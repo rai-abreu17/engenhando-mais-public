@@ -25,6 +25,7 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted, navigating to home...');
     // Simulate login/signup and redirect to home
     navigate('/');
   };
@@ -43,7 +44,7 @@ const Login = () => {
           <span className="text-4xl font-bold text-engenha-blue">LOGO</span>
         </div>
 
-        <h1 className="text-engenha-text-light text-2xl font-bold mb-8">
+        <h1 className="text-black text-2xl font-semibold mb-8">
           {isSignUp ? 'Crie sua conta no ENGENHA+' : 'Seja bem vindo ao ENGENHA+'}
         </h1>
 
@@ -148,7 +149,7 @@ const Login = () => {
           {!isSignUp && (
             <button
               type="button"
-              className="text-engenha-text-light text-sm underline"
+              className="text-black text-sm font-semibold underline"
             >
               Esqueceu a senha? Clique aqui!
             </button>
