@@ -26,25 +26,25 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted, navigating to home...');
-    // Simulate login/signup and redirect to home
+    localStorage.setItem('engenha_token', 'authenticated');
     navigate('/');
   };
 
   const socialButtons = [
-    { name: 'Google', icon: 'G', color: 'bg-white border border-engenha-border text-gray-700' },
+    { name: 'Google', icon: 'G', color: 'bg-white border border-gray-300 text-gray-700' },
     { name: 'Apple', icon: '', color: 'bg-black text-white' },
     { name: 'Facebook', icon: 'f', color: 'bg-blue-600 text-white' }
   ];
 
   return (
-    <div className="min-h-screen bg-engenha-gradient flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#001cab] to-[#0029ff] flex flex-col">
       {/* Header with logo */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="bg-white rounded-full w-32 h-32 flex items-center justify-center mb-8 shadow-lg">
-          <span className="text-4xl font-bold text-engenha-blue">LOGO</span>
+          <span className="text-4xl font-bold text-[#001cab]">LOGO</span>
         </div>
 
-        <h1 className="text-black text-2xl font-semibold mb-8">
+        <h1 className="text-white text-2xl font-semibold mb-8">
           {isSignUp ? 'Crie sua conta no ENGENHA+' : 'Seja bem vindo ao ENGENHA+'}
         </h1>
 
@@ -53,38 +53,38 @@ const Login = () => {
           {isSignUp && (
             <>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-engenha-border" size={20} />
+                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]" size={20} />
                 <input
                   type="text"
                   name="fullName"
                   placeholder="DIGITE SEU NOME COMPLETO"
                   value={formData.fullName}
                   onChange={handleInputChange}
-                  className="w-full bg-white/20 border border-engenha-border rounded-lg pl-12 pr-4 py-3 text-engenha-text-light placeholder-engenha-border focus:outline-none focus:ring-2 focus:ring-engenha-border"
+                  className="w-full bg-white/20 border border-[#96CCDB] rounded-lg pl-12 pr-4 py-3 text-[#B5FDFF] placeholder-[#96CCDB] focus:outline-none focus:ring-2 focus:ring-[#96CCDB]"
                   required
                 />
               </div>
 
               <div className="relative">
-                <School className="absolute left-4 top-1/2 transform -translate-y-1/2 text-engenha-border" size={20} />
+                <School className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]" size={20} />
                 <input
                   type="text"
                   name="university"
                   placeholder="DIGITE SUA UNIVERSIDADE"
                   value={formData.university}
                   onChange={handleInputChange}
-                  className="w-full bg-white/20 border border-engenha-border rounded-lg pl-12 pr-4 py-3 text-engenha-text-light placeholder-engenha-border focus:outline-none focus:ring-2 focus:ring-engenha-border"
+                  className="w-full bg-white/20 border border-[#96CCDB] rounded-lg pl-12 pr-4 py-3 text-[#B5FDFF] placeholder-[#96CCDB] focus:outline-none focus:ring-2 focus:ring-[#96CCDB]"
                   required
                 />
               </div>
 
               <div className="relative">
-                <BookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-engenha-border" size={20} />
+                <BookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]" size={20} />
                 <select
                   name="course"
                   value={formData.course}
                   onChange={handleInputChange}
-                  className="w-full bg-white/20 border border-engenha-border rounded-lg pl-12 pr-4 py-3 text-engenha-text-light focus:outline-none focus:ring-2 focus:ring-engenha-border appearance-none"
+                  className="w-full bg-white/20 border border-[#96CCDB] rounded-lg pl-12 pr-4 py-3 text-[#B5FDFF] focus:outline-none focus:ring-2 focus:ring-[#96CCDB] appearance-none"
                   required
                 >
                   <option value="" className="text-gray-800">SELECIONE SEU CURSO</option>
@@ -99,33 +99,33 @@ const Login = () => {
           )}
 
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-engenha-border" size={20} />
+            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]" size={20} />
             <input
               type="email"
               name="email"
               placeholder={isSignUp ? "DIGITE SEU EMAIL" : "DIGITE SEU EMAIL OU USUÁRIO"}
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full bg-white/20 border border-engenha-border rounded-lg pl-12 pr-4 py-3 text-engenha-text-light placeholder-engenha-border focus:outline-none focus:ring-2 focus:ring-engenha-border"
+              className="w-full bg-white/20 border border-[#96CCDB] rounded-lg pl-12 pr-4 py-3 text-[#B5FDFF] placeholder-[#96CCDB] focus:outline-none focus:ring-2 focus:ring-[#96CCDB]"
               required
             />
           </div>
 
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-engenha-border" size={20} />
+            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]" size={20} />
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="DIGITE SUA SENHA"
               value={formData.password}
               onChange={handleInputChange}
-              className="w-full bg-white/20 border border-engenha-border rounded-lg pl-12 pr-12 py-3 text-engenha-text-light placeholder-engenha-border focus:outline-none focus:ring-2 focus:ring-engenha-border"
+              className="w-full bg-white/20 border border-[#96CCDB] rounded-lg pl-12 pr-12 py-3 text-[#B5FDFF] placeholder-[#96CCDB] focus:outline-none focus:ring-2 focus:ring-[#96CCDB]"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-engenha-border"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -133,14 +133,14 @@ const Login = () => {
 
           {isSignUp && (
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-engenha-border" size={20} />
+              <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#96CCDB]" size={20} />
               <input
                 type={showPassword ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="CONFIRME SUA SENHA"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="w-full bg-white/20 border border-engenha-border rounded-lg pl-12 pr-4 py-3 text-engenha-text-light placeholder-engenha-border focus:outline-none focus:ring-2 focus:ring-engenha-border"
+                className="w-full bg-white/20 border border-[#96CCDB] rounded-lg pl-12 pr-4 py-3 text-[#B5FDFF] placeholder-[#96CCDB] focus:outline-none focus:ring-2 focus:ring-[#96CCDB]"
                 required
               />
             </div>
@@ -149,7 +149,7 @@ const Login = () => {
           {!isSignUp && (
             <button
               type="button"
-              className="text-black text-sm font-semibold underline"
+              className="text-white text-sm font-semibold underline"
             >
               Esqueceu a senha? Clique aqui!
             </button>
@@ -157,7 +157,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-engenha-orange hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors"
+            className="w-full bg-[#ff7a28] hover:bg-[#d75200] text-white font-bold py-3 rounded-lg transition-colors"
           >
             {isSignUp ? 'CADASTRE-SE' : 'LOGIN'}
           </button>
@@ -165,7 +165,7 @@ const Login = () => {
 
         <button
           onClick={() => setIsSignUp(!isSignUp)}
-          className="text-engenha-text-light text-sm underline mt-4"
+          className="text-white text-sm underline mt-4"
         >
           {isSignUp ? 'Já tem uma conta? Entre aqui!' : 'Não tem uma conta? Clique aqui!'}
         </button>
@@ -173,11 +173,11 @@ const Login = () => {
         {/* Social Login */}
         <div className="mt-8 w-full max-w-sm">
           <div className="flex items-center mb-4">
-            <div className="flex-1 h-px bg-engenha-border"></div>
-            <span className="px-4 text-engenha-text-light text-sm">
+            <div className="flex-1 h-px bg-[#96CCDB]"></div>
+            <span className="px-4 text-white text-sm">
               {isSignUp ? 'CADASTRE-SE COM' : 'LOGAR COM'}
             </span>
-            <div className="flex-1 h-px bg-engenha-border"></div>
+            <div className="flex-1 h-px bg-[#96CCDB]"></div>
           </div>
 
           <div className="flex justify-center space-x-4">

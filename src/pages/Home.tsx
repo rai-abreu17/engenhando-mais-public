@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
-import { Play, BookOpen, Trophy, TrendingUp, ChevronRight } from 'lucide-react';
+import { Play, BookOpen, Trophy, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 
 const Home = () => {
   const [coins, setCoins] = useState(120);
   const [studyStreak, setStudyStreak] = useState(7);
+  const [recentVideoIndex, setRecentVideoIndex] = useState(0);
+  const [recommendationIndex, setRecommendationIndex] = useState(0);
 
   const recentVideos = [
     {
@@ -74,8 +76,24 @@ const Home = () => {
     }
   ];
 
+  const nextRecentVideo = () => {
+    setRecentVideoIndex((prev) => (prev + 1) % recentVideos.length);
+  };
+
+  const prevRecentVideo = () => {
+    setRecentVideoIndex((prev) => (prev - 1 + recentVideos.length) % recentVideos.length);
+  };
+
+  const nextRecommendation = () => {
+    setRecommendationIndex((prev) => (prev + 1) % recommendations.length);
+  };
+
+  const prevRecommendation = () => {
+    setRecommendationIndex((prev) => (prev - 1 + recommendations.length) % recommendations.length);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[#f0f6ff] pb-20">
       <Header 
         title={`Olá, Estudante! 👋`}
         subtitle={`${studyStreak} dias consecutivos estudando`}
@@ -84,67 +102,109 @@ const Home = () => {
       />
 
       <div className="px-6 space-y-6">
-        {/* Continue watching - Carrossel */}
+        {/* Continue watching - Carrossel com setas */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-800">Continue de onde parou</h2>
-            <ChevronRight className="text-engenha-border" size={20} />
+            <h2 className="text-lg font-semibold text-[#030025]">Continue de onde parou</h2>
           </div>
-          <div className="flex space-x-4 overflow-x-auto pb-2">
-            {recentVideos.map((video) => (
-              <div key={video.id} className="bg-white p-4 rounded-xl shadow-sm border border-engenha-border min-w-[280px] flex-shrink-0">
-                <div className="flex items-center space-x-4">
-                  <div className="text-3xl">{video.thumbnail}</div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-engenha-text-light text-sm">{video.title}</h3>
-                    <p className="text-xs text-engenha-border">{video.subject} • {video.duration}</p>
-                    <div className="mt-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-engenha-blue h-2 rounded-full transition-all duration-300" 
-                          style={{ width: `${video.progress}%` }}
-                        ></div>
+          <div className="relative">
+            <button
+              onClick={prevRecentVideo}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+            >
+              <ChevronLeft className="text-[#96CCDB]" size={20} />
+            </button>
+            <button
+              onClick={nextRecentVideo}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+            >
+              <ChevronRight className="text-[#96CCDB]" size={20} />
+            </button>
+            
+            <div className="overflow-hidden mx-8">
+              <div 
+                className="flex transition-transform duration-300"
+                style={{ transform: `translateX(-${recentVideoIndex * 100}%)` }}
+              >
+                {recentVideos.map((video) => (
+                  <div key={video.id} className="w-full flex-shrink-0 px-2">
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-[#96CCDB]">
+                      <div className="flex items-center space-x-4">
+                        <div className="text-3xl">{video.thumbnail}</div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-[#030025] text-sm">{video.title}</h3>
+                          <p className="text-xs text-[#030025]">{video.subject} • {video.duration}</p>
+                          <div className="mt-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-[#001cab] h-2 rounded-full transition-all duration-300" 
+                                style={{ width: `${video.progress}%` }}
+                              ></div>
+                            </div>
+                            <p className="text-xs text-[#030025] mt-1">{video.progress}% completo</p>
+                          </div>
+                        </div>
+                        <button className="bg-[#001cab] text-white p-2 rounded-full hover:bg-[#0029ff] transition-colors flex items-center justify-center">
+                          <Play size={16} />
+                        </button>
                       </div>
-                      <p className="text-xs text-engenha-border mt-1">{video.progress}% completo</p>
                     </div>
                   </div>
-                  <button className="bg-engenha-blue text-white p-2 rounded-full hover:bg-engenha-blue-dark transition-colors flex items-center justify-center">
-                    <Play size={16} />
-                  </button>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
-        {/* Recommendations - Carrossel */}
+        {/* Recommendations - Carrossel com setas */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-800">Recomendado para você</h2>
-            <ChevronRight className="text-engenha-border" size={20} />
+            <h2 className="text-lg font-semibold text-[#030025]">Recomendado para você</h2>
           </div>
-          <div className="flex space-x-4 overflow-x-auto pb-2">
-            {recommendations.map((item) => (
-              <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border border-engenha-border hover:shadow-md transition-shadow min-w-[250px] flex-shrink-0">
-                <div className="flex items-center space-x-3">
-                  <div className="text-2xl">{item.thumbnail}</div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-engenha-text-light text-sm">{item.title}</h3>
-                    <p className="text-xs text-engenha-border">{item.subject}</p>
-                    <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-engenha-blue text-xs rounded-full border border-engenha-border">
-                      {item.difficulty}
-                    </span>
+          <div className="relative">
+            <button
+              onClick={prevRecommendation}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+            >
+              <ChevronLeft className="text-[#96CCDB]" size={20} />
+            </button>
+            <button
+              onClick={nextRecommendation}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+            >
+              <ChevronRight className="text-[#96CCDB]" size={20} />
+            </button>
+            
+            <div className="overflow-hidden mx-8">
+              <div 
+                className="flex transition-transform duration-300"
+                style={{ transform: `translateX(-${recommendationIndex * 100}%)` }}
+              >
+                {recommendations.map((item) => (
+                  <div key={item.id} className="w-full flex-shrink-0 px-2">
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-[#96CCDB] hover:shadow-md transition-shadow">
+                      <div className="flex items-center space-x-3">
+                        <div className="text-2xl">{item.thumbnail}</div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-[#030025] text-sm">{item.title}</h3>
+                          <p className="text-xs text-[#030025]">{item.subject}</p>
+                          <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-[#001cab] text-xs rounded-full border border-[#96CCDB]">
+                            {item.difficulty}
+                          </span>
+                        </div>
+                        <BookOpen className="text-[#96CCDB]" size={20} />
+                      </div>
+                    </div>
                   </div>
-                  <BookOpen className="text-engenha-border" size={20} />
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
         {/* Quick Stats */}
         <section className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-r from-green-400 to-green-500 p-4 rounded-xl text-white border border-engenha-border">
+          <div className="bg-gradient-to-r from-green-400 to-green-500 p-4 rounded-xl text-white border border-[#96CCDB]">
             <div className="flex items-center space-x-3">
               <TrendingUp size={24} />
               <div>
@@ -153,7 +213,7 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-purple-400 to-purple-500 p-4 rounded-xl text-white border border-engenha-border">
+          <div className="bg-gradient-to-r from-purple-400 to-purple-500 p-4 rounded-xl text-white border border-[#96CCDB]">
             <div className="flex items-center space-x-3">
               <Trophy size={24} />
               <div>
@@ -165,7 +225,7 @@ const Home = () => {
         </section>
 
         {/* Weekly Challenge */}
-        <section className="bg-gradient-to-r from-engenha-orange to-red-500 p-6 rounded-xl text-white border border-engenha-border">
+        <section className="bg-gradient-to-r from-[#ff7a28] to-[#d75200] p-6 rounded-xl text-white border border-[#96CCDB]">
           <div className="flex items-start space-x-3 mb-3">
             <span className="text-2xl">🔥</span>
             <div className="flex-1">
