@@ -13,6 +13,8 @@ const Mascote = () => {
   const [coins, setCoins] = useState(120);
   const [studyStreak, setStudyStreak] = useState(7);
   const [selectedTab, setSelectedTab] = useState('care');
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const mascotState = () => {
     if (mascotStats.hunger > 80) return 'muito-com-fome';
@@ -31,6 +33,25 @@ const Mascote = () => {
         health: Math.min(100, prev.health + 10)
       }));
     }
+  };
+
+  const buyAccessory = (accessory: any) => {
+    if (coins >= accessory.cost && !accessory.owned) {
+      setCoins(coins - accessory.cost);
+      // Update the accessory to owned
+      const updatedAccessories = accessories.map(item => 
+        item.name === accessory.name ? { ...item, owned: true } : item
+      );
+      setShowPurchaseModal(false);
+      setSelectedItem(null);
+      // In a real app, you would update the state properly
+      alert(`Você comprou ${accessory.name}! Seu mascote está mais estiloso agora! 🎉`);
+    }
+  };
+
+  const openPurchaseModal = (item: any) => {
+    setSelectedItem(item);
+    setShowPurchaseModal(true);
   };
 
   const playWithMascot = () => {
@@ -193,9 +214,27 @@ const Mascote = () => {
                   <div className="text-2xl mb-2">{accessory.name.split(' ')[1]}</div>
                   <h4 className="font-medium text-gray-800">{accessory.name.split(' ')[0]}</h4>
                   {accessory.owned ? (
-                    <p className="text-sm text-green-600 font-medium">✓ Possui</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-green-600 font-medium">✓ Possui</p>
+                      <button className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                        Equipado
+                      </button>
+                    </div>
                   ) : (
-                    <p className="text-sm font-bold text-engenha-blue">🪙 {accessory.cost}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-bold text-engenha-blue">🪙 {accessory.cost}</p>
+                      <button
+                        onClick={() => openPurchaseModal(accessory)}
+                        disabled={coins < accessory.cost}
+                        className={`text-xs px-3 py-1 rounded font-medium transition-colors ${
+                          coins >= accessory.cost
+                            ? 'bg-engenha-blue text-white hover:bg-blue-700'
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        Comprar
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}
@@ -231,6 +270,43 @@ const Mascote = () => {
           </section>
         )}
       </div>
+
+      {/* Purchase Modal */}
+      {showPurchaseModal && selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full">
+            <div className="text-center">
+              <div className="text-4xl mb-4">{selectedItem.name.split(' ')[1]}</div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                Comprar {selectedItem.name.split(' ')[0]}?
+              </h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Este item custará {selectedItem.cost} moedas. Você tem {coins} moedas disponíveis.
+              </p>
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowPurchaseModal(false)}
+                  className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => buyAccessory(selectedItem)}
+                  disabled={coins < selectedItem.cost}
+                  className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+                    coins >= selectedItem.cost
+                      ? 'bg-engenha-blue text-white hover:bg-blue-700'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  Comprar 🪙 {selectedItem.cost}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Navigation />
     </div>

@@ -63,15 +63,23 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// ENGENHA+ Custom Colors - Cores corretas
+				// ENGENHA+ Custom Colors - Nova Paleta
 				engenha: {
-					blue: '#001CAB',
-					orange: '#f97316',
-					'blue-light': '#001CAB',
-					'blue-dark': '#001CAB',
+					'light-blue': '#f0f6ff',     // Azul muito claro
+					'light-cream': '#fffaf0',    // Bege muito claro  
+					'dark-navy': '#030025',      // Azul muito escuro
+					'bright-blue': '#0029ff',    // Azul vibrante
+					'orange': '#ff7a28',         // Laranja
+					'blue': '#001cab',           // Azul escuro
+					'dark-orange': '#d75200',    // Laranja escuro
+					'sky-blue': '#28b0ff',       // Azul claro
+					'gold': '#ffb646',           // Amarelo/Dourado
+					// Aliases para compatibilidade
+					'blue-light': '#28b0ff',
+					'blue-dark': '#001cab',
 					gray: '#6b7280',
-					'text-light': '#B5FDFF',
-					'border': '#96CCDB'
+					'text-light': '#f0f6ff',
+					'border': '#28b0ff'
 				}
 			},
 			borderRadius: {
@@ -132,8 +140,10 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'engenha-gradient': 'linear-gradient(135deg, #001CAB 0%, #001CAB 100%)',
-				'engenha-wave': 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' version=\'1.1\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' viewBox=\'0 0 800 400\'%3e%3cpath d=\'M0,320L48,314.7C96,309,192,299,288,282.7C384,267,480,245,576,234.7C672,224,768,224,864,213.3C960,203,1056,181,1152,181.3C1248,181,1344,203,1392,213.3L1440,224L1440,400L1392,400C1344,400,1248,400,1152,400C1056,400,960,400,864,400C768,400,672,400,576,400C480,400,384,400,288,400C192,400,96,400,48,400L0,400Z\' fill=\'%23001CAB\'%3e%3c/path%3e%3c/svg%3e")'
+				'engenha-gradient': 'linear-gradient(135deg, #0029ff 0%, #001cab 100%)',
+				'engenha-gradient-warm': 'linear-gradient(135deg, #ff7a28 0%, #d75200 100%)',
+				'engenha-gradient-sky': 'linear-gradient(135deg, #28b0ff 0%, #0029ff 100%)',
+				'engenha-wave': 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' version=\'1.1\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' viewBox=\'0 0 800 400\'%3e%3cpath d=\'M0,320L48,314.7C96,309,192,299,288,282.7C384,267,480,245,576,234.7C672,224,768,224,864,213.3C960,203,1056,181,1152,181.3C1248,181,1344,203,1392,213.3L1440,224L1440,400L1392,400C1344,400,1248,400,1152,400C1056,400,960,400,864,400C768,400,672,400,576,400C480,400,384,400,288,400C192,400,96,400,48,400L0,400Z\' fill=\'%23001cab\'%3e%3c/path%3e%3c/svg%3e")'
 			}
 		}
 	},

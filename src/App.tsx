@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Biblioteca from "./pages/Biblioteca";
-import Mascote from "./pages/Mascote";
+import MascoteNovo from './pages/MascoteNovo';
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
@@ -34,9 +34,10 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={isAuthenticated ? <Home /> : <Login />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/biblioteca" element={<Biblioteca />} />
-            <Route path="/mascote" element={<Mascote />} />
+            <Route path="/mascote" element={<MascoteNovo />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

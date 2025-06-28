@@ -8,7 +8,7 @@ const Navigation = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { icon: Home, label: 'Home', path: '/' },
+    { icon: Home, label: 'Home', path: '/home' },
     { icon: Book, label: 'Biblioteca', path: '/biblioteca' },
     { icon: Users, label: 'Mascote', path: '/mascote' },
     { icon: Settings, label: 'Config', path: '/configuracoes' }
