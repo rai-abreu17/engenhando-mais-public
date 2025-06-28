@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, showCoins = false, coi
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-2xl font-bold text-engenha-text-light">{title}</h1>
-          {subtitle && <p className="text-blue-100 mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-engenha-text-light mt-1">{subtitle}</p>}
         </div>
         {showCoins && (
           <div className="bg-white/20 px-3 py-1 rounded-full border border-engenha-border">

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Play, BookOpen, Trophy, TrendingUp } from 'lucide-react';
+import { Play, BookOpen, Trophy, TrendingUp, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 
@@ -24,6 +24,22 @@ const Home = () => {
       progress: 30,
       duration: '38 min',
       thumbnail: '⚗️'
+    },
+    {
+      id: 3,
+      title: 'Algoritmos de Busca',
+      subject: 'Programação',
+      progress: 60,
+      duration: '52 min',
+      thumbnail: '💻'
+    },
+    {
+      id: 4,
+      title: 'Derivadas Básicas',
+      subject: 'Cálculo I',
+      progress: 20,
+      duration: '35 min',
+      thumbnail: '📈'
     }
   ];
 
@@ -41,6 +57,20 @@ const Home = () => {
       subject: 'Programação',
       difficulty: 'Avançado',
       thumbnail: '💻'
+    },
+    {
+      id: 5,
+      title: 'Teorema de Pitágoras',
+      subject: 'Matemática',
+      difficulty: 'Básico',
+      thumbnail: '📐'
+    },
+    {
+      id: 6,
+      title: 'Circuitos Elétricos',
+      subject: 'Física II',
+      difficulty: 'Intermediário',
+      thumbnail: '⚡'
     }
   ];
 
@@ -54,17 +84,20 @@ const Home = () => {
       />
 
       <div className="px-6 space-y-6">
-        {/* Continue watching */}
+        {/* Continue watching - Carrossel */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">Continue de onde parou</h2>
-          <div className="space-y-3">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-gray-800">Continue de onde parou</h2>
+            <ChevronRight className="text-engenha-border" size={20} />
+          </div>
+          <div className="flex space-x-4 overflow-x-auto pb-2">
             {recentVideos.map((video) => (
-              <div key={video.id} className="bg-white p-4 rounded-xl shadow-sm border border-engenha-border">
+              <div key={video.id} className="bg-white p-4 rounded-xl shadow-sm border border-engenha-border min-w-[280px] flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="text-3xl">{video.thumbnail}</div>
                   <div className="flex-1">
-                    <h3 className="font-medium text-engenha-text-light">{video.title}</h3>
-                    <p className="text-sm text-gray-500">{video.subject} • {video.duration}</p>
+                    <h3 className="font-medium text-engenha-text-light text-sm">{video.title}</h3>
+                    <p className="text-xs text-engenha-border">{video.subject} • {video.duration}</p>
                     <div className="mt-2">
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
@@ -72,7 +105,7 @@ const Home = () => {
                           style={{ width: `${video.progress}%` }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">{video.progress}% completo</p>
+                      <p className="text-xs text-engenha-border mt-1">{video.progress}% completo</p>
                     </div>
                   </div>
                   <button className="bg-engenha-blue text-white p-2 rounded-full hover:bg-engenha-blue-dark transition-colors flex items-center justify-center">
@@ -84,22 +117,25 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Recommendations */}
+        {/* Recommendations - Carrossel */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">Recomendado para você</h2>
-          <div className="grid grid-cols-1 gap-3">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-gray-800">Recomendado para você</h2>
+            <ChevronRight className="text-engenha-border" size={20} />
+          </div>
+          <div className="flex space-x-4 overflow-x-auto pb-2">
             {recommendations.map((item) => (
-              <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border border-engenha-border hover:shadow-md transition-shadow">
+              <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border border-engenha-border hover:shadow-md transition-shadow min-w-[250px] flex-shrink-0">
                 <div className="flex items-center space-x-3">
                   <div className="text-2xl">{item.thumbnail}</div>
                   <div className="flex-1">
-                    <h3 className="font-medium text-engenha-text-light">{item.title}</h3>
-                    <p className="text-sm text-gray-500">{item.subject}</p>
+                    <h3 className="font-medium text-engenha-text-light text-sm">{item.title}</h3>
+                    <p className="text-xs text-engenha-border">{item.subject}</p>
                     <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-engenha-blue text-xs rounded-full border border-engenha-border">
                       {item.difficulty}
                     </span>
                   </div>
-                  <BookOpen className="text-gray-400" size={20} />
+                  <BookOpen className="text-engenha-border" size={20} />
                 </div>
               </div>
             ))}
