@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, ShoppingCart, Utensils, Hand, Moon, Gamepad2, Shirt, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { Heart, ShoppingCart, Utensils, Hand, Moon, Gamepad2, Shirt, Sparkles, Volume2, VolumeX, Edit2 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import RacingGame from '../components/RacingGame';
 import ShootingGame from '../components/ShootingGame';
@@ -38,6 +38,9 @@ const MascoteNovo = () => {
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [showRacingGame, setShowRacingGame] = useState(false);
   const [showShootingGame, setShowShootingGame] = useState(false);
+  const [showNameEditor, setShowNameEditor] = useState(false);
+  const [editingName, setEditingName] = useState('');
+  const [customMascotNames, setCustomMascotNames] = useState<{[key: string]: string}>({});
   const [ownedAccessories, setOwnedAccessories] = useState<string[]>([]);
 
   const [mascotStats, setMascotStats] = useState<MascotStats>({
@@ -136,6 +139,7 @@ const MascoteNovo = () => {
   useEffect(() => {
     const savedMascot = localStorage.getItem('selectedMascot');
     const savedUnlockedMascots = localStorage.getItem('unlockedMascots');
+    const savedCustomNames = localStorage.getItem('customMascotNames');
     
     if (savedMascot) {
       setCurrentMascot(savedMascot);
@@ -150,6 +154,10 @@ const MascoteNovo = () => {
           mascot.unlocked = true;
         }
       });
+    }
+
+    if (savedCustomNames) {
+      setCustomMascotNames(JSON.parse(savedCustomNames));
     }
   }, []);
 
@@ -341,6 +349,38 @@ const MascoteNovo = () => {
     }
   };
 
+  const getMascotName = () => {
+    const mascot = getCurrentMascot();
+    return customMascotNames[mascot.id] || mascot.name;
+  };
+
+  const openNameEditor = () => {
+    const currentName = getMascotName();
+    setEditingName(currentName);
+    setShowNameEditor(true);
+  };
+
+  const saveMascotName = () => {
+    if (editingName.trim()) {
+      const newCustomNames = {
+        ...customMascotNames,
+        [currentMascot]: editingName.trim()
+      };
+      setCustomMascotNames(newCustomNames);
+      localStorage.setItem('customMascotNames', JSON.stringify(newCustomNames));
+      setShowNameEditor(false);
+      
+      if (soundEnabled) {
+        console.log('🔊 Som de confirmação');
+      }
+    }
+  };
+
+  const cancelNameEdit = () => {
+    setShowNameEditor(false);
+    setEditingName('');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-engenha-light-blue to-engenha-sky-blue">
       {/* Header com moedas e controles */}
@@ -365,9 +405,18 @@ const MascoteNovo = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
         {/* Nome e nível do mascote */}
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold text-engenha-dark-navy">
-            {getCurrentMascot().name}
-          </h2>
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <h2 className="text-2xl font-bold text-engenha-dark-navy">
+              {getMascotName()}
+            </h2>
+            <button
+              onClick={openNameEditor}
+              className="p-1 rounded-full bg-engenha-orange bg-opacity-20 hover:bg-opacity-40 text-engenha-orange transition-all duration-200"
+              title="Editar nome"
+            >
+              <Edit2 size={16} />
+            </button>
+          </div>
           <p className="text-engenha-dark-navy opacity-70">
             Nível {mascotStats.level} • {mascotStats.experience} XP
           </p>
@@ -845,7 +894,7 @@ const MascoteNovo = () => {
                           ownedAccessories.includes(item.name)
                             ? 'bg-engenha-sky-blue text-white cursor-not-allowed'
                             : coins >= item.price
-                            ? 'bg-engenha-gold text-engenha-dark-navy hover:bg-yellow-400'
+                            ? 'bg-engenha-gold text-engenha-dark-navy hover:bg-engenha-gold hover:opacity-80'
                             : 'bg-engenha-light-blue text-engenha-dark-navy cursor-not-allowed'
                         }`}
                       >
@@ -857,7 +906,7 @@ const MascoteNovo = () => {
               </div>
 
               {/* Acessórios premium */}
-              <div className="bg-purple-100 rounded-lg p-3">
+              <div className="bg-engenha-light-blue bg-opacity-20 rounded-lg p-3">
                 <h4 className="font-bold text-engenha-dark-navy mb-2">💎 Acessórios Premium</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {[
@@ -866,7 +915,7 @@ const MascoteNovo = () => {
                     { name: '🌟 Aura Dourada', price: 'R$ 6,99', type: 'money' },
                     { name: '🎭 Máscara Misteriosa', price: 'R$ 3,99', type: 'money' }
                   ].map((item, index) => (
-                    <div key={index} className="bg-white rounded-lg p-2 text-center border-2 border-purple-300">
+                    <div key={index} className="bg-white rounded-lg p-2 text-center border-2 border-engenha-sky-blue">
                       <div className="text-lg mb-1">{item.name.split(' ')[0]}</div>
                       <div className="text-xs font-semibold text-engenha-dark-navy mb-1">
                         {item.name.split(' ').slice(1).join(' ')}
@@ -884,6 +933,62 @@ const MascoteNovo = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Editor de Nome do Mascote */}
+      {showNameEditor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-engenha-dark-navy">
+                ✏️ Editar Nome do Mascote
+              </h3>
+              <button
+                onClick={() => setShowNameEditor(false)}
+                className="text-engenha-dark-navy hover:text-engenha-orange"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-engenha-dark-navy mb-1">
+                Nome Atual:
+              </label>
+              <div className="bg-white rounded-lg p-2 text-center text-2xl font-bold text-engenha-dark-navy">
+                {getMascotName()}
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-engenha-dark-navy mb-1">
+                Novo Nome:
+              </label>
+              <input
+                type="text"
+                value={editingName}
+                onChange={(e) => setEditingName(e.target.value)}
+                className="w-full bg-white rounded-lg p-2 text-center text-2xl font-bold text-engenha-dark-navy border border-engenha-sky-blue focus:ring-2 focus:ring-engenha-orange focus:outline-none"
+                placeholder="Digite o novo nome"
+              />
+            </div>
+            
+            <div className="flex justify-between gap-2">
+              <button
+                onClick={saveMascotName}
+                className="w-full bg-engenha-orange text-white rounded-lg py-2 font-medium hover:bg-engenha-dark-orange transition-colors"
+              >
+                Salvar Nome
+              </button>
+              <button
+                onClick={cancelNameEdit}
+                className="w-full bg-engenha-light-blue text-engenha-dark-navy rounded-lg py-2 font-medium hover:bg-engenha-sky-blue hover:text-white transition-colors"
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
