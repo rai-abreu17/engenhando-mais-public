@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronRight, User, Bell, Smartphone, HelpCircle, LogOut } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ChevronRight, User, Bell, Smartphone, HelpCircle, LogOut, Building, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
@@ -22,6 +22,113 @@ const Configuracoes = () => {
     cycles: 4
   });
 
+  // Estados para os campos de busca
+  const [universitySearch, setUniversitySearch] = useState('UFMG');
+  const [courseSearch, setCourseSearch] = useState('Engenharia Civil');
+  const [showUniversityList, setShowUniversityList] = useState(false);
+  const [showCourseList, setShowCourseList] = useState(false);
+  
+  // Refs para controle dos dropdowns
+  const universityRef = useRef<HTMLDivElement>(null);
+  const courseRef = useRef<HTMLDivElement>(null);
+
+  // Lista de universidades brasileiras
+  const universities = [
+    'Não tenho universidade',
+    'Universidade de São Paulo (USP)',
+    'Universidade Estadual de Campinas (UNICAMP)',
+    'Universidade Federal do Rio de Janeiro (UFRJ)',
+    'Universidade Federal de Minas Gerais (UFMG)',
+    'Universidade Federal do Rio Grande do Sul (UFRGS)',
+    'Universidade Federal de São Paulo (UNIFESP)',
+    'Universidade Federal de Santa Catarina (UFSC)',
+    'Universidade Federal do Paraná (UFPR)',
+    'Universidade Federal da Bahia (UFBA)',
+    'Universidade Federal de Pernambuco (UFPE)',
+    'Universidade Federal do Ceará (UFC)',
+    'Universidade Federal Fluminense (UFF)',
+    'Universidade Federal de Goiás (UFG)',
+    'Universidade Federal do Pará (UFPA)',
+    'Universidade de Brasília (UnB)',
+    'Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)',
+    'Pontifícia Universidade Católica de São Paulo (PUC-SP)',
+    'Pontifícia Universidade Católica do Rio Grande do Sul (PUCRS)',
+    'Universidade Presbiteriana Mackenzie',
+    'Universidade Federal de São Carlos (UFSCar)',
+    'Universidade Federal do ABC (UFABC)',
+    'Universidade Federal de Viçosa (UFV)',
+    'Universidade Federal de Lavras (UFLA)',
+    'Instituto Tecnológico de Aeronáutica (ITA)',
+    'Instituto Militar de Engenharia (IME)',
+    'Centro Federal de Educação Tecnológica de Minas Gerais (CEFET-MG)',
+    'Universidade Tecnológica Federal do Paraná (UTFPR)',
+    'Universidade Estadual Paulista (UNESP)',
+    'Universidade Estadual de Londrina (UEL)',
+    'Universidade Estadual de Maringá (UEM)'
+  ];
+
+  // Lista de cursos
+  const courses = [
+    'Bacharelado em Ciências e Tecnologia (BCT)',
+    'Engenharia Civil',
+    'Engenharia Mecânica',
+    'Engenharia Elétrica',
+    'Engenharia Eletrônica',
+    'Engenharia da Computação',
+    'Engenharia Química',
+    'Engenharia Aeronáutica',
+    'Engenharia Aeroespacial',
+    'Engenharia Agrícola',
+    'Engenharia de Alimentos',
+    'Engenharia Ambiental',
+    'Engenharia de Automação',
+    'Engenharia de Controle e Automação',
+    'Engenharia Automotiva',
+    'Engenharia Biomédica',
+    'Engenharia de Bioprocessos',
+    'Engenharia de Biotecnologia',
+    'Engenharia de Energia',
+    'Engenharia Física',
+    'Engenharia Florestal',
+    'Engenharia Geológica',
+    'Engenharia Industrial',
+    'Engenharia da Informação',
+    'Engenharia de Materiais',
+    'Engenharia Mecatrônica',
+    'Engenharia Metalúrgica',
+    'Engenharia de Minas',
+    'Engenharia Naval e Oceânica',
+    'Engenharia Nuclear',
+    'Engenharia de Petróleo',
+    'Engenharia de Produção',
+    'Engenharia de Software',
+    'Engenharia de Telecomunicações',
+    'Engenharia Têxtil'
+  ];
+
+  const filteredUniversities = universities.filter(uni =>
+    uni.toLowerCase().includes(universitySearch.toLowerCase())
+  );
+
+  const filteredCourses = courses.filter(course =>
+    course.toLowerCase().includes(courseSearch.toLowerCase())
+  );
+
+  // Fechar dropdowns ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (universityRef.current && !universityRef.current.contains(event.target as Node)) {
+        setShowUniversityList(false);
+      }
+      if (courseRef.current && !courseRef.current.contains(event.target as Node)) {
+        setShowCourseList(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleLogout = () => {
     // Limpar todos os dados do localStorage relacionados à autenticação
     localStorage.removeItem('engenha_token');
@@ -31,6 +138,28 @@ const Configuracoes = () => {
     
     // Redirecionar para a página de login
     navigate('/login');
+  };
+
+  const handleUniversitySearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUniversitySearch(value);
+    setShowUniversityList(true);
+  };
+
+  const selectUniversity = (university: string) => {
+    setUniversitySearch(university);
+    setShowUniversityList(false);
+  };
+
+  const handleCourseSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCourseSearch(value);
+    setShowCourseList(true);
+  };
+
+  const selectCourse = (course: string) => {
+    setCourseSearch(course);
+    setShowCourseList(false);
   };
 
   const userInfo = {
@@ -100,23 +229,84 @@ const Configuracoes = () => {
             className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Universidade</label>
-          <input
-            type="text"
-            defaultValue={userInfo.university}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue"
-          />
+        <div className="relative" ref={universityRef}>
+          <label className="block text-sm font-medium text-engenha-dark-navy mb-1">Universidade</label>
+          <div className="relative">
+            <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
+            <input
+              type="text"
+              placeholder="BUSQUE SUA UNIVERSIDADE"
+              value={universitySearch}
+              onChange={handleUniversitySearch}
+              onFocus={() => setShowUniversityList(true)}
+              className="w-full border border-engenha-sky-blue rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy"
+              autoComplete="off"
+            />
+          </div>
+          {showUniversityList && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
+              {filteredUniversities.slice(0, 10).map((university, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => selectUniversity(university)}
+                  className={`w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm ${
+                    university === 'Não tenho universidade' ? 'border-b border-gray-200 font-medium text-gray-600' : ''
+                  }`}
+                >
+                  {university}
+                </button>
+              ))}
+              {filteredUniversities.length > 10 && (
+                <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
+                  Mostrando primeiros 10 resultados. Continue digitando para refinar.
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Curso</label>
-          <select className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue">
-            <option value="civil">Engenharia Civil</option>
-            <option value="mecanica">Engenharia Mecânica</option>
-            <option value="eletrica">Engenharia Elétrica</option>
-            <option value="computacao">Engenharia da Computação</option>
-            <option value="quimica">Engenharia Química</option>
-          </select>
+        
+        <div className="relative" ref={courseRef}>
+          <label className="block text-sm font-medium text-engenha-dark-navy mb-1">Curso</label>
+          <div className="relative">
+            <BookOpen className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
+            <input
+              type="text"
+              placeholder={universitySearch === 'Não tenho universidade' ? 'CURSO NÃO APLICÁVEL' : 'BUSQUE SEU CURSO'}
+              value={courseSearch}
+              onChange={handleCourseSearch}
+              onFocus={() => setShowCourseList(true)}
+              disabled={universitySearch === 'Não tenho universidade'}
+              className={`w-full border border-engenha-sky-blue rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy ${
+                universitySearch === 'Não tenho universidade' ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''
+              }`}
+              autoComplete="off"
+            />
+          </div>
+          {universitySearch === 'Não tenho universidade' && (
+            <p className="text-engenha-sky-blue text-xs mt-1">
+              * Como você não possui universidade, o campo de curso não é necessário.
+            </p>
+          )}
+          {showCourseList && universitySearch !== 'Não tenho universidade' && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
+              {filteredCourses.slice(0, 8).map((course, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => selectCourse(course)}
+                  className="w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm"
+                >
+                  {course}
+                </button>
+              ))}
+              {filteredCourses.length > 8 && (
+                <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
+                  Mostrando primeiros 8 resultados. Continue digitando para refinar.
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <button className="w-full bg-engenha-orange text-white py-2 rounded-lg font-medium hover:bg-engenha-dark-orange transition-colors">
           Salvar Alterações
