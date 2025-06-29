@@ -15,10 +15,8 @@ interface AnimalMascot {
 }
 
 interface MascotStats {
-  happiness: number;
   hunger: number;
   energy: number;
-  cleanliness: number;
   health: number;
   level: number;
   experience: number;
@@ -43,10 +41,8 @@ const MascoteNovo = () => {
   const [ownedAccessories, setOwnedAccessories] = useState<string[]>([]);
 
   const [mascotStats, setMascotStats] = useState<MascotStats>({
-    happiness: 85,
     hunger: 60,
     energy: 75,
-    cleanliness: 90,
     health: 95,
     level: 12,
     experience: 2340
@@ -120,9 +116,7 @@ const MascoteNovo = () => {
     if (mascotStats.health < 30) newEmotion = 'sick';
     else if (mascotStats.hunger < 20) newEmotion = 'hungry';
     else if (mascotStats.energy < 20) newEmotion = 'sleepy';
-    else if (mascotStats.cleanliness < 30) newEmotion = 'dirty';
-    else if (mascotStats.happiness < 30) newEmotion = 'sad';
-    else if (mascotStats.happiness > 80) newEmotion = 'excited';
+    else if (mascotStats.energy > 80) newEmotion = 'excited';
 
     setMascotState(prev => ({ ...prev, emotion: newEmotion }));
   }, [mascotStats]);
@@ -137,6 +131,32 @@ const MascoteNovo = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Load mascot from localStorage on component mount
+  useEffect(() => {
+    const savedMascot = localStorage.getItem('selectedMascot');
+    const savedUnlockedMascots = localStorage.getItem('unlockedMascots');
+    
+    if (savedMascot) {
+      setCurrentMascot(savedMascot);
+    }
+    
+    if (savedUnlockedMascots) {
+      const unlockedIds = JSON.parse(savedUnlockedMascots);
+      // Atualizar o estado dos mascotes desbloqueados
+      unlockedIds.forEach((id: string) => {
+        const mascot = animalMascots.find(m => m.id === id);
+        if (mascot) {
+          mascot.unlocked = true;
+        }
+      });
+    }
+  }, []);
+
+  // Save mascot to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('selectedMascot', currentMascot);
+  }, [currentMascot]);
 
   const getCurrentMascot = () => {
     return animalMascots.find(m => m.id === currentMascot) || animalMascots[0];
@@ -187,7 +207,6 @@ const MascoteNovo = () => {
       setMascotStats(prev => ({
         ...prev,
         hunger: Math.min(100, prev.hunger + 30),
-        happiness: Math.min(100, prev.happiness + 10),
         experience: prev.experience + 5
       }));
       setMascotState(prev => ({ 
@@ -209,7 +228,6 @@ const MascoteNovo = () => {
   const petMascot = () => {
     setMascotStats(prev => ({
       ...prev,
-      happiness: Math.min(100, prev.happiness + 15),
       experience: prev.experience + 3
     }));
     setMascotState(prev => ({ 
@@ -232,7 +250,6 @@ const MascoteNovo = () => {
       setMascotStats(prev => ({
         ...prev,
         energy: prev.energy - 20,
-        happiness: Math.min(100, prev.happiness + 20),
         experience: prev.experience + 10
       }));
       setMascotState(prev => ({ 
@@ -256,8 +273,6 @@ const MascoteNovo = () => {
       setCoins(coins - 5);
       setMascotStats(prev => ({
         ...prev,
-        cleanliness: 100,
-        happiness: Math.min(100, prev.happiness + 5),
         health: Math.min(100, prev.health + 5)
       }));
       setMascotState(prev => ({ 
@@ -298,6 +313,10 @@ const MascoteNovo = () => {
       if (!mascot.unlocked && mascot.cost) {
         setCoins(coins - mascot.cost);
         mascot.unlocked = true;
+        
+        // Salvar mascotes desbloqueados no localStorage
+        const unlockedMascots = animalMascots.filter(m => m.unlocked).map(m => m.id);
+        localStorage.setItem('unlockedMascots', JSON.stringify(unlockedMascots));
       }
       setCurrentMascot(mascotId);
       setShowMascotSelector(false);
@@ -312,8 +331,7 @@ const MascoteNovo = () => {
     setCoins(coins + coinsEarned);
     setMascotStats(prev => ({
       ...prev,
-      experience: prev.experience + score,
-      happiness: Math.min(100, prev.happiness + 15)
+      experience: prev.experience + score
     }));
     setShowRacingGame(false);
     setShowShootingGame(false);
@@ -339,13 +357,6 @@ const MascoteNovo = () => {
             className="bg-white bg-opacity-20 rounded-full p-2"
           >
             {soundEnabled ? <Volume2 className="text-white" size={20} /> : <VolumeX className="text-white" size={20} />}
-          </button>
-          
-          <button
-            onClick={() => setShowMascotSelector(true)}
-            className="bg-white bg-opacity-20 rounded-full p-2"
-          >
-            <Sparkles className="text-white" size={20} />
           </button>
         </div>
       </div>
@@ -496,19 +507,8 @@ const MascoteNovo = () => {
           </div>
           <div className="w-full bg-white bg-opacity-30 rounded-full h-2">
             <div 
-              className="bg-red-500 h-2 rounded-full transition-all duration-300"
+              className="bg-engenha-dark-orange h-2 rounded-full transition-all duration-300"
               style={{ width: `${mascotStats.health}%` }}
-            ></div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-engenha-dark-navy">😊 Felicidade</span>
-            <span className="text-sm text-engenha-dark-navy">{mascotStats.happiness}%</span>
-          </div>
-          <div className="w-full bg-white bg-opacity-30 rounded-full h-2">
-            <div 
-              className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${mascotStats.happiness}%` }}
             ></div>
           </div>
 
@@ -518,7 +518,7 @@ const MascoteNovo = () => {
           </div>
           <div className="w-full bg-white bg-opacity-30 rounded-full h-2">
             <div 
-              className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+              className="bg-[#ff7a28] h-2 rounded-full transition-all duration-300"
               style={{ width: `${mascotStats.hunger}%` }}
             ></div>
           </div>
@@ -529,19 +529,8 @@ const MascoteNovo = () => {
           </div>
           <div className="w-full bg-white bg-opacity-30 rounded-full h-2">
             <div 
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+              className="bg-engenha-blue h-2 rounded-full transition-all duration-300"
               style={{ width: `${mascotStats.energy}%` }}
-            ></div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-engenha-dark-navy">🧼 Limpeza</span>
-            <span className="text-sm text-engenha-dark-navy">{mascotStats.cleanliness}%</span>
-          </div>
-          <div className="w-full bg-white bg-opacity-30 rounded-full h-2">
-            <div 
-              className="bg-green-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${mascotStats.cleanliness}%` }}
             ></div>
           </div>
         </div>
@@ -549,7 +538,15 @@ const MascoteNovo = () => {
 
       {/* Botões de ação - estilo My Talking Tom */}
       <div className="fixed bottom-20 left-0 right-0 px-4">
-        <div className="flex justify-center space-x-4">
+        <div className="flex justify-center space-x-3">
+          <button
+            onClick={() => setShowMascotSelector(true)}
+            className="bg-engenha-sky-blue bg-opacity-90 rounded-full p-4 shadow-lg hover:scale-110 transition-transform"
+            title="Trocar Mascote"
+          >
+            <Sparkles className="text-white" size={24} />
+          </button>
+          
           <button
             onClick={() => setShowShop(true)}
             className="bg-white bg-opacity-90 rounded-full p-4 shadow-lg hover:scale-110 transition-transform"
@@ -584,38 +581,56 @@ const MascoteNovo = () => {
       {showMascotSelector && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full">
-            <h3 className="text-xl font-bold text-engenha-dark-navy mb-4 text-center">
-              Escolher Mascote
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-engenha-dark-navy">
+                🎭 Escolher Mascote
+              </h3>
+              <button
+                onClick={() => setShowMascotSelector(false)}
+                className="text-engenha-dark-navy hover:text-engenha-orange text-xl"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="mb-4 p-3 bg-[#f0f6ff] rounded-lg">
+              <p className="text-sm text-[#030025]">
+                💡 Seu mascote escolhido será salvo automaticamente e permanecerá o mesmo em todos os dispositivos!
+              </p>
+            </div>
+            
             <div className="grid grid-cols-2 gap-3 mb-4">
               {animalMascots.map((mascot) => (
                 <button
                   key={mascot.id}
                   onClick={() => changeMascot(mascot.id)}
                   disabled={!mascot.unlocked && coins < (mascot.cost || 0)}
-                  className={`p-4 rounded-lg border transition-colors ${
+                  className={`p-4 rounded-lg border-2 transition-all ${
                     currentMascot === mascot.id
-                      ? 'border-engenha-orange bg-engenha-orange text-white'
+                      ? 'border-engenha-orange bg-engenha-orange text-white shadow-lg transform scale-105'
                       : mascot.unlocked || coins >= (mascot.cost || 0)
-                      ? 'border-engenha-sky-blue bg-engenha-light-blue hover:bg-engenha-sky-blue hover:text-white'
-                      : 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+                      ? 'border-engenha-sky-blue bg-engenha-light-blue hover:bg-engenha-sky-blue hover:text-white hover:scale-105'
+                      : 'border-engenha-light-blue bg-engenha-light-blue text-engenha-dark-navy cursor-not-allowed opacity-60'
                   }`}
                 >
-                  <div className="text-3xl mb-2">{mascot.emoji}</div>
+                  <div className="text-4xl mb-2">{mascot.emoji}</div>
                   <div className="text-sm font-medium">{mascot.name}</div>
-                  <div className="text-xs opacity-70">{mascot.description}</div>
-                  {!mascot.unlocked && (
-                    <div className="text-xs text-engenha-gold mt-1">🪙 {mascot.cost}</div>
+                  <div className="text-xs opacity-70 mt-1">{mascot.description}</div>
+                  {currentMascot === mascot.id && (
+                    <div className="text-xs text-white mt-2 font-bold">✓ Selecionado</div>
                   )}
-                  {mascot.unlocked && (
-                    <div className="text-xs text-green-600 mt-1">✓ Desbloqueado</div>
+                  {!mascot.unlocked && currentMascot !== mascot.id && (
+                    <div className="text-xs text-engenha-gold mt-2 font-bold">🪙 {mascot.cost}</div>
+                  )}
+                  {mascot.unlocked && currentMascot !== mascot.id && (
+                    <div className="text-xs text-[#28b0ff] mt-2 font-bold">✓ Desbloqueado</div>
                   )}
                 </button>
               ))}
             </div>
             <button
               onClick={() => setShowMascotSelector(false)}
-              className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium"
+              className="w-full bg-engenha-light-blue text-engenha-dark-navy py-3 px-4 rounded-lg font-medium hover:bg-engenha-sky-blue hover:text-white transition-colors"
             >
               Fechar
             </button>
@@ -685,7 +700,7 @@ const MascoteNovo = () => {
             </div>
             <button
               onClick={() => setShowGameMenu(false)}
-              className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium"
+              className="w-full bg-engenha-light-blue text-engenha-dark-navy py-2 px-4 rounded-lg font-medium"
             >
               Fechar
             </button>
@@ -730,10 +745,10 @@ const MascoteNovo = () => {
                 { name: '🍌 Banana', price: 8, effect: 'Energia +15%' },
                 { name: '🥕 Cenoura', price: 6, effect: 'Saúde +10%' },
                 { name: '🍖 Carne', price: 15, effect: 'Fome -25%' },
-                { name: '🐟 Peixe', price: 12, effect: 'Felicidade +20%' },
+                { name: '🐟 Peixe', price: 12, effect: 'Saúde +20%' },
                 { name: '🥛 Leite', price: 10, effect: 'Saúde +15%' },
                 { name: '🍯 Mel', price: 20, effect: 'Energia +30%' },
-                { name: '🧀 Queijo', price: 18, effect: 'Felicidade +25%' }
+                { name: '🧀 Queijo', price: 18, effect: 'Energia +25%' }
               ].map((food, index) => (
                 <div key={index} className="bg-white rounded-lg p-3 border border-engenha-sky-blue">
                   <div className="text-center">
@@ -759,9 +774,6 @@ const MascoteNovo = () => {
                             if (food.effect.includes('Saúde')) {
                               newStats.health = Math.min(100, prev.health + parseInt(food.effect.match(/\+(\d+)%/)?.[1] || '0'));
                             }
-                            if (food.effect.includes('Felicidade')) {
-                              newStats.happiness = Math.min(100, prev.happiness + parseInt(food.effect.match(/\+(\d+)%/)?.[1] || '0'));
-                            }
                             return newStats;
                           });
                           if (soundEnabled) {
@@ -773,7 +785,7 @@ const MascoteNovo = () => {
                       className={`w-full py-1 px-2 rounded text-xs font-bold ${
                         coins >= food.price
                           ? 'bg-engenha-orange text-white hover:bg-engenha-dark-orange'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-[#f0f6ff] text-[#030025] cursor-not-allowed'
                       }`}
                     >
                       🪙 {food.price}
@@ -831,10 +843,10 @@ const MascoteNovo = () => {
                         disabled={coins < item.price || ownedAccessories.includes(item.name)}
                         className={`w-full py-1 px-2 rounded text-xs font-bold ${
                           ownedAccessories.includes(item.name)
-                            ? 'bg-green-500 text-white cursor-not-allowed'
+                            ? 'bg-engenha-sky-blue text-white cursor-not-allowed'
                             : coins >= item.price
                             ? 'bg-engenha-gold text-engenha-dark-navy hover:bg-yellow-400'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-engenha-light-blue text-engenha-dark-navy cursor-not-allowed'
                         }`}
                       >
                         {ownedAccessories.includes(item.name) ? '✓ Comprado' : `🪙 ${item.price}`}
@@ -864,7 +876,7 @@ const MascoteNovo = () => {
                           // Aqui seria integrado com sistema de pagamento real
                           alert(`Redirecionando para pagamento de ${item.price}`);
                         }}
-                        className="w-full py-1 px-2 rounded text-xs font-bold bg-purple-500 text-white hover:bg-purple-600"
+                        className="w-full py-1 px-2 rounded text-xs font-bold bg-engenha-orange text-white hover:bg-engenha-dark-orange"
                       >
                         💎 {item.price}
                       </button>

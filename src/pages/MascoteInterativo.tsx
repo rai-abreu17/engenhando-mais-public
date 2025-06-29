@@ -280,9 +280,9 @@ const MascoteInterativo = () => {
   };
 
   const getStatColor = (value: number) => {
-    if (value >= 70) return 'bg-green-500';
-    if (value >= 40) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (value >= 70) return 'bg-engenha-sky-blue';
+    if (value >= 40) return 'bg-engenha-gold';
+    return 'bg-engenha-orange';
   };
 
   return (
@@ -290,11 +290,20 @@ const MascoteInterativo = () => {
       <Header 
         title="Meu Mascote"
         subtitle={`Nível ${mascotStats.level} • ${mascotStats.experience} XP`}
-        showCoins={true}
-        coins={coins}
       />
 
       <div className="px-6 space-y-6">
+        {/* Indicador de Moedas */}
+        <div className="flex justify-end">
+          <div className="bg-engenha-gold border border-engenha-gold px-4 py-2 rounded-full shadow-sm">
+            <div className="flex items-center space-x-2">
+              <span className="text-xl">🪙</span>
+              <span className="font-semibold text-engenha-dark-navy">{coins}</span>
+              <span className="text-xs text-engenha-dark-navy">moedas</span>
+            </div>
+          </div>
+        </div>
+
         {/* Mascote Principal */}
         <div className="bg-engenha-light-cream rounded-2xl p-6 shadow-lg border border-engenha-sky-blue">
           <div className="flex justify-between items-start mb-4">
@@ -343,7 +352,7 @@ const MascoteInterativo = () => {
                 </span>
                 <span className="text-sm text-engenha-dark-navy">{mascotStats.health}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-engenha-light-blue rounded-full h-2">
                 <div 
                   className={`${getStatColor(mascotStats.health)} h-2 rounded-full transition-all duration-300`}
                   style={{ width: `${mascotStats.health}%` }}
@@ -358,7 +367,7 @@ const MascoteInterativo = () => {
                 </span>
                 <span className="text-sm text-engenha-dark-navy">{mascotStats.happiness}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-engenha-light-blue rounded-full h-2">
                 <div 
                   className={`${getStatColor(mascotStats.happiness)} h-2 rounded-full transition-all duration-300`}
                   style={{ width: `${mascotStats.happiness}%` }}
@@ -373,7 +382,7 @@ const MascoteInterativo = () => {
                 </span>
                 <span className="text-sm text-engenha-dark-navy">{100 - mascotStats.hunger}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-engenha-light-blue rounded-full h-2">
                 <div 
                   className={`${getStatColor(100 - mascotStats.hunger)} h-2 rounded-full transition-all duration-300`}
                   style={{ width: `${100 - mascotStats.hunger}%` }}
@@ -388,7 +397,7 @@ const MascoteInterativo = () => {
                 </span>
                 <span className="text-sm text-engenha-dark-navy">{mascotStats.energy}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-engenha-light-blue rounded-full h-2">
                 <div 
                   className={`${getStatColor(mascotStats.energy)} h-2 rounded-full transition-all duration-300`}
                   style={{ width: `${mascotStats.energy}%` }}
@@ -468,7 +477,7 @@ const MascoteInterativo = () => {
                       className={`p-3 rounded-lg border transition-colors ${
                         coins >= food.cost
                           ? 'border-engenha-sky-blue bg-engenha-light-blue hover:bg-engenha-sky-blue hover:text-white'
-                          : 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'border-engenha-light-blue bg-engenha-light-blue text-engenha-dark-navy cursor-not-allowed'
                       }`}
                     >
                       <div className="text-2xl mb-1">{food.emoji}</div>
@@ -491,7 +500,7 @@ const MascoteInterativo = () => {
                       <div className="text-sm font-medium text-engenha-dark-navy">{accessory.name}</div>
                       <div className="text-xs text-engenha-gold mb-2">🪙 {accessory.cost}</div>
                       {accessory.owned ? (
-                        <button className="w-full bg-green-500 text-white py-1 px-2 rounded text-xs">
+                        <button className="w-full bg-engenha-sky-blue text-white py-1 px-2 rounded text-xs">
                           Equipado
                         </button>
                       ) : (
@@ -504,7 +513,7 @@ const MascoteInterativo = () => {
                           className={`w-full py-1 px-2 rounded text-xs font-medium ${
                             coins >= accessory.cost
                               ? 'bg-engenha-orange text-white hover:bg-engenha-dark-orange'
-                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              : 'bg-engenha-light-blue text-engenha-dark-navy cursor-not-allowed'
                           }`}
                         >
                           Comprar

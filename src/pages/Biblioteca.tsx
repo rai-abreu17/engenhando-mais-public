@@ -7,15 +7,14 @@ import Navigation from '../components/Navigation';
 const Biblioteca = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('Todas');
-
-  const allSubjects = [
+  const [subjects, setSubjects] = useState([
     {
       id: 1,
       name: 'Cálculo I',
       icon: '∫',
       progress: 75,
       videoCount: 24,
-      color: 'bg-blue-500',
+      color: 'bg-[#0029ff]',
       isMine: true,
       isFavorite: true,
       lastAccessed: new Date('2024-01-15')
@@ -26,7 +25,7 @@ const Biblioteca = () => {
       icon: '⚗️',
       progress: 45,
       videoCount: 18,
-      color: 'bg-green-500',
+      color: 'bg-[#28b0ff]',
       isMine: true,
       isFavorite: false,
       lastAccessed: new Date('2024-01-14')
@@ -37,7 +36,7 @@ const Biblioteca = () => {
       icon: '💻',
       progress: 60,
       videoCount: 32,
-      color: 'bg-purple-500',
+      color: 'bg-[#ff7a28]',
       isMine: true,
       isFavorite: true,
       lastAccessed: new Date('2024-01-13')
@@ -48,7 +47,7 @@ const Biblioteca = () => {
       icon: '📊',
       progress: 30,
       videoCount: 20,
-      color: 'bg-red-500',
+      color: 'bg-[#d75200]',
       isMine: true,
       isFavorite: false,
       lastAccessed: new Date('2024-01-12')
@@ -59,7 +58,7 @@ const Biblioteca = () => {
       icon: '🧪',
       progress: 0,
       videoCount: 15,
-      color: 'bg-yellow-500',
+      color: 'bg-[#ffb646]',
       isMine: false,
       isFavorite: false,
       lastAccessed: null
@@ -70,12 +69,12 @@ const Biblioteca = () => {
       icon: '📈',
       progress: 0,
       videoCount: 22,
-      color: 'bg-indigo-500',
+      color: 'bg-[#001cab]',
       isMine: false,
       isFavorite: false,
       lastAccessed: null
     }
-  ];
+  ]);
 
   const recentVideos = [
     {
@@ -114,7 +113,7 @@ const Biblioteca = () => {
 
   // Filter subjects based on selected filter and search term
   const getFilteredSubjects = () => {
-    let filtered = allSubjects;
+    let filtered = subjects;
 
     // Apply filter
     switch (selectedFilter) {
@@ -144,14 +143,19 @@ const Biblioteca = () => {
   };
 
   const toggleFavorite = (subjectId: number) => {
-    // In a real app, this would update the backend
-    console.log(`Toggling favorite for subject ${subjectId}`);
+    setSubjects(prevSubjects => 
+      prevSubjects.map(subject =>
+        subject.id === subjectId 
+          ? { ...subject, isFavorite: !subject.isFavorite }
+          : subject
+      )
+    );
   };
 
   const filteredSubjects = getFilteredSubjects();
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[#f0f6ff] pb-20">
       <Header 
         title="Biblioteca"
         subtitle="Encontre conteúdos para suas disciplinas"
@@ -165,9 +169,9 @@ const Biblioteca = () => {
             placeholder="Buscar disciplinas, tópicos ou conceitos"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-engenha-blue focus:border-transparent"
+            className="w-full bg-[#fffaf0] border border-[#28b0ff] rounded-xl px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-[#0029ff] focus:border-transparent"
           />
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#001cab]" size={20} />
         </div>
 
         {/* Filters */}
@@ -178,8 +182,8 @@ const Biblioteca = () => {
               onClick={() => setSelectedFilter(filter)}
               className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 selectedFilter === filter
-                  ? 'bg-engenha-blue text-white'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                  ? 'bg-[#0029ff] text-white shadow-md'
+                  : 'bg-[#fffaf0] text-[#030025] border border-[#28b0ff] hover:bg-[#f0f6ff] hover:shadow-sm'
               }`}
             >
               {filter}
@@ -190,22 +194,22 @@ const Biblioteca = () => {
         {/* Filtered Subjects */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 className="text-lg font-semibold text-[#030025]">
               {selectedFilter === 'Todas' ? 'Todas as disciplinas' :
                selectedFilter === 'Minhas Disciplinas' ? 'Suas disciplinas atuais' :
                selectedFilter === 'Favoritas' ? 'Disciplinas favoritas' :
                'Disciplinas recentes'}
             </h2>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-[#030025] opacity-70">
               {filteredSubjects.length} {filteredSubjects.length === 1 ? 'disciplina' : 'disciplinas'}
             </span>
           </div>
           
           {filteredSubjects.length === 0 ? (
-            <div className="bg-white p-8 rounded-xl text-center">
+            <div className="bg-[#fffaf0] p-8 rounded-xl text-center border border-[#28b0ff] shadow-sm">
               <div className="text-4xl mb-4">📚</div>
-              <h3 className="font-medium text-gray-800 mb-2">Nenhuma disciplina encontrada</h3>
-              <p className="text-gray-500 text-sm">
+              <h3 className="font-medium text-[#030025] mb-2">Nenhuma disciplina encontrada</h3>
+              <p className="text-[#030025] opacity-70 text-sm">
                 {searchTerm ? 
                   `Não encontramos disciplinas com "${searchTerm}"` :
                   selectedFilter === 'Favoritas' ? 'Você ainda não favoritou nenhuma disciplina' :
@@ -217,36 +221,36 @@ const Biblioteca = () => {
           ) : (
             <div className="grid grid-cols-2 gap-4">
               {filteredSubjects.map((subject) => (
-                <div key={subject.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div key={subject.id} className="bg-[#fffaf0] p-4 rounded-xl shadow-sm border border-[#28b0ff] hover:shadow-md transition-all duration-200">
                   <div className={`${subject.color} w-12 h-12 rounded-lg flex items-center justify-center text-white text-xl mb-3`}>
                     {subject.icon}
                   </div>
-                  <h3 className="font-medium text-gray-800 mb-2">{subject.name}</h3>
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+                  <h3 className="font-medium text-[#030025] mb-2">{subject.name}</h3>
+                  <div className="flex items-center justify-between text-sm text-[#030025] opacity-70 mb-2">
                     <span>{subject.videoCount} aulas</span>
                     <button 
                       onClick={() => toggleFavorite(subject.id)}
                       className="transition-colors"
                     >
                       <Star 
-                        className={subject.isFavorite ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
+                        className={subject.isFavorite ? 'text-[#ffb646] fill-current' : 'text-[#28b0ff] opacity-50'} 
                         size={16} 
                       />
                     </button>
                   </div>
                   {subject.isMine && (
                     <>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-[#f0f6ff] rounded-full h-2">
                         <div 
-                          className="bg-engenha-blue h-2 rounded-full transition-all duration-300" 
+                          className="bg-[#0029ff] h-2 rounded-full transition-all duration-300" 
                           style={{ width: `${subject.progress}%` }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">{subject.progress}% completo</p>
+                      <p className="text-xs text-[#030025] opacity-70 mt-1">{subject.progress}% completo</p>
                     </>
                   )}
                   {!subject.isMine && (
-                    <button className="w-full mt-2 bg-engenha-blue text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                    <button className="w-full mt-2 bg-[#ff7a28] text-white py-2 rounded-lg text-sm font-medium hover:bg-[#d75200] transition-colors">
                       Começar
                     </button>
                   )}
@@ -259,26 +263,26 @@ const Biblioteca = () => {
         {/* Recent Videos - only show if not filtering by specific categories */}
         {selectedFilter === 'Todas' && !searchTerm && (
           <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Videoaulas recentes</h2>
+            <h2 className="text-lg font-semibold text-[#030025] mb-4">Videoaulas recentes</h2>
             <div className="space-y-3">
               {recentVideos.map((video) => (
-                <div key={video.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div key={video.id} className="bg-[#fffaf0] p-4 rounded-xl shadow-sm border border-[#28b0ff] hover:shadow-md transition-all duration-200">
                   <div className="flex items-center space-x-4">
                     <div className="text-3xl">{video.thumbnail}</div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-800">{video.title}</h3>
-                      <p className="text-sm text-gray-500">{video.subject} • {video.creator}</p>
+                      <h3 className="font-medium text-[#030025]">{video.title}</h3>
+                      <p className="text-sm text-[#030025] opacity-70">{video.subject} • {video.creator}</p>
                       <div className="flex items-center space-x-4 mt-2">
-                        <div className="flex items-center space-x-1 text-xs text-gray-500">
+                        <div className="flex items-center space-x-1 text-xs text-[#030025] opacity-70">
                           <Clock size={12} />
                           <span>{video.duration}</span>
                         </div>
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-engenha-blue text-xs rounded-full">
+                        <span className="inline-block px-2 py-1 bg-[#f0f6ff] text-[#001cab] text-xs rounded-full border border-[#28b0ff]">
                           {video.difficulty}
                         </span>
                       </div>
                     </div>
-                    <button className="bg-engenha-blue text-white p-2 rounded-full hover:bg-engenha-blue-dark transition-colors">
+                    <button className="bg-[#ff7a28] text-white p-2 rounded-full hover:bg-[#d75200] transition-colors">
                       <Play size={16} />
                     </button>
                   </div>
