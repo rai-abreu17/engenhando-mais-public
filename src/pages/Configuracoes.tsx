@@ -1,10 +1,12 @@
-
 import React, { useState } from 'react';
 import { ChevronRight, User, Bell, Smartphone, HelpCircle, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 
 const Configuracoes = () => {
+  const navigate = useNavigate();
+  
   const [notifications, setNotifications] = useState({
     studyReminders: true,
     mascotAlerts: true,
@@ -19,6 +21,17 @@ const Configuracoes = () => {
     longBreak: 15,
     cycles: 4
   });
+
+  const handleLogout = () => {
+    // Limpar todos os dados do localStorage relacionados à autenticação
+    localStorage.removeItem('engenha_token');
+    localStorage.removeItem('selectedMascot');
+    localStorage.removeItem('unlockedMascots');
+    localStorage.removeItem('customMascotNames');
+    
+    // Redirecionar para a página de login
+    navigate('/login');
+  };
 
   const userInfo = {
     name: 'João Silva',
@@ -465,7 +478,10 @@ const Configuracoes = () => {
             </div>
           </div>
 
-          <button className="w-full bg-engenha-dark-orange border border-engenha-dark-orange p-4 rounded-xl hover:bg-engenha-orange transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="w-full bg-engenha-dark-orange border border-engenha-dark-orange p-4 rounded-xl hover:bg-engenha-orange transition-colors"
+          >
             <div className="flex items-center justify-center space-x-2 text-white">
               <LogOut size={20} />
               <span className="font-medium">Sair da Conta</span>
