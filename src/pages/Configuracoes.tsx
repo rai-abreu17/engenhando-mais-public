@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { ChevronRight, User, Bell, Smartphone, HelpCircle, LogOut, Building, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -27,6 +27,15 @@ const Configuracoes = () => {
   const [courseSearch, setCourseSearch] = useState('Engenharia Civil');
   const [showUniversityList, setShowUniversityList] = useState(false);
   const [showCourseList, setShowCourseList] = useState(false);
+  
+  // Estados para os campos do formulário de perfil
+  const [profileForm, setProfileForm] = useState({
+    name: 'João Silva',
+    email: 'joao.silva@email.com'
+  });
+  
+  // Estado para controle de validação
+  const [showValidation, setShowValidation] = useState(false);
   
   // Refs para controle dos dropdowns
   const universityRef = useRef<HTMLDivElement>(null);
@@ -162,6 +171,52 @@ const Configuracoes = () => {
     setShowCourseList(false);
   };
 
+  // Função para validar campos obrigatórios
+  const validateForm = useCallback(() => {
+    const nameValid = profileForm.name.trim() !== '';
+    const emailValid = profileForm.email.trim() !== '' && profileForm.email.includes('@');
+    const universityValid = universitySearch.trim() !== '';
+    const courseValid = universitySearch === 'Não tenho universidade' || courseSearch.trim() !== '';
+    
+    return nameValid && emailValid && universityValid && courseValid;
+  }, [profileForm.name, profileForm.email, universitySearch, courseSearch]);
+
+  // Função para verificar se um campo específico é válido
+  const isFieldValid = useCallback((fieldName: string) => {
+    switch (fieldName) {
+      case 'name':
+        return profileForm.name.trim() !== '';
+      case 'email':
+        return profileForm.email.trim() !== '' && profileForm.email.includes('@');
+      case 'university':
+        return universitySearch.trim() !== '';
+      case 'course':
+        return universitySearch === 'Não tenho universidade' || courseSearch.trim() !== '';
+      default:
+        return true;
+    }
+  }, [profileForm.name, profileForm.email, universitySearch, courseSearch]);
+
+  // Função para verificar se deve mostrar erro de um campo específico
+  const shouldShowFieldError = useCallback((fieldName: string) => {
+    if (!showValidation) return false;
+    return !isFieldValid(fieldName);
+  }, [showValidation, isFieldValid]);
+
+  // Memorizar o estado do botão
+  const isFormValid = useMemo(() => validateForm(), [validateForm]);
+
+  // Função para salvar alterações
+  const handleSaveChanges = useCallback(() => {
+    setShowValidation(true);
+    
+    if (validateForm()) {
+      // Aqui você salvaria os dados (API call, localStorage, etc.)
+      alert('Alterações salvas com sucesso!');
+      setShowValidation(false);
+    }
+  }, [validateForm]);
+
   const userInfo = {
     name: 'João Silva',
     email: 'joao.silva@email.com',
@@ -199,121 +254,258 @@ const Configuracoes = () => {
 
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
 
-  const ProfileSettings = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <button 
-          onClick={() => setActiveComponent(null)}
-          className="text-engenha-blue font-medium"
-        >
-          ← Voltar
-        </button>
-        <h3 className="font-semibold text-gray-800">Perfil e Conta</h3>
-        <div></div>
-      </div>
+  // Utilizando React.memo para evitar re-renderizações desnecessárias
+  const ProfileSettings = React.memo(() => {
+    // Estado local para validação apenas quando o botão é clicado
+    const [localValidation, setLocalValidation] = useState(false);
+    
+    // Estados locais para o formulário
+    const [localName, setLocalName] = useState(profileForm.name);
+    const [localEmail, setLocalEmail] = useState(profileForm.email);
+    const [localUniversity, setLocalUniversity] = useState(universitySearch);
+    const [localCourse, setLocalCourse] = useState(courseSearch);
+    const [showLocalUnivList, setShowLocalUnivList] = useState(false);
+    const [showLocalCourseList, setShowLocalCourseList] = useState(false);
+    
+    // Funções de validação locais
+    const isLocalValid = (field: string) => {
+      if (!localValidation) return true;
       
-      <div className="bg-engenha-light-cream p-4 rounded-lg space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-          <input
-            type="text"
-            defaultValue={userInfo.name}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            defaultValue={userInfo.email}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue"
-          />
-        </div>
-        <div className="relative" ref={universityRef}>
-          <label className="block text-sm font-medium text-engenha-dark-navy mb-1">Universidade</label>
-          <div className="relative">
-            <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
-            <input
-              type="text"
-              placeholder="BUSQUE SUA UNIVERSIDADE"
-              value={universitySearch}
-              onChange={handleUniversitySearch}
-              onFocus={() => setShowUniversityList(true)}
-              className="w-full border border-engenha-sky-blue rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy"
-              autoComplete="off"
-            />
-          </div>
-          {showUniversityList && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
-              {filteredUniversities.slice(0, 10).map((university, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => selectUniversity(university)}
-                  className={`w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm ${
-                    university === 'Não tenho universidade' ? 'border-b border-gray-200 font-medium text-gray-600' : ''
-                  }`}
-                >
-                  {university}
-                </button>
-              ))}
-              {filteredUniversities.length > 10 && (
-                <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
-                  Mostrando primeiros 10 resultados. Continue digitando para refinar.
-                </div>
-              )}
-            </div>
-          )}
+      switch (field) {
+        case 'name':
+          return localName.trim() !== '';
+        case 'email':
+          return localEmail.trim() !== '' && localEmail.includes('@');
+        case 'university':
+          return localUniversity.trim() !== '';
+        case 'course':
+          return localUniversity === 'Não tenho universidade' || localCourse.trim() !== '';
+        default:
+          return true;
+      }
+    };
+    
+    const isFormLocalValid = 
+      localName.trim() !== '' && 
+      localEmail.trim() !== '' && 
+      localEmail.includes('@') && 
+      localUniversity.trim() !== '' && 
+      (localUniversity === 'Não tenho universidade' || localCourse.trim() !== '');
+    
+    // Função para salvar mudanças
+    const handleLocalSave = () => {
+      setLocalValidation(true);
+      
+      if (isFormLocalValid) {
+        setProfileForm({
+          name: localName,
+          email: localEmail
+        });
+        setUniversitySearch(localUniversity);
+        setCourseSearch(localCourse);
+        alert('Alterações salvas com sucesso!');
+        setLocalValidation(false);
+      }
+    };
+    
+    // Filtragens locais
+    const localFilteredUniversities = universities.filter(uni =>
+      uni.toLowerCase().includes(localUniversity.toLowerCase())
+    );
+    
+    const localFilteredCourses = courses.filter(course =>
+      course.toLowerCase().includes(localCourse.toLowerCase())
+    );
+    
+    // Refs locais
+    const localUnivRef = useRef<HTMLDivElement>(null);
+    const localCourseRef = useRef<HTMLDivElement>(null);
+    
+    // Efeito para clicar fora
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (localUnivRef.current && !localUnivRef.current.contains(event.target as Node)) {
+          setShowLocalUnivList(false);
+        }
+        if (localCourseRef.current && !localCourseRef.current.contains(event.target as Node)) {
+          setShowLocalCourseList(false);
+        }
+      };
+      
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+    
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <button 
+            onClick={() => setActiveComponent(null)}
+            className="text-engenha-blue font-medium"
+          >
+            ← Voltar
+          </button>
+          <h3 className="font-semibold text-gray-800">Perfil e Conta</h3>
+          <div></div>
         </div>
         
-        <div className="relative" ref={courseRef}>
-          <label className="block text-sm font-medium text-engenha-dark-navy mb-1">Curso</label>
-          <div className="relative">
-            <BookOpen className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
+        <div className="bg-engenha-light-cream p-4 rounded-lg space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nome Completo <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
-              placeholder={universitySearch === 'Não tenho universidade' ? 'CURSO NÃO APLICÁVEL' : 'BUSQUE SEU CURSO'}
-              value={courseSearch}
-              onChange={handleCourseSearch}
-              onFocus={() => setShowCourseList(true)}
-              disabled={universitySearch === 'Não tenho universidade'}
-              className={`w-full border border-engenha-sky-blue rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy ${
-                universitySearch === 'Não tenho universidade' ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''
+              value={localName}
+              onChange={(e) => setLocalName(e.target.value)}
+              className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue ${
+                !isLocalValid('name') ? 'border-red-500' : 'border-gray-200'
               }`}
-              autoComplete="off"
+              placeholder="Digite seu nome completo"
             />
+            {!isLocalValid('name') && (
+              <p className="text-red-500 text-xs mt-1">Nome é obrigatório</p>
+            )}
           </div>
-          {universitySearch === 'Não tenho universidade' && (
-            <p className="text-engenha-sky-blue text-xs mt-1">
-              * Como você não possui universidade, o campo de curso não é necessário.
-            </p>
-          )}
-          {showCourseList && universitySearch !== 'Não tenho universidade' && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
-              {filteredCourses.slice(0, 8).map((course, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => selectCourse(course)}
-                  className="w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm"
-                >
-                  {course}
-                </button>
-              ))}
-              {filteredCourses.length > 8 && (
-                <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
-                  Mostrando primeiros 8 resultados. Continue digitando para refinar.
-                </div>
-              )}
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              value={localEmail}
+              onChange={(e) => setLocalEmail(e.target.value)}
+              className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue ${
+                !isLocalValid('email') ? 'border-red-500' : 'border-gray-200'
+              }`}
+              placeholder="Digite seu email"
+            />
+            {!isLocalValid('email') && (
+              <p className="text-red-500 text-xs mt-1">Email válido é obrigatório</p>
+            )}
+          </div>
+          
+          <div className="relative" ref={localUnivRef}>
+            <label className="block text-sm font-medium text-engenha-dark-navy mb-1">
+              Universidade <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
+              <input
+                type="text"
+                placeholder="BUSQUE SUA UNIVERSIDADE"
+                value={localUniversity}
+                onChange={(e) => {
+                  setLocalUniversity(e.target.value);
+                  setShowLocalUnivList(true);
+                }}
+                onFocus={() => setShowLocalUnivList(true)}
+                className={`w-full border rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy ${
+                  !isLocalValid('university') ? 'border-red-500' : 'border-engenha-sky-blue'
+                }`}
+                autoComplete="off"
+              />
             </div>
-          )}
+            {!isLocalValid('university') && (
+              <p className="text-red-500 text-xs mt-1">Universidade é obrigatória</p>
+            )}
+            {showLocalUnivList && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
+                {localFilteredUniversities.slice(0, 10).map((university, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setLocalUniversity(university);
+                      setShowLocalUnivList(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm ${
+                      university === 'Não tenho universidade' ? 'border-b border-gray-200 font-medium text-gray-600' : ''
+                    }`}
+                  >
+                    {university}
+                  </button>
+                ))}
+                {localFilteredUniversities.length > 10 && (
+                  <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
+                    Mostrando primeiros 10 resultados. Continue digitando para refinar.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          
+          <div className="relative" ref={localCourseRef}>
+            <label className="block text-sm font-medium text-engenha-dark-navy mb-1">
+              Curso {localUniversity !== 'Não tenho universidade' && <span className="text-red-500">*</span>}
+            </label>
+            <div className="relative">
+              <BookOpen className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
+              <input
+                type="text"
+                placeholder={localUniversity === 'Não tenho universidade' ? 'CURSO NÃO APLICÁVEL' : 'BUSQUE SEU CURSO'}
+                value={localCourse}
+                onChange={(e) => {
+                  setLocalCourse(e.target.value);
+                  setShowLocalCourseList(true);
+                }}
+                onFocus={() => setShowLocalCourseList(true)}
+                disabled={localUniversity === 'Não tenho universidade'}
+                className={`w-full border rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy ${
+                  localUniversity === 'Não tenho universidade' ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''
+                } ${
+                  !isLocalValid('course') ? 'border-red-500' : 'border-engenha-sky-blue'
+                }`}
+                autoComplete="off"
+              />
+            </div>
+            {localUniversity === 'Não tenho universidade' && (
+              <p className="text-engenha-sky-blue text-xs mt-1">
+                * Como você não possui universidade, o campo de curso não é necessário.
+              </p>
+            )}
+            {!isLocalValid('course') && localUniversity !== 'Não tenho universidade' && (
+              <p className="text-red-500 text-xs mt-1">Curso é obrigatório</p>
+            )}
+            {showLocalCourseList && localUniversity !== 'Não tenho universidade' && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
+                {localFilteredCourses.slice(0, 8).map((course, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setLocalCourse(course);
+                      setShowLocalCourseList(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm"
+                  >
+                    {course}
+                  </button>
+                ))}
+                {localFilteredCourses.length > 8 && (
+                  <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
+                    Mostrando primeiros 8 resultados. Continue digitando para refinar.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <button 
+            onClick={handleLocalSave}
+            disabled={!isFormLocalValid}
+            className={`w-full py-2 rounded-lg font-medium transition-colors ${
+              isFormLocalValid
+                ? 'bg-engenha-orange text-white hover:bg-engenha-dark-orange' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            Salvar Alterações
+          </button>
         </div>
-        <button className="w-full bg-engenha-orange text-white py-2 rounded-lg font-medium hover:bg-engenha-dark-orange transition-colors">
-          Salvar Alterações
-        </button>
       </div>
-    </div>
-  );
+    );
+  });
 
   const HelpSettings = () => (
     <div className="space-y-4">
