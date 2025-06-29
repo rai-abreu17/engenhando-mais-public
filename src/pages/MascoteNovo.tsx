@@ -579,8 +579,8 @@ const MascoteNovo = () => {
 
       {/* Modal de seleção de mascote */}
       {showMascotSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-engenha-dark-navy">
                 🎭 Escolher Mascote
@@ -640,8 +640,8 @@ const MascoteNovo = () => {
 
       {/* Modal de jogos */}
       {showGameMenu && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <h3 className="text-xl font-bold text-engenha-dark-navy mb-4 text-center">
               Jogos Interativos
             </h3>
@@ -725,8 +725,8 @@ const MascoteNovo = () => {
 
       {/* Loja de Comida */}
       {showFoodShop && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-engenha-dark-navy">
                 🍽️ Loja de Comida
@@ -800,8 +800,8 @@ const MascoteNovo = () => {
 
       {/* Loja de Acessórios */}
       {showShop && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-engenha-light-cream rounded-xl p-6 mx-4 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-engenha-dark-navy">
                 🛍️ Loja de Acessórios
