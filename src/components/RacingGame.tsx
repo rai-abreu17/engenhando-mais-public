@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Trophy, Clock, Zap } from 'lucide-react';
 
@@ -44,27 +45,34 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   const lanes = [25, 50, 75]; // Posições das pistas em %
   const carColors = ['#dc2626', '#2563eb', '#16a34a', '#f59e0b', '#7c3aed'];
 
-  // Inicializar com alguns carros para teste
+  // Inicializar com carros de teste para garantir visibilidade
   useEffect(() => {
-    console.log('Inicializando carros adversários...');
+    console.log('🚗 Inicializando carros adversários...');
     const initialCars: OpponentCar[] = [
       {
         id: 1,
         lane: 0,
-        position: 120,
-        speed: 2,
+        position: 80,
+        speed: 2.5,
         color: '#dc2626'
       },
       {
         id: 2,
         lane: 2,
-        position: 150,
-        speed: 1.8,
+        position: 60,
+        speed: 2.0,
         color: '#2563eb'
+      },
+      {
+        id: 3,
+        lane: 1,
+        position: 40,
+        speed: 1.8,
+        color: '#16a34a'
       }
     ];
     setOpponentCars(initialCars);
-    console.log('Carros inicializados:', initialCars);
+    console.log('✅ Carros inicializados:', initialCars);
   }, []);
 
   // Atualizar posição do carro quando muda de pista
@@ -224,27 +232,26 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       // Atualizar offset da estrada para efeito de movimento
       setRoadOffset(prev => (prev + speed * 3) % 100);
       
-      // Spawnar novos carros adversários com mais frequência
-      if (Math.random() < 0.02) { // 2% de chance a cada frame
+      // Sistema de spawn mais agressivo e frequente para teste
+      if (Math.random() < 0.1) { // Aumentei para 10% de chance
         setOpponentCars(prevCars => {
-          if (prevCars.length < 6) {
-            // Escolher uma pista aleatória
+          if (prevCars.length < 8) { // Permite mais carros
             const randomLane = Math.floor(Math.random() * 3);
             
-            // Verificar se não há carro muito próximo nesta pista
+            // Menos restritivo para spawn
             const hasNearCar = prevCars.some(car => 
-              car.lane === randomLane && car.position > 85
+              car.lane === randomLane && car.position > 90
             );
             
             if (!hasNearCar) {
               const newCar: OpponentCar = {
                 id: Date.now() + Math.random(),
                 lane: randomLane,
-                position: 110, // Começar um pouco fora da tela
-                speed: 1.5 + Math.random() * 1.5,
+                position: 100, // Posição inicial mais próxima
+                speed: 1.5 + Math.random() * 2,
                 color: carColors[Math.floor(Math.random() * carColors.length)]
               };
-              console.log('Novo carro criado:', newCar);
+              console.log('🚙 Novo carro criado:', newCar);
               return [...prevCars, newCar];
             }
           }
@@ -258,20 +265,27 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       const updatedCars = prevCars
         .map(car => ({
           ...car,
-          position: car.position - (car.speed + speed * 0.3),
+          position: car.position - (car.speed + speed * 0.5), // Movimento mais rápido
         }))
-        .filter(car => car.position > -15);
+        .filter(car => car.position > -20); // Filtra carros mais longe
+
+      // Log para debug
+      if (updatedCars.length > 0) {
+        console.log(`🎮 ${updatedCars.length} carros na tela:`, 
+          updatedCars.map(car => `Lane ${car.lane} Pos ${car.position.toFixed(1)}`).join(', ')
+        );
+      }
 
       // Verificar colisões
       if (gameState === 'playing') {
         const collision = updatedCars.some(car => 
           car.lane === currentLane && 
-          car.position >= 10 && 
-          car.position <= 30
+          car.position >= 5 && 
+          car.position <= 35
         );
         
         if (collision) {
-          console.log('Colisão detectada!');
+          console.log('💥 Colisão detectada!');
           setGameState('finished');
           setEndGameReason('collision');
         }
@@ -297,14 +311,6 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       }
     };
   }, [gameLoop, gameState]);
-
-  // Log para debug
-  useEffect(() => {
-    console.log('Carros adversários atuais:', opponentCars.length);
-    opponentCars.forEach(car => {
-      console.log(`Carro ${car.id}: Lane ${car.lane}, Position ${car.position.toFixed(1)}`);
-    });
-  }, [opponentCars]);
 
   const triggerQuestion = () => {
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
@@ -428,23 +434,32 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         </div>
       </div>
 
-      {/* Debug info */}
-      <div className="absolute top-20 right-4 bg-black bg-opacity-60 text-white p-2 rounded text-xs z-10">
-        <div>Carros: {opponentCars.length}</div>
-        <div>Pista atual: {currentLane}</div>
+      {/* Debug info MELHORADO */}
+      <div className="absolute top-20 right-4 bg-black bg-opacity-80 text-white p-3 rounded text-sm z-10">
+        <div className="font-bold text-yellow-300 mb-1">🔧 DEBUG INFO</div>
+        <div>Carros ativos: <span className="text-green-300">{opponentCars.length}</span></div>
+        <div>Pista atual: <span className="text-blue-300">{currentLane + 1}</span></div>
+        <div>Velocidade: <span className="text-red-300">{speed.toFixed(1)}</span></div>
+        {opponentCars.length > 0 && (
+          <div className="mt-2 text-xs">
+            <div className="text-yellow-200">Próximos carros:</div>
+            {opponentCars.slice(0, 3).map(car => (
+              <div key={car.id} className="text-gray-300">
+                P{car.lane + 1}: {car.position.toFixed(0)}%
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Pista de corrida */}
       <div className="relative h-full bg-gray-800 overflow-hidden">
         {/* Estrada com efeito de movimento */}
         <div className="absolute inset-0">
-          {/* Grama lateral */}
           <div className="absolute left-0 top-0 w-20 h-full bg-green-500"></div>
           <div className="absolute right-0 top-0 w-20 h-full bg-green-500"></div>
           
-          {/* Asfalto principal */}
           <div className="absolute left-20 right-20 top-0 h-full bg-gray-700">
-            {/* Linhas centrais animadas */}
             <div 
               className="absolute w-full h-full"
               style={{
@@ -456,13 +471,10 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
                 transform: `translateY(${roadOffset % 40}px)`,
               }}
             >
-              {/* Divisor entre pistas 1 e 2 */}
               <div className="absolute left-1/3 w-1 h-full bg-white opacity-60"></div>
-              {/* Divisor entre pistas 2 e 3 */}
               <div className="absolute left-2/3 w-1 h-full bg-white opacity-60"></div>
             </div>
             
-            {/* Bordas laterais */}
             <div className="absolute left-0 w-2 h-full bg-white"></div>
             <div className="absolute right-0 w-2 h-full bg-white"></div>
           </div>
@@ -472,11 +484,10 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         {lanes.map((lane, index) => (
           <div 
             key={index}
-            className="absolute top-4 text-white font-bold text-sm"
+            className="absolute top-4 text-white font-bold text-sm z-5"
             style={{ 
               left: `${lane}%`,
-              transform: 'translateX(-50%)',
-              zIndex: 5
+              transform: 'translateX(-50%)'
             }}
           >
             Pista {index + 1}
@@ -494,27 +505,21 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
             height: '100px'
           }}
         >
-          {/* Sombra do carro */}
           <div 
             className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-4 bg-black opacity-40 rounded-full"
             style={{ filter: 'blur(3px)' }}
           />
           
-          {/* Corpo do carro do jogador */}
           <div className="relative w-full h-full">
             <div className="absolute inset-0 bg-red-600 rounded-lg shadow-lg"
                  style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)' }}>
-              {/* Janelas */}
               <div className="absolute left-1/4 right-1/4 top-2 h-6 bg-blue-200 rounded-t opacity-80" />
-              {/* Faróis */}
               <div className="absolute left-2 top-1 w-3 h-2 bg-yellow-300 rounded-sm" />
               <div className="absolute right-2 top-1 w-3 h-2 bg-yellow-300 rounded-sm" />
-              {/* Listras */}
               <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-white opacity-60" />
             </div>
           </div>
           
-          {/* Efeito de turbo */}
           {boost && (
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-12"
                  style={{
@@ -527,41 +532,43 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
           )}
         </div>
 
-        {/* Carros adversários */}
+        {/* Carros adversários COM MELHOR VISIBILIDADE */}
         {opponentCars.map((car) => (
           <div 
             key={car.id}
-            className="absolute z-15"
+            className="absolute z-10" // Z-index menor que o jogador mas visível
             style={{
               left: `${lanes[car.lane]}%`,
               bottom: `${car.position}%`,
               transform: 'translateX(-50%) rotate(180deg)',
-              width: '60px',
-              height: '100px'
+              width: '70px', // Aumentei o tamanho
+              height: '110px' // Aumentei o tamanho
             }}
           >
-            {/* Sombra do carro adversário */}
+            {/* Sombra mais visível */}
             <div 
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-4 bg-black opacity-40 rounded-full"
-              style={{ filter: 'blur(3px)' }}
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-6 bg-black opacity-50 rounded-full"
+              style={{ filter: 'blur(4px)' }}
             />
             
-            {/* Corpo do carro adversário */}
+            {/* Corpo do carro adversário MAIOR e mais visível */}
             <div className="relative w-full h-full">
               <div 
-                className="absolute inset-0 rounded-lg shadow-lg"
+                className="absolute inset-0 rounded-lg shadow-xl border-2 border-white border-opacity-30" // Adicionei borda
                 style={{ 
                   backgroundColor: car.color,
                   clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)'
                 }}
               >
-                {/* Janelas */}
-                <div className="absolute left-1/4 right-1/4 top-2 h-6 bg-gray-200 rounded-t opacity-80" />
-                {/* Faróis traseiros */}
-                <div className="absolute left-2 top-1 w-3 h-2 bg-red-400 rounded-sm" />
-                <div className="absolute right-2 top-1 w-3 h-2 bg-red-400 rounded-sm" />
-                {/* Listras */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-white opacity-40" />
+                {/* Janelas mais visíveis */}
+                <div className="absolute left-1/4 right-1/4 top-3 h-8 bg-gray-100 rounded-t opacity-90 border" />
+                {/* Faróis traseiros mais brilhantes */}
+                <div className="absolute left-3 top-2 w-4 h-3 bg-red-500 rounded-sm shadow-lg" />
+                <div className="absolute right-3 top-2 w-4 h-3 bg-red-500 rounded-sm shadow-lg" />
+                {/* Listras mais visíveis */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-2 bg-white opacity-60" />
+                {/* Adicionar detalhes extras */}
+                <div className="absolute bottom-2 left-1/4 right-1/4 h-1 bg-white opacity-50 rounded" />
               </div>
             </div>
           </div>
