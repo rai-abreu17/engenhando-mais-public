@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Trophy, Clock, Zap } from 'lucide-react';
 
@@ -38,6 +37,8 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   const [carRotation, setCarRotation] = useState(0);
   const gameLoopRef = useRef<number>();
   const [consecutiveWrongAnswers, setConsecutiveWrongAnswers] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [protectionTime, setProtectionTime] = useState(3); // 3 segundos de proteção inicial
   
   const [opponentCars, setOpponentCars] = useState<OpponentCar[]>([]);
   const [roadOffset, setRoadOffset] = useState(0);
@@ -45,34 +46,44 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   const lanes = [25, 50, 75]; // Posições das pistas em %
   const carColors = ['#dc2626', '#2563eb', '#16a34a', '#f59e0b', '#7c3aed'];
 
-  // Inicializar com carros de teste para garantir visibilidade
+  // Inicialização corrigida - carros longe do jogador
   useEffect(() => {
-    console.log('🚗 Inicializando carros adversários...');
-    const initialCars: OpponentCar[] = [
+    console.log('🚗 Inicializando jogo com proteção...');
+    
+    // Inicializar carros adversários em posições seguras (muito distantes)
+    const safeCars: OpponentCar[] = [
       {
         id: 1,
         lane: 0,
-        position: 80,
-        speed: 2.5,
+        position: 150, // Muito longe do jogador
+        speed: 2.0,
         color: '#dc2626'
       },
       {
         id: 2,
         lane: 2,
-        position: 60,
-        speed: 2.0,
-        color: '#2563eb'
-      },
-      {
-        id: 3,
-        lane: 1,
-        position: 40,
+        position: 180,
         speed: 1.8,
-        color: '#16a34a'
+        color: '#2563eb'
       }
     ];
-    setOpponentCars(initialCars);
-    console.log('✅ Carros inicializados:', initialCars);
+    
+    setOpponentCars(safeCars);
+    
+    // Período de proteção inicial
+    const protectionTimer = setInterval(() => {
+      setProtectionTime(prev => {
+        if (prev <= 1) {
+          setGameStarted(true);
+          clearInterval(protectionTimer);
+          console.log('✅ Proteção inicial finalizada - jogo ativo');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(protectionTimer);
   }, []);
 
   // Atualizar posição do carro quando muda de pista
@@ -224,7 +235,7 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   }, [currentQuestion, consecutiveWrongAnswers]);
 
   const gameLoop = useCallback(() => {
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && gameStarted) {
       // Atualizar distância e pontuação
       setDistance(prev => prev + speed);
       setScore(prev => prev + Math.floor(speed * 3));
@@ -232,26 +243,26 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       // Atualizar offset da estrada para efeito de movimento
       setRoadOffset(prev => (prev + speed * 3) % 100);
       
-      // Sistema de spawn mais agressivo e frequente para teste
-      if (Math.random() < 0.1) { // Aumentei para 10% de chance
+      // Sistema de spawn corrigido - apenas após o jogo começar
+      if (Math.random() < 0.05) { // 5% de chance, mais controlado
         setOpponentCars(prevCars => {
-          if (prevCars.length < 8) { // Permite mais carros
+          if (prevCars.length < 5) { // Limite menor de carros
             const randomLane = Math.floor(Math.random() * 3);
             
-            // Menos restritivo para spawn
+            // Verificar se há espaço seguro para spawn
             const hasNearCar = prevCars.some(car => 
-              car.lane === randomLane && car.position > 90
+              car.lane === randomLane && car.position > 120 // Distância maior para spawn
             );
             
             if (!hasNearCar) {
               const newCar: OpponentCar = {
                 id: Date.now() + Math.random(),
                 lane: randomLane,
-                position: 100, // Posição inicial mais próxima
-                speed: 1.5 + Math.random() * 2,
+                position: 140, // Posição inicial muito distante
+                speed: 1.2 + Math.random() * 1.5, // Velocidade mais controlada
                 color: carColors[Math.floor(Math.random() * carColors.length)]
               };
-              console.log('🚙 Novo carro criado:', newCar);
+              console.log('🚙 Novo carro spawned:', `Lane ${newCar.lane + 1}, Pos ${newCar.position}`);
               return [...prevCars, newCar];
             }
           }
@@ -265,23 +276,16 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       const updatedCars = prevCars
         .map(car => ({
           ...car,
-          position: car.position - (car.speed + speed * 0.5), // Movimento mais rápido
+          position: car.position - (car.speed + speed * 0.3), // Movimento mais suave
         }))
-        .filter(car => car.position > -20); // Filtra carros mais longe
+        .filter(car => car.position > -30); // Remover carros que saíram da tela
 
-      // Log para debug
-      if (updatedCars.length > 0) {
-        console.log(`🎮 ${updatedCars.length} carros na tela:`, 
-          updatedCars.map(car => `Lane ${car.lane} Pos ${car.position.toFixed(1)}`).join(', ')
-        );
-      }
-
-      // Verificar colisões
-      if (gameState === 'playing') {
+      // Verificar colisões APENAS se o jogo começou e não está em proteção
+      if (gameState === 'playing' && gameStarted && protectionTime === 0) {
         const collision = updatedCars.some(car => 
           car.lane === currentLane && 
-          car.position >= 5 && 
-          car.position <= 35
+          car.position >= 10 && // Range de colisão mais restrito
+          car.position <= 25    // Range menor para colisão mais precisa
         );
         
         if (collision) {
@@ -297,7 +301,7 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
     if (gameState !== 'finished') {
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     }
-  }, [gameState, speed, currentLane]);
+  }, [gameState, speed, currentLane, gameStarted, protectionTime]);
 
   // Loop principal do jogo
   useEffect(() => {
@@ -387,6 +391,17 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   // Tela do jogo
   return (
     <div className="fixed inset-0 bg-gradient-to-b from-green-400 to-green-600 z-50 overflow-hidden">
+      {/* Proteção inicial */}
+      {protectionTime > 0 && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
+          <div className="text-white text-6xl font-bold animate-pulse text-center">
+            <div className="text-yellow-400 mb-4">🛡️ PROTEÇÃO ATIVA</div>
+            <div>{protectionTime}</div>
+            <div className="text-2xl mt-4">Prepare-se para correr!</div>
+          </div>
+        </div>
+      )}
+
       {/* Overlay de pergunta */}
       {gameState === 'question' && currentQuestion && (
         <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-70 z-20 p-4">
@@ -434,16 +449,20 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         </div>
       </div>
 
-      {/* Debug info MELHORADO */}
+      {/* Debug info melhorado */}
       <div className="absolute top-20 right-4 bg-black bg-opacity-80 text-white p-3 rounded text-sm z-10">
-        <div className="font-bold text-yellow-300 mb-1">🔧 DEBUG INFO</div>
-        <div>Carros ativos: <span className="text-green-300">{opponentCars.length}</span></div>
-        <div>Pista atual: <span className="text-blue-300">{currentLane + 1}</span></div>
+        <div className="font-bold text-yellow-300 mb-1">🔧 TESTE DE USABILIDADE</div>
+        <div>Status: <span className="text-green-300">{!gameStarted ? 'PROTEÇÃO' : 'ATIVO'}</span></div>
+        <div>Carros: <span className="text-blue-300">{opponentCars.length}</span></div>
+        <div>Pista: <span className="text-purple-300">{currentLane + 1}</span></div>
         <div>Velocidade: <span className="text-red-300">{speed.toFixed(1)}</span></div>
+        {protectionTime > 0 && (
+          <div className="text-yellow-200">Proteção: {protectionTime}s</div>
+        )}
         {opponentCars.length > 0 && (
           <div className="mt-2 text-xs">
-            <div className="text-yellow-200">Próximos carros:</div>
-            {opponentCars.slice(0, 3).map(car => (
+            <div className="text-yellow-200">Carros próximos:</div>
+            {opponentCars.filter(car => car.position < 100).slice(0, 3).map(car => (
               <div key={car.id} className="text-gray-300">
                 P{car.lane + 1}: {car.position.toFixed(0)}%
               </div>
@@ -520,6 +539,12 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
             </div>
           </div>
           
+          {protectionTime > 0 && (
+            <div className="absolute inset-0 rounded-lg border-4 border-yellow-400 animate-pulse"
+                 style={{ boxShadow: '0 0 20px rgba(251, 191, 36, 0.8)' }}
+            />
+          )}
+          
           {boost && (
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-12"
                  style={{
@@ -532,43 +557,36 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
           )}
         </div>
 
-        {/* Carros adversários COM MELHOR VISIBILIDADE */}
+        {/* Carros adversários com melhor visibilidade */}
         {opponentCars.map((car) => (
           <div 
             key={car.id}
-            className="absolute z-10" // Z-index menor que o jogador mas visível
+            className="absolute z-10"
             style={{
               left: `${lanes[car.lane]}%`,
               bottom: `${car.position}%`,
               transform: 'translateX(-50%) rotate(180deg)',
-              width: '70px', // Aumentei o tamanho
-              height: '110px' // Aumentei o tamanho
+              width: '50px',
+              height: '90px'
             }}
           >
-            {/* Sombra mais visível */}
             <div 
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-6 bg-black opacity-50 rounded-full"
-              style={{ filter: 'blur(4px)' }}
+              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-10 h-4 bg-black opacity-40 rounded-full"
+              style={{ filter: 'blur(3px)' }}
             />
             
-            {/* Corpo do carro adversário MAIOR e mais visível */}
             <div className="relative w-full h-full">
               <div 
-                className="absolute inset-0 rounded-lg shadow-xl border-2 border-white border-opacity-30" // Adicionei borda
+                className="absolute inset-0 rounded-lg shadow-lg border border-white border-opacity-20"
                 style={{ 
                   backgroundColor: car.color,
                   clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)'
                 }}
               >
-                {/* Janelas mais visíveis */}
-                <div className="absolute left-1/4 right-1/4 top-3 h-8 bg-gray-100 rounded-t opacity-90 border" />
-                {/* Faróis traseiros mais brilhantes */}
-                <div className="absolute left-3 top-2 w-4 h-3 bg-red-500 rounded-sm shadow-lg" />
-                <div className="absolute right-3 top-2 w-4 h-3 bg-red-500 rounded-sm shadow-lg" />
-                {/* Listras mais visíveis */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-2 bg-white opacity-60" />
-                {/* Adicionar detalhes extras */}
-                <div className="absolute bottom-2 left-1/4 right-1/4 h-1 bg-white opacity-50 rounded" />
+                <div className="absolute left-1/4 right-1/4 top-2 h-5 bg-gray-100 rounded-t opacity-90" />
+                <div className="absolute left-2 top-1 w-3 h-2 bg-red-500 rounded-sm" />
+                <div className="absolute right-2 top-1 w-3 h-2 bg-red-500 rounded-sm" />
+                <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-white opacity-50" />
               </div>
             </div>
           </div>
