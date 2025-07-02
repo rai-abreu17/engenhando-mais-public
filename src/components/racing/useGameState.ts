@@ -71,7 +71,8 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
       setScore(prev => prev + Math.floor(speed * 3));
       setRoadOffset(prev => (prev + speed * 3) % 100);
       
-      if (Math.random() < GAME_CONFIG.SPAWN_CHANCE) {
+      // Spawn de novos carros com maior frequência e logs de debug
+      if (Math.random() < GAME_CONFIG.SPAWN_CHANCE * 2) { // Doubled spawn chance for testing
         setOpponentCars(prevCars => {
           if (prevCars.length < GAME_CONFIG.MAX_OPPONENT_CARS) {
             const randomLane = Math.floor(Math.random() * 3);
@@ -81,32 +82,56 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
             
             if (!hasNearCar) {
               const newCar = createOpponentCar(randomLane);
-              console.log('🚙 Novo carro spawned:', `Lane ${newCar.lane + 1}, Pos ${newCar.position}`);
+              console.log('🚙 Novo carro spawned:', {
+                id: newCar.id,
+                lane: newCar.lane + 1,
+                position: newCar.position,
+                color: newCar.color,
+                speed: newCar.speed.toFixed(2)
+              });
               return [...prevCars, newCar];
+            } else {
+              console.log('⚠️ Spawn bloqueado - carro próximo na lane', randomLane + 1);
             }
+          } else {
+            console.log('⚠️ Spawn bloqueado - máximo de carros atingido:', prevCars.length);
           }
           return prevCars;
         });
       }
     }
 
+    // Atualizar posições dos carros e verificar colisões
     setOpponentCars(prevCars => {
       const updatedCars = prevCars
         .map(car => ({
           ...car,
           position: car.position - (car.speed + speed * 0.3),
         }))
-        .filter(car => car.position > -30);
+        .filter(car => {
+          const shouldKeep = car.position > -30;
+          if (!shouldKeep) {
+            console.log('🗑️ Removendo carro que saiu da tela:', car.id);
+          }
+          return shouldKeep;
+        });
 
+      // Verificar colisões apenas quando o jogo está ativo
       if (gameState === 'playing' && gameStarted && protectionTime === 0) {
-        const collision = updatedCars.some(car => 
+        const collision = updatedCars.find(car => 
           car.lane === currentLane && 
           car.position >= GAME_CONFIG.COLLISION_RANGE_MIN && 
           car.position <= GAME_CONFIG.COLLISION_RANGE_MAX
         );
         
         if (collision) {
-          console.log('💥 Colisão detectada!');
+          console.log('💥 Colisão detectada!', {
+            carId: collision.id,
+            playerLane: currentLane + 1,
+            carLane: collision.lane + 1,
+            carPosition: collision.position.toFixed(1),
+            collisionRange: `${GAME_CONFIG.COLLISION_RANGE_MIN}-${GAME_CONFIG.COLLISION_RANGE_MAX}`
+          });
           setGameState('finished');
           setEndGameReason('collision');
         }

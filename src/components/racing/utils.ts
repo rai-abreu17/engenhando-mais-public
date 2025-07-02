@@ -7,13 +7,23 @@ export const getRandomQuestion = (): Question => {
 };
 
 export const createOpponentCar = (lane: number): OpponentCar => {
-  return {
+  const car = {
     id: Date.now() + Math.random(),
     lane,
-    position: 140,
-    speed: 1.2 + Math.random() * 1.5,
+    position: 140 + Math.random() * 20, // Posição inicial mais variada
+    speed: 1.5 + Math.random() * 1.0, // Velocidade mais variada
     color: CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)]
   };
+  
+  console.log('🚗 Criando novo carro:', {
+    id: car.id.toString().slice(-6),
+    lane: car.lane + 1,
+    position: car.position.toFixed(1),
+    speed: car.speed.toFixed(2),
+    color: car.color
+  });
+  
+  return car;
 };
 
 export const calculateCoinsReward = (score: number, distance: number): number => {

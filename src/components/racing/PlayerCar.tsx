@@ -17,7 +17,7 @@ const PlayerCar: React.FC<PlayerCarProps> = ({
 }) => {
   return (
     <div 
-      className="absolute transition-all duration-200 ease-out z-20"
+      className="absolute transition-all duration-200 ease-out z-15"
       style={{
         left: `${LANES[currentLane]}%`,
         bottom: '15%',

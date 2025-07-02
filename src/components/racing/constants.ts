@@ -14,10 +14,10 @@ export const GAME_CONFIG = {
   BOOST_MULTIPLIER: 1.8,
   BOOST_DURATION: 2000,
   MAX_CONSECUTIVE_WRONG: 3,
-  MAX_OPPONENT_CARS: 5,
-  SPAWN_CHANCE: 0.05,
-  COLLISION_RANGE_MIN: 10,
-  COLLISION_RANGE_MAX: 25,
+  MAX_OPPONENT_CARS: 6, // Aumentado para permitir mais carros
+  SPAWN_CHANCE: 0.08, // Aumentado para mais carros
+  COLLISION_RANGE_MIN: 8, // Range de colisão mais preciso
+  COLLISION_RANGE_MAX: 22,
 };
 
 export const QUESTIONS: Question[] = [

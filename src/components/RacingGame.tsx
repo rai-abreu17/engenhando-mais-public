@@ -51,24 +51,33 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   useEffect(() => {
     console.log('🚗 Inicializando jogo com proteção...');
     
+    // Força o spawn de carros iniciais para demonstração
     const safeCars = [
       {
         id: 1,
         lane: 0,
-        position: 150,
-        speed: 2.0,
+        position: 120,
+        speed: 2.2,
         color: '#dc2626'
       },
       {
         id: 2,
         lane: 2,
-        position: 180,
+        position: 150,
         speed: 1.8,
         color: '#2563eb'
+      },
+      {
+        id: 3,
+        lane: 1,
+        position: 180,
+        speed: 2.0,
+        color: '#16a34a'
       }
     ];
     
     setOpponentCars(safeCars);
+    console.log('🚙 Carros iniciais spawned:', safeCars.length);
     
     const protectionTimer = setInterval(() => {
       setProtectionTime(prev => {
@@ -225,8 +234,8 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       />
 
       {/* Debug info */}
-      <div className="absolute top-20 right-4 bg-black bg-opacity-80 text-white p-3 rounded text-sm z-10">
-        <div className="font-bold text-yellow-300 mb-1">🔧 TESTE DE USABILIDADE</div>
+      <div className="absolute top-20 right-4 bg-black bg-opacity-90 text-white p-3 rounded text-sm z-30">
+        <div className="font-bold text-yellow-300 mb-1">🔧 DEBUG PANEL</div>
         <div>Status: <span className="text-green-300">{!gameStarted ? 'PROTEÇÃO' : 'ATIVO'}</span></div>
         <div>Carros: <span className="text-blue-300">{opponentCars.length}</span></div>
         <div>Pista: <span className="text-purple-300">{currentLane + 1}</span></div>
@@ -236,12 +245,20 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         )}
         {opponentCars.length > 0 && (
           <div className="mt-2 text-xs">
-            <div className="text-yellow-200">Carros próximos:</div>
-            {opponentCars.filter(car => car.position < 100).slice(0, 3).map(car => (
-              <div key={car.id} className="text-gray-300">
-                P{car.lane + 1}: {car.position.toFixed(0)}%
-              </div>
-            ))}
+            <div className="text-yellow-200">Carros visíveis:</div>
+            {opponentCars
+              .filter(car => car.position >= -20 && car.position <= 150)
+              .slice(0, 3)
+              .map(car => (
+                <div key={car.id} className="text-gray-300">
+                  P{car.lane + 1}: {car.position.toFixed(0)}% 
+                  <span className="text-xs ml-1" style={{color: car.color}}>●</span>
+                </div>
+              ))
+            }
+            {opponentCars.filter(car => car.position >= -20 && car.position <= 150).length === 0 && (
+              <div className="text-red-300">Nenhum carro visível!</div>
+            )}
           </div>
         )}
       </div>
@@ -278,7 +295,7 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         {LANES.map((lane, index) => (
           <div 
             key={index}
-            className="absolute top-4 text-white font-bold text-sm z-5"
+            className="absolute top-4 text-white font-bold text-sm z-15"
             style={{ 
               left: `${lane}%`,
               transform: 'translateX(-50%)'
@@ -288,6 +305,7 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
           </div>
         ))}
 
+        {/* Player car - z-index mais baixo para não cobrir oponentes */}
         <PlayerCar
           currentLane={currentLane}
           carRotation={carRotation}
@@ -295,7 +313,10 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
           boost={boost}
         />
 
-        <OpponentCars opponentCars={opponentCars} />
+        {/* Opponent cars - z-index mais alto para garantir visibilidade */}
+        <div className="relative z-20">
+          <OpponentCars opponentCars={opponentCars} />
+        </div>
 
         <GameControls
           currentLane={currentLane}
@@ -306,10 +327,26 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
 
         {/* Additional UI elements */}
         <div className="absolute top-16 left-4 bg-black bg-opacity-60 text-white p-3 rounded-lg z-10">
-          <div className="text-sm font-bold mb-2">🎮 CONTROLES:</div>
+          <div className="text-sm font-bold mb-2">🧪 CONTROLES DE TESTE:</div>
           <div className="text-xs space-y-1">
             <div>← → ou A/D: Trocar pista</div>
             <div>ESPAÇO: Turbo</div>
+            <button 
+              onClick={() => {
+                const testCar = {
+                  id: Date.now(),
+                  lane: Math.floor(Math.random() * 3),
+                  position: 100,
+                  speed: 2,
+                  color: '#dc2626'
+                };
+                setOpponentCars(prev => [...prev, testCar]);
+                console.log('🧪 Carro de teste spawned:', testCar);
+              }}
+              className="block mt-2 bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
+            >
+              Spawn Carro Teste
+            </button>
           </div>
         </div>
 
