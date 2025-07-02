@@ -27,26 +27,22 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
 
   const activateBoost = useCallback(() => {
     if (!boost) {
-      console.log('🚀 Turbo ativado!');
       setBoost(true);
       setSpeed(prev => prev * GAME_CONFIG.BOOST_MULTIPLIER);
       setTimeout(() => {
         setBoost(false);
         setSpeed(prev => prev / GAME_CONFIG.BOOST_MULTIPLIER);
-        console.log('🚀 Turbo desativado');
       }, GAME_CONFIG.BOOST_DURATION);
     }
   }, [boost]);
 
   const handleAnswer = useCallback((answerIndex: number) => {
     if (currentQuestion && answerIndex === currentQuestion.correct) {
-      console.log('✅ Resposta correta!');
       setSpeed(prev => Math.min(prev + 0.5, GAME_CONFIG.MAX_SPEED));
       activateBoost();
       setScore(prev => prev + 150);
       setConsecutiveWrongAnswers(0);
     } else {
-      console.log('❌ Resposta incorreta');
       setConsecutiveWrongAnswers(prev => prev + 1);
       
       if (consecutiveWrongAnswers + 1 >= GAME_CONFIG.MAX_CONSECUTIVE_WRONG) {
@@ -67,33 +63,6 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
     setCurrentQuestion(randomQuestion);
     setQuestionTimeLeft(GAME_CONFIG.QUESTION_TIME);
     setGameState('question');
-    console.log('❓ Pergunta acionada:', randomQuestion.question);
-  }, []);
-
-  const spawnOpponentCar = useCallback(() => {
-    setOpponentCars(prevCars => {
-      if (prevCars.length >= GAME_CONFIG.MAX_OPPONENT_CARS) {
-        return prevCars;
-      }
-
-      const randomLane = Math.floor(Math.random() * 3);
-      const hasNearCar = prevCars.some(car => 
-        car.lane === randomLane && car.position > 120
-      );
-
-      if (!hasNearCar) {
-        const newCar = createOpponentCar(randomLane);
-        console.log('🚙 SPAWN: Novo carro criado', {
-          id: newCar.id,
-          lane: newCar.lane + 1,
-          position: newCar.position,
-          color: newCar.color
-        });
-        return [...prevCars, newCar];
-      }
-
-      return prevCars;
-    });
   }, []);
 
   const gameLoop = useCallback(() => {
@@ -102,51 +71,42 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
       setScore(prev => prev + Math.floor(speed * 3));
       setRoadOffset(prev => (prev + speed * 3) % 100);
       
-      // Spawn mais frequente para teste
-      if (Math.random() < 0.08) {
-        spawnOpponentCar();
+      if (Math.random() < GAME_CONFIG.SPAWN_CHANCE) {
+        setOpponentCars(prevCars => {
+          if (prevCars.length < GAME_CONFIG.MAX_OPPONENT_CARS) {
+            const randomLane = Math.floor(Math.random() * 3);
+            const hasNearCar = prevCars.some(car => 
+              car.lane === randomLane && car.position > 120
+            );
+            
+            if (!hasNearCar) {
+              const newCar = createOpponentCar(randomLane);
+              console.log('🚙 Novo carro spawned:', `Lane ${newCar.lane + 1}, Pos ${newCar.position}`);
+              return [...prevCars, newCar];
+            }
+          }
+          return prevCars;
+        });
       }
     }
 
-    // Atualizar posições dos carros
     setOpponentCars(prevCars => {
       const updatedCars = prevCars
         .map(car => ({
           ...car,
-          position: car.position - (car.speed + speed * 0.5),
+          position: car.position - (car.speed + speed * 0.3),
         }))
-        .filter(car => {
-          if (car.position <= -50) {
-            console.log(`🗑️ Carro ${car.id} removido (posição: ${car.position.toFixed(1)})`);
-            return false;
-          }
-          return true;
-        });
+        .filter(car => car.position > -30);
 
-      // Log do estado atual
-      if (updatedCars.length > 0) {
-        console.log('🎯 CARROS ATIVOS:', updatedCars.map(car => ({
-          id: car.id.toString().slice(-4),
-          lane: car.lane + 1,
-          pos: car.position.toFixed(1)
-        })));
-      }
-
-      // Detecção de colisão
       if (gameState === 'playing' && gameStarted && protectionTime === 0) {
-        const collision = updatedCars.some(car => {
-          const isColliding = car.lane === currentLane && 
-            car.position >= 5 && 
-            car.position <= 30;
-          
-          if (isColliding) {
-            console.log(`💥 COLISÃO! Player lane: ${currentLane + 1}, Car lane: ${car.lane + 1}, Pos: ${car.position.toFixed(1)}`);
-          }
-          
-          return isColliding;
-        });
+        const collision = updatedCars.some(car => 
+          car.lane === currentLane && 
+          car.position >= GAME_CONFIG.COLLISION_RANGE_MIN && 
+          car.position <= GAME_CONFIG.COLLISION_RANGE_MAX
+        );
         
         if (collision) {
+          console.log('💥 Colisão detectada!');
           setGameState('finished');
           setEndGameReason('collision');
         }
@@ -158,7 +118,7 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
     if (gameState !== 'finished') {
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     }
-  }, [gameState, speed, currentLane, gameStarted, protectionTime, spawnOpponentCar]);
+  }, [gameState, speed, currentLane, gameStarted, protectionTime]);
 
   return {
     gameState,

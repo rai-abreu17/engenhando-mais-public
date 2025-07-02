@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useGameState } from './racing/useGameState';
 import { LANES, GAME_CONFIG } from './racing/constants';
@@ -46,37 +47,35 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
     getGameOverReason
   } = useGameState(onGameEnd);
 
-  // Inicialização simplificada
+  // Initialize game with protection
   useEffect(() => {
-    console.log('🎮 INIT: Inicializando jogo');
+    console.log('🚗 Inicializando jogo com proteção...');
     
-    // Criar carros iniciais para teste
-    const testCars = [
+    const safeCars = [
       {
-        id: Date.now() + 1,
+        id: 1,
         lane: 0,
-        position: 80,
-        speed: 2,
+        position: 150,
+        speed: 2.0,
         color: '#dc2626'
       },
       {
-        id: Date.now() + 2,
+        id: 2,
         lane: 2,
-        position: 120,
-        speed: 1.5,
+        position: 180,
+        speed: 1.8,
         color: '#2563eb'
       }
     ];
     
-    setOpponentCars(testCars);
-    console.log('🚙 INIT: Carros de teste criados:', testCars);
+    setOpponentCars(safeCars);
     
     const protectionTimer = setInterval(() => {
       setProtectionTime(prev => {
         if (prev <= 1) {
           setGameStarted(true);
           clearInterval(protectionTimer);
-          console.log('✅ INIT: Jogo ativo');
+          console.log('✅ Proteção inicial finalizada - jogo ativo');
           return 0;
         }
         return prev - 1;
@@ -175,10 +174,8 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   const handleLaneChange = (direction: 'left' | 'right') => {
     if (direction === 'left' && currentLane > 0) {
       setCurrentLane(prev => prev - 1);
-      console.log(`🏁 Mudando para pista ${currentLane}`);
     } else if (direction === 'right' && currentLane < 2) {
       setCurrentLane(prev => prev + 1);
-      console.log(`🏁 Mudando para pista ${currentLane + 2}`);
     }
   };
 
@@ -200,18 +197,18 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gradient-to-b from-green-400 to-green-600 z-50 overflow-hidden">
-      {/* Tela de proteção */}
+      {/* Protection screen */}
       {protectionTime > 0 && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
           <div className="text-white text-6xl font-bold animate-pulse text-center">
-            <div className="text-yellow-400 mb-4">🛡️ PROTEÇÃO</div>
+            <div className="text-yellow-400 mb-4">🛡️ PROTEÇÃO ATIVA</div>
             <div>{protectionTime}</div>
-            <div className="text-2xl mt-4">Prepare-se!</div>
+            <div className="text-2xl mt-4">Prepare-se para correr!</div>
           </div>
         </div>
       )}
 
-      {/* Overlay de pergunta */}
+      {/* Question overlay */}
       {gameState === 'question' && currentQuestion && (
         <QuestionOverlay
           question={currentQuestion}
@@ -227,42 +224,29 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         onClose={onClose}
       />
 
-      {/* Debug info melhorado */}
-      <div className="absolute top-20 right-4 bg-black bg-opacity-95 text-white p-4 rounded-lg text-sm z-40 max-w-sm border-2 border-yellow-400">
-        <div className="font-bold text-yellow-300 mb-2 text-center">🔧 DEBUG STATUS</div>
-        <div className="space-y-1">
-          <div>Estado: <span className="text-green-300 font-bold">{!gameStarted ? 'PROTEÇÃO' : 'ATIVO'}</span></div>
-          <div>Total de carros: <span className="text-blue-300 font-bold">{opponentCars.length}</span></div>
-          <div>Player pista: <span className="text-purple-300 font-bold">{currentLane + 1}</span></div>
-          <div>Velocidade: <span className="text-red-300 font-bold">{speed.toFixed(1)}</span></div>
-          {protectionTime > 0 && (
-            <div className="text-yellow-200 font-bold">Proteção: {protectionTime}s</div>
-          )}
-        </div>
-        
-        <div className="mt-3 pt-2 border-t border-gray-600">
-          <div className="text-yellow-200 font-bold mb-1">🚗 Carros visíveis:</div>
-          {opponentCars.length === 0 ? (
-            <div className="text-red-400 font-bold">❌ NENHUM CARRO!</div>
-          ) : (
-            <div className="space-y-1">
-              {opponentCars.map(car => (
-                <div key={car.id} className="flex justify-between items-center text-xs bg-gray-700 px-2 py-1 rounded">
-                  <span className="font-bold">#{car.id.toString().slice(-3)}</span>
-                  <span>P{car.lane + 1}</span>
-                  <span>{car.position.toFixed(0)}%</span>
-                  <div 
-                    className="w-3 h-3 rounded-full border border-white"
-                    style={{ backgroundColor: car.color }}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      {/* Debug info */}
+      <div className="absolute top-20 right-4 bg-black bg-opacity-80 text-white p-3 rounded text-sm z-10">
+        <div className="font-bold text-yellow-300 mb-1">🔧 TESTE DE USABILIDADE</div>
+        <div>Status: <span className="text-green-300">{!gameStarted ? 'PROTEÇÃO' : 'ATIVO'}</span></div>
+        <div>Carros: <span className="text-blue-300">{opponentCars.length}</span></div>
+        <div>Pista: <span className="text-purple-300">{currentLane + 1}</span></div>
+        <div>Velocidade: <span className="text-red-300">{speed.toFixed(1)}</span></div>
+        {protectionTime > 0 && (
+          <div className="text-yellow-200">Proteção: {protectionTime}s</div>
+        )}
+        {opponentCars.length > 0 && (
+          <div className="mt-2 text-xs">
+            <div className="text-yellow-200">Carros próximos:</div>
+            {opponentCars.filter(car => car.position < 100).slice(0, 3).map(car => (
+              <div key={car.id} className="text-gray-300">
+                P{car.lane + 1}: {car.position.toFixed(0)}%
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Pista de corrida */}
+      {/* Race track */}
       <div className="relative h-full bg-gray-800 overflow-hidden">
         {/* Road with movement effect */}
         <div className="absolute inset-0">
@@ -304,7 +288,6 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
           </div>
         ))}
 
-        {/* Carros - ordem importante! */}
         <PlayerCar
           currentLane={currentLane}
           carRotation={carRotation}
@@ -312,10 +295,7 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
           boost={boost}
         />
 
-        {/* CARROS ADVERSÁRIOS - z-index alto para garantir visibilidade */}
-        <div className="relative z-30">
-          <OpponentCars opponentCars={opponentCars} />
-        </div>
+        <OpponentCars opponentCars={opponentCars} />
 
         <GameControls
           currentLane={currentLane}
@@ -340,7 +320,7 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         </div>
 
         {boost && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-35">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
             <div className="text-yellow-400 text-4xl font-bold animate-pulse">
               ⚡ TURBO ATIVO! ⚡
             </div>
