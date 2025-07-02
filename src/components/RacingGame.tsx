@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useGameState } from './racing/useGameState';
 import { LANES, GAME_CONFIG } from './racing/constants';
@@ -50,17 +49,19 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   // Initialize game with protection
   useEffect(() => {
     console.log('🚗 Inicializando jogo com proteção...');
+    console.log('🎮 Estado inicial - Carros adversários:', opponentCars.length);
     
-    const safeCars = [
+    // Criar alguns carros iniciais em posições seguras
+    const initialCars = [
       {
-        id: 1,
+        id: Date.now() + 1,
         lane: 0,
-        position: 150,
-        speed: 2.0,
+        position: 160,
+        speed: 1.5,
         color: '#dc2626'
       },
       {
-        id: 2,
+        id: Date.now() + 2,
         lane: 2,
         position: 180,
         speed: 1.8,
@@ -68,7 +69,8 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
       }
     ];
     
-    setOpponentCars(safeCars);
+    setOpponentCars(initialCars);
+    console.log('🚙 Carros iniciais criados:', initialCars);
     
     const protectionTimer = setInterval(() => {
       setProtectionTime(prev => {
@@ -174,8 +176,10 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
   const handleLaneChange = (direction: 'left' | 'right') => {
     if (direction === 'left' && currentLane > 0) {
       setCurrentLane(prev => prev - 1);
+      console.log(`🏁 Mudando para pista ${currentLane}`);
     } else if (direction === 'right' && currentLane < 2) {
       setCurrentLane(prev => prev + 1);
+      console.log(`🏁 Mudando para pista ${currentLane + 2}`);
     }
   };
 
@@ -224,26 +228,32 @@ const RacingGame: React.FC<RacingGameProps> = ({ onGameEnd, onClose }) => {
         onClose={onClose}
       />
 
-      {/* Debug info */}
-      <div className="absolute top-20 right-4 bg-black bg-opacity-80 text-white p-3 rounded text-sm z-10">
-        <div className="font-bold text-yellow-300 mb-1">🔧 TESTE DE USABILIDADE</div>
+      {/* Debug info aprimorado */}
+      <div className="absolute top-20 right-4 bg-black bg-opacity-90 text-white p-3 rounded text-sm z-10 max-w-xs">
+        <div className="font-bold text-yellow-300 mb-1">🔧 DEBUG INFO</div>
         <div>Status: <span className="text-green-300">{!gameStarted ? 'PROTEÇÃO' : 'ATIVO'}</span></div>
-        <div>Carros: <span className="text-blue-300">{opponentCars.length}</span></div>
-        <div>Pista: <span className="text-purple-300">{currentLane + 1}</span></div>
+        <div>Carros visíveis: <span className="text-blue-300">{opponentCars.length}</span></div>
+        <div>Player pista: <span className="text-purple-300">{currentLane + 1}</span></div>
         <div>Velocidade: <span className="text-red-300">{speed.toFixed(1)}</span></div>
         {protectionTime > 0 && (
           <div className="text-yellow-200">Proteção: {protectionTime}s</div>
         )}
-        {opponentCars.length > 0 && (
-          <div className="mt-2 text-xs">
-            <div className="text-yellow-200">Carros próximos:</div>
-            {opponentCars.filter(car => car.position < 100).slice(0, 3).map(car => (
-              <div key={car.id} className="text-gray-300">
-                P{car.lane + 1}: {car.position.toFixed(0)}%
+        
+        {/* Lista detalhada dos carros */}
+        <div className="mt-2 text-xs border-t border-gray-600 pt-2">
+          <div className="text-yellow-200 font-bold">Carros na tela:</div>
+          {opponentCars.length === 0 ? (
+            <div className="text-red-300">Nenhum carro</div>
+          ) : (
+            opponentCars.slice(0, 4).map(car => (
+              <div key={car.id} className="text-gray-300 flex justify-between">
+                <span>P{car.lane + 1}</span>
+                <span>{car.position.toFixed(0)}%</span>
+                <span style={{ color: car.color }}>●</span>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
 
       {/* Race track */}
