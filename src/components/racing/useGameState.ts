@@ -70,65 +70,83 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
     console.log('❓ Pergunta acionada:', randomQuestion.question);
   }, []);
 
+  const spawnOpponentCar = useCallback(() => {
+    setOpponentCars(prevCars => {
+      if (prevCars.length >= GAME_CONFIG.MAX_OPPONENT_CARS) {
+        return prevCars;
+      }
+
+      const randomLane = Math.floor(Math.random() * 3);
+      const hasNearCar = prevCars.some(car => 
+        car.lane === randomLane && car.position > 120
+      );
+
+      if (!hasNearCar) {
+        const newCar = createOpponentCar(randomLane);
+        console.log('🚙 SPAWN: Novo carro criado', {
+          id: newCar.id,
+          lane: newCar.lane + 1,
+          position: newCar.position,
+          color: newCar.color
+        });
+        return [...prevCars, newCar];
+      }
+
+      return prevCars;
+    });
+  }, []);
+
   const gameLoop = useCallback(() => {
     if (gameState === 'playing' && gameStarted) {
       setDistance(prev => prev + speed);
       setScore(prev => prev + Math.floor(speed * 3));
       setRoadOffset(prev => (prev + speed * 3) % 100);
       
-      // Spawn de carros adversários com controle melhorado
-      if (Math.random() < GAME_CONFIG.SPAWN_CHANCE * 0.7) { // Reduzindo um pouco a frequência
-        setOpponentCars(prevCars => {
-          if (prevCars.length < GAME_CONFIG.MAX_OPPONENT_CARS) {
-            const randomLane = Math.floor(Math.random() * 3);
-            
-            // Verificar se já existe um carro muito próximo na mesma pista
-            const hasNearCar = prevCars.some(car => 
-              car.lane === randomLane && car.position > 120
-            );
-            
-            if (!hasNearCar) {
-              const newCar = createOpponentCar(randomLane);
-              console.log('🚙 Novo carro spawned:', `Lane ${newCar.lane + 1}, Pos ${newCar.position}%, Cor: ${newCar.color}`);
-              return [...prevCars, newCar];
-            }
-          }
-          return prevCars;
-        });
+      // Spawn mais frequente para teste
+      if (Math.random() < 0.08) {
+        spawnOpponentCar();
       }
     }
 
-    // Atualizar posições dos carros adversários
+    // Atualizar posições dos carros
     setOpponentCars(prevCars => {
       const updatedCars = prevCars
         .map(car => ({
           ...car,
-          position: car.position - (car.speed + speed * 0.3),
+          position: car.position - (car.speed + speed * 0.5),
         }))
         .filter(car => {
-          if (car.position <= -30) {
-            console.log(`🗑️ Carro ${car.id} removido (saiu da tela)`);
+          if (car.position <= -50) {
+            console.log(`🗑️ Carro ${car.id} removido (posição: ${car.position.toFixed(1)})`);
             return false;
           }
           return true;
         });
 
-      // Detecção de colisão apenas quando não há proteção
+      // Log do estado atual
+      if (updatedCars.length > 0) {
+        console.log('🎯 CARROS ATIVOS:', updatedCars.map(car => ({
+          id: car.id.toString().slice(-4),
+          lane: car.lane + 1,
+          pos: car.position.toFixed(1)
+        })));
+      }
+
+      // Detecção de colisão
       if (gameState === 'playing' && gameStarted && protectionTime === 0) {
         const collision = updatedCars.some(car => {
           const isColliding = car.lane === currentLane && 
-            car.position >= GAME_CONFIG.COLLISION_RANGE_MIN && 
-            car.position <= GAME_CONFIG.COLLISION_RANGE_MAX;
+            car.position >= 5 && 
+            car.position <= 30;
           
           if (isColliding) {
-            console.log(`💥 Colisão detectada com carro ${car.id}! Player lane: ${currentLane + 1}, Car lane: ${car.lane + 1}, Car pos: ${car.position.toFixed(1)}`);
+            console.log(`💥 COLISÃO! Player lane: ${currentLane + 1}, Car lane: ${car.lane + 1}, Pos: ${car.position.toFixed(1)}`);
           }
           
           return isColliding;
         });
         
         if (collision) {
-          console.log('🔚 Jogo terminado por colisão');
           setGameState('finished');
           setEndGameReason('collision');
         }
@@ -140,7 +158,7 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
     if (gameState !== 'finished') {
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     }
-  }, [gameState, speed, currentLane, gameStarted, protectionTime]);
+  }, [gameState, speed, currentLane, gameStarted, protectionTime, spawnOpponentCar]);
 
   return {
     gameState,
