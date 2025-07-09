@@ -8,24 +8,19 @@ interface OpponentCarsProps {
 }
 
 const OpponentCars: React.FC<OpponentCarsProps> = ({ opponentCars }) => {
-  // Debug: Log para verificar se há carros para renderizar
-  console.log('🚗 OpponentCars renderizando:', opponentCars.length);
+  console.log('🚗 OpponentCars renderizando:', opponentCars.length, opponentCars);
   
   if (!opponentCars || opponentCars.length === 0) {
-    console.log('⚠️ Nenhum carro adversário para renderizar');
     return null;
   }
 
   return (
     <>
       {opponentCars.map((car) => {
-        // Verificação de segurança para dados do carro
         if (!car || typeof car.lane !== 'number' || typeof car.position !== 'number') {
-          console.warn('❌ Dados inválidos do carro:', car);
           return null;
         }
 
-        // Verificação se o carro está na área visível
         const isVisible = car.position >= -20 && car.position <= 150;
         if (!isVisible) {
           return null;
@@ -36,53 +31,36 @@ const OpponentCars: React.FC<OpponentCarsProps> = ({ opponentCars }) => {
         return (
           <div 
             key={car.id}
-            className="absolute z-20"
+            className="absolute z-50"
             style={{
               left: `${LANES[car.lane]}%`,
               bottom: `${car.position}%`,
-              transform: 'translateX(-50%) rotate(180deg)',
-              width: '50px',
-              height: '90px',
-              pointerEvents: 'none' // Previne problemas de interação
+              transform: 'translateX(-50%)',
+              width: '60px',
+              height: '100px',
+              pointerEvents: 'none'
             }}
           >
-            {/* Sombra do carro */}
+            {/* Carro simplificado e bem visível */}
             <div 
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-10 h-4 bg-black opacity-40 rounded-full"
-              style={{ filter: 'blur(3px)', zIndex: -1 }}
-            />
-            
-            {/* Corpo do carro */}
-            <div className="relative w-full h-full">
-              <div 
-                className="absolute inset-0 rounded-lg shadow-xl border-2 border-white border-opacity-30"
-                style={{ 
-                  backgroundColor: car.color,
-                  clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%)',
-                  boxShadow: `0 0 20px ${car.color}50` // Brilho colorido
-                }}
-              >
-                {/* Para-brisa */}
-                <div className="absolute left-1/4 right-1/4 top-3 h-6 bg-gray-100 rounded-t opacity-90 border border-gray-300" />
-                
-                {/* Faróis */}
-                <div className="absolute left-2 top-1 w-3 h-2 bg-red-500 rounded-sm" />
-                <div className="absolute right-2 top-1 w-3 h-2 bg-red-500 rounded-sm" />
-                
-                {/* Linha central */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-white opacity-50" />
-                
-                {/* Indicador visual adicional */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-white opacity-20" />
+              className="w-full h-full rounded-lg border-4 border-white shadow-2xl"
+              style={{ 
+                backgroundColor: car.color,
+                boxShadow: `0 0 30px ${car.color}, inset 0 0 20px rgba(255,255,255,0.3)`
+              }}
+            >
+              {/* Para-brisa */}
+              <div className="absolute left-2 right-2 top-2 h-8 bg-blue-200 rounded border-2 border-white" />
+              
+              {/* Faróis */}
+              <div className="absolute left-1 top-1 w-4 h-3 bg-yellow-300 rounded border border-white" />
+              <div className="absolute right-1 top-1 w-4 h-3 bg-yellow-300 rounded border border-white" />
+              
+              {/* Debug label bem visível */}
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-2 py-1 rounded font-bold text-sm border-2 border-white">
+                CAR-{car.id}
               </div>
             </div>
-            
-            {/* Debug info para desenvolvimento */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-white bg-black bg-opacity-75 px-1 rounded">
-                L{car.lane + 1}
-              </div>
-            )}
           </div>
         );
       })}
