@@ -53,10 +53,11 @@ const ResponsiveCarousel = <T extends { id?: string | number }>({
         {showArrows && (
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-[#fffaf0] border border-[#28b0ff] rounded-full p-2 shadow-md hover:shadow-lg transition-shadow hidden md:flex items-center justify-center"
+            className="absolute left-2 md:left-0 top-1/2 transform -translate-y-1/2 z-10 bg-[#fffaf0] border border-[#28b0ff] rounded-full p-1 md:p-2 shadow-md hover:shadow-lg transition-shadow flex items-center justify-center"
             aria-label="Item anterior"
           >
-            <ChevronLeft className="text-[#28b0ff]" size={24} />
+            <ChevronLeft className="text-[#28b0ff]" size={16} />
+            <span className="hidden md:inline"><ChevronLeft className="text-[#28b0ff]" size={24} /></span>
           </button>
         )}
 
@@ -64,15 +65,16 @@ const ResponsiveCarousel = <T extends { id?: string | number }>({
         {showArrows && (
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-[#fffaf0] border border-[#28b0ff] rounded-full p-2 shadow-md hover:shadow-lg transition-shadow hidden md:flex items-center justify-center"
+            className="absolute right-2 md:right-0 top-1/2 transform -translate-y-1/2 z-10 bg-[#fffaf0] border border-[#28b0ff] rounded-full p-1 md:p-2 shadow-md hover:shadow-lg transition-shadow flex items-center justify-center"
             aria-label="Próximo item"
           >
-            <ChevronRight className="text-[#28b0ff]" size={24} />
+            <ChevronRight className="text-[#28b0ff]" size={16} />
+            <span className="hidden md:inline"><ChevronRight className="text-[#28b0ff]" size={24} /></span>
           </button>
         )}
 
         {/* Container do Carrossel - garantir layout horizontal */}
-        <div className={`overflow-hidden ${showArrows ? 'md:mx-8' : ''}`}> 
+        <div className={`overflow-hidden px-6 md:px-0 ${showArrows ? 'md:mx-8' : ''}`}> 
           <div 
             className="flex transition-transform duration-300 ease-in-out"
             style={{ 
