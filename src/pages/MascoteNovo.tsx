@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, ShoppingCart, Utensils, Hand, Moon, Gamepad2, Shirt, Sparkles, Volume2, VolumeX, Edit2 } from 'lucide-react';
-import Navigation from '../components/Navigation';
-import RacingGame from '../components/RacingGame';
-import ShootingGame from '../components/ShootingGame';
+import Navigation from '../components/common/Navigation';
+import RacingGame from '../components/games/RacingGame';
+import ShootingGame from '../components/games/ShootingGame';
 
 interface AnimalMascot {
   id: string;
@@ -813,7 +813,7 @@ const MascoteNovo = () => {
                         if (coins >= food.price) {
                           setCoins(coins - food.price);
                           setMascotStats(prev => {
-                            let newStats = { ...prev };
+                            const newStats = { ...prev };
                             if (food.effect.includes('Fome')) {
                               newStats.hunger = Math.max(0, prev.hunger - parseInt(food.effect.match(/-(\d+)%/)?.[1] || '0'));
                             }

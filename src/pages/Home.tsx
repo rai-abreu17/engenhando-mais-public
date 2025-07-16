@@ -1,146 +1,151 @@
 
 import React, { useState } from 'react';
-import { Play, BookOpen, Trophy, TrendingUp } from 'lucide-react';
-import Header from '../components/Header';
-import Navigation from '../components/Navigation';
-import ResponsiveCarousel from '../components/ResponsiveCarousel';
+import ResponsiveCarousel from '../components/common/ResponsiveCarousel';
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
+import { MOCK_SUBJECTS } from '../data/mockData';
+import { useSubjects } from '../hooks/useSubjects';
+import { BookOpen, TrendingUp, Trophy } from 'lucide-react';
 
-const Home = () => {
-  const [studyStreak, setStudyStreak] = useState(7);
+const studyStreak = 7;
 
-  const recentVideos = [
-    {
-      id: 1,
-      title: 'Limites e Continuidade',
-      subject: 'Cálculo I',
-      progress: 75,
-      duration: '45 min',
-      thumbnail: '📊'
-    },
-    {
-      id: 2,
-      title: 'Leis de Newton',
-      subject: 'Física I',
-      progress: 30,
-      duration: '38 min',
-      thumbnail: '⚗️'
-    },
-    {
-      id: 3,
-      title: 'Algoritmos de Busca',
-      subject: 'Programação',
-      progress: 60,
-      duration: '52 min',
-      thumbnail: '💻'
-    },
-    {
-      id: 4,
-      title: 'Derivadas Básicas',
-      subject: 'Cálculo I',
-      progress: 20,
-      duration: '35 min',
-      thumbnail: '📈'
-    },
-    {
-      id: 5,
-      title: 'Estruturas de Dados',
-      subject: 'Programação',
-      progress: 85,
-      duration: '42 min',
-      thumbnail: '🗃️'
-    },
-    {
-      id: 6,
-      title: 'Termodinâmica',
-      subject: 'Física II',
-      progress: 45,
-      duration: '48 min',
-      thumbnail: '🌡️'
-    }
-  ];
+const recentVideos = [
+  {
+    id: 1,
+    title: 'Limites Fundamentais',
+    subject: 'Cálculo I',
+    progress: 80,
+    duration: '25 min',
+    thumbnail: '∫',
+  },
+  {
+    id: 2,
+    title: 'Movimento Retilíneo',
+    subject: 'Física I',
+    progress: 60,
+    duration: '30 min',
+    thumbnail: '⚗️',
+  },
+  {
+    id: 3,
+    title: 'Algoritmos Básicos',
+    subject: 'Algoritmos',
+    progress: 90,
+    duration: '40 min',
+    thumbnail: '💻',
+  },
+  {
+    id: 4,
+    title: 'Teorema de Pitágoras',
+    subject: 'Matemática',
+    progress: 50,
+    duration: '20 min',
+    thumbnail: '📐',
+  },
+  {
+    id: 5,
+    title: 'Circuitos Elétricos',
+    subject: 'Física II',
+    progress: 30,
+    duration: '35 min',
+    thumbnail: '⚡',
+  },
+  {
+    id: 6,
+    title: 'Banco de Dados',
+    subject: 'Programação',
+    progress: 70,
+    duration: '45 min',
+    thumbnail: '🗄️',
+  },
+  {
+    id: 7,
+    title: 'Integrais Definidas',
+    subject: 'Cálculo II',
+    progress: 20,
+    duration: '50 min',
+    thumbnail: '∫',
+  },
+];
 
-  const recommendations = [
-    {
-      id: 1,
-      title: 'Derivadas - Conceitos',
-      subject: 'Cálculo I',
-      difficulty: 'Intermediário',
-      thumbnail: '📈'
-    },
-    {
-      id: 2,
-      title: 'Algoritmos de Ordenação',
-      subject: 'Programação',
-      difficulty: 'Avançado',
-      thumbnail: '💻'
-    },
-    {
-      id: 3,
-      title: 'Teorema de Pitágoras',
-      subject: 'Matemática',
-      difficulty: 'Básico',
-      thumbnail: '📐'
-    },
-    {
-      id: 4,
-      title: 'Circuitos Elétricos',
-      subject: 'Física II',
-      difficulty: 'Intermediário',
-      thumbnail: '⚡'
-    },
-    {
-      id: 5,
-      title: 'Banco de Dados',
-      subject: 'Programação',
-      difficulty: 'Intermediário',
-      thumbnail: '🗄️'
-    },
-    {
-      id: 6,
-      title: 'Integrais Definidas',
-      subject: 'Cálculo II',
-      difficulty: 'Avançado',
-      thumbnail: '∫'
-    }
-  ];
+const recommendations = [
+  {
+    id: 1,
+    title: 'Derivadas - Conceitos',
+    subject: 'Cálculo I',
+    difficulty: 'Intermediário',
+    thumbnail: '📈',
+  },
+  {
+    id: 2,
+    title: 'Algoritmos de Ordenação',
+    subject: 'Programação',
+    difficulty: 'Avançado',
+    thumbnail: '🗃️',
+  },
+  {
+    id: 3,
+    title: 'Teorema de Pitágoras',
+    subject: 'Matemática',
+    difficulty: 'Básico',
+    thumbnail: '📐',
+  },
+  {
+    id: 4,
+    title: 'Circuitos Elétricos',
+    subject: 'Física II',
+    difficulty: 'Intermediário',
+    thumbnail: '⚡',
+  },
+  {
+    id: 5,
+    title: 'Banco de Dados',
+    subject: 'Programação',
+    difficulty: 'Intermediário',
+    thumbnail: '🗄️',
+  },
+  {
+    id: 6,
+    title: 'Integrais Definidas',
+    subject: 'Cálculo II',
+    difficulty: 'Avançado',
+    thumbnail: '∫',
+  },
+];
+
+const Home: React.FC = () => {
+  const { filteredSubjects } = useSubjects(MOCK_SUBJECTS);
 
   // Função para renderizar cada item do carrossel "Continue de onde parou"
   const renderRecentVideo = (video: any) => (
-    <div className="bg-[#fffaf0] p-4 rounded-xl shadow-sm border border-[#28b0ff]">
-      <div className="flex items-center space-x-4">
-        <div className="text-3xl">{video.thumbnail}</div>
-        <div className="flex-1">
-          <h3 className="font-medium text-[#030025] text-sm">{video.title}</h3>
-          <p className="text-xs text-[#030025]">{video.subject} • {video.duration}</p>
-          <div className="mt-2">
-            <div className="w-full bg-[#f0f6ff] rounded-full h-2">
-              <div 
-                className="bg-[#0029ff] h-2 rounded-full transition-all duration-300" 
-                style={{ width: `${video.progress}%` }}
-              ></div>
-            </div>
-            <p className="text-xs text-[#030025] mt-1">{video.progress}% completo</p>
+    <div className="bg-[#fffaf0] p-4 rounded-xl shadow-sm border border-[#28b0ff] hover:shadow-md transition-shadow flex items-center gap-4">
+      <div className="text-3xl">{video.thumbnail}</div>
+      <div className="flex-1">
+        <h3 className="font-medium text-[#030025] text-sm">{video.title}</h3>
+        <p className="text-xs text-[#030025]">{video.subject} • {video.duration}</p>
+        <div className="mt-2">
+          <div className="w-full bg-[#f0f6ff] rounded-full h-2">
+            <div className="bg-[#0029ff] h-2 rounded-full transition-all duration-300" style={{ width: `${video.progress}%` }}></div>
           </div>
+          <p className="text-xs text-[#030025] mt-1">{video.progress}% completo</p>
         </div>
-        <button className="bg-[#ff7a28] text-white p-2 rounded-full hover:bg-[#d75200] transition-colors flex items-center justify-center">
-          <Play size={16} />
-        </button>
       </div>
+      <button className="bg-[#ff7a28] text-white p-2 rounded-full hover:bg-[#d75200] transition-colors flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </button>
     </div>
   );
 
   // Função para renderizar cada item do carrossel "Recomendado para você"
   const renderRecommendation = (item: any) => (
-    <div className="bg-[#fffaf0] p-4 rounded-xl shadow-sm border border-[#28b0ff] hover:shadow-md transition-shadow">
-      <div className="flex items-center space-x-3">
-        <div className="text-2xl">{item.thumbnail}</div>
-        <div className="flex-1">
-          <h3 className="font-medium text-[#030025] text-sm">{item.title}</h3>
-          <p className="text-xs text-[#030025]">{item.subject}</p>
-          <span className="inline-block mt-1 px-2 py-1 bg-[#f0f6ff] text-[#001cab] text-xs rounded-full border border-[#28b0ff]">
-            {item.difficulty}
-          </span>
-        </div>
+    <div className="bg-[#fffaf0] p-4 rounded-xl shadow-sm border border-[#28b0ff] hover:shadow-md transition-shadow flex items-center gap-4">
+      <div className="text-3xl">{item.thumbnail}</div>
+      <div className="flex-1">
+        <h3 className="font-medium text-[#030025] text-sm">{item.title}</h3>
+        <p className="text-xs text-[#030025]">{item.subject}</p>
+        <span className="inline-block px-2 py-1 bg-[#f0f6ff] text-[#001cab] text-xs rounded-full border border-[#28b0ff]">{item.difficulty}</span>
+      </div>
+      <div className="flex items-center">
         <BookOpen className="text-[#28b0ff]" size={20} />
       </div>
     </div>

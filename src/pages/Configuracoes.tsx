@@ -2,8 +2,8 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { ChevronRight, User, Bell, Smartphone, HelpCircle, LogOut, Building, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Navigation from '../components/Navigation';
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
 
 const Configuracoes = () => {
   const navigate = useNavigate();

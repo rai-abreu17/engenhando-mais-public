@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Heart, Utensils, Shirt, Gamepad2, ShoppingCart, Star, Volume2, VolumeX, RotateCcw } from 'lucide-react';
-import Header from '../components/Header';
-import Navigation from '../components/Navigation';
-import QuizGame from '../components/QuizGame';
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
+import QuizGame from '../components/games/QuizGame';
 
 interface MascotType {
   id: string;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useResponsiveItems } from '../hooks/useResponsiveItems';
+import { useResponsiveItems } from '../../hooks/useResponsiveItems';
 
-interface ResponsiveCarouselProps {
-  items: any[];
-  renderItem: (item: any, index: number) => React.ReactNode;
+interface ResponsiveCarouselProps<T = unknown> {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
   title: string;
   itemsPerView?: {
     mobile: number;
@@ -13,12 +13,12 @@ interface ResponsiveCarouselProps {
   };
 }
 
-const ResponsiveCarousel: React.FC<ResponsiveCarouselProps> = ({ 
+const ResponsiveCarousel = <T extends { id?: string | number }>({ 
   items, 
   renderItem, 
   title,
   itemsPerView = { mobile: 1, tablet: 2, desktop: 3 }
-}) => {
+}: ResponsiveCarouselProps<T>) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsToShow = useResponsiveItems(itemsPerView);
 
@@ -48,16 +48,15 @@ const ResponsiveCarousel: React.FC<ResponsiveCarouselProps> = ({
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold text-[#030025]">{title}</h2>
       </div>
-      
       <div className="relative">
         {/* Seta Esquerda - Visível apenas em telas médias e maiores */}
         {showArrows && (
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-engenha-light-cream rounded-full p-2 shadow-md hover:shadow-lg transition-shadow hidden md:flex items-center justify-center"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-[#fffaf0] border border-[#28b0ff] rounded-full p-2 shadow-md hover:shadow-lg transition-shadow hidden md:flex items-center justify-center"
             aria-label="Item anterior"
           >
-            <ChevronLeft className="text-engenha-sky-blue" size={20} />
+            <ChevronLeft className="text-[#28b0ff]" size={24} />
           </button>
         )}
 
@@ -65,15 +64,15 @@ const ResponsiveCarousel: React.FC<ResponsiveCarouselProps> = ({
         {showArrows && (
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-engenha-light-cream rounded-full p-2 shadow-md hover:shadow-lg transition-shadow hidden md:flex items-center justify-center"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-[#fffaf0] border border-[#28b0ff] rounded-full p-2 shadow-md hover:shadow-lg transition-shadow hidden md:flex items-center justify-center"
             aria-label="Próximo item"
           >
-            <ChevronRight className="text-engenha-sky-blue" size={20} />
+            <ChevronRight className="text-[#28b0ff]" size={24} />
           </button>
         )}
-        
-        {/* Container do Carrossel */}
-        <div className={`overflow-hidden ${showArrows ? 'md:mx-8' : ''}`}>
+
+        {/* Container do Carrossel - garantir layout horizontal */}
+        <div className={`overflow-hidden ${showArrows ? 'md:mx-8' : ''}`}> 
           <div 
             className="flex transition-transform duration-300 ease-in-out"
             style={{ 
@@ -83,10 +82,8 @@ const ResponsiveCarousel: React.FC<ResponsiveCarouselProps> = ({
             {items.map((item, index) => (
               <div
                 key={item.id || index}
-                className={`flex-shrink-0 px-2`}
-                style={{ 
-                  width: `${100 / itemsToShow}%`
-                }}
+                className="flex-shrink-0 px-2"
+                style={{ width: `${100 / itemsToShow}%` }}
               >
                 {renderItem(item, index)}
               </div>
@@ -103,8 +100,8 @@ const ResponsiveCarousel: React.FC<ResponsiveCarouselProps> = ({
                 onClick={() => setCurrentIndex(index)}
                 className={`w-2 h-2 rounded-full transition-colors ${
                   index === currentIndex 
-                    ? 'bg-engenha-blue' 
-                    : 'bg-engenha-sky-blue opacity-50'
+                    ? 'bg-[#0029ff]' 
+                    : 'bg-[#28b0ff] opacity-50'
                 }`}
                 aria-label={`Ir para slide ${index + 1}`}
               />

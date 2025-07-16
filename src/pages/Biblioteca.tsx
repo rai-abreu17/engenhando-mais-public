@@ -1,82 +1,32 @@
 
+/**
+ * Biblioteca Page Component
+ * 
+ * Displays the library of subjects and videos available to the user.
+ * Includes search functionality and filtering options.
+ */
+
 import React, { useState } from 'react';
 import { Search, Star, Play, Clock } from 'lucide-react';
-import Header from '../components/Header';
-import Navigation from '../components/Navigation';
 
-const Biblioteca = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('Todas');
-  const [subjects, setSubjects] = useState([
-    {
-      id: 1,
-      name: 'Cálculo I',
-      icon: '∫',
-      progress: 75,
-      videoCount: 24,
-      color: 'bg-[#0029ff]',
-      isMine: true,
-      isFavorite: true,
-      lastAccessed: new Date('2024-01-15')
-    },
-    {
-      id: 2,
-      name: 'Física I',
-      icon: '⚗️',
-      progress: 45,
-      videoCount: 18,
-      color: 'bg-[#28b0ff]',
-      isMine: true,
-      isFavorite: false,
-      lastAccessed: new Date('2024-01-14')
-    },
-    {
-      id: 3,
-      name: 'Algoritmos',
-      icon: '💻',
-      progress: 60,
-      videoCount: 32,
-      color: 'bg-[#ff7a28]',
-      isMine: true,
-      isFavorite: true,
-      lastAccessed: new Date('2024-01-13')
-    },
-    {
-      id: 4,
-      name: 'Álgebra Linear',
-      icon: '📊',
-      progress: 30,
-      videoCount: 20,
-      color: 'bg-[#d75200]',
-      isMine: true,
-      isFavorite: false,
-      lastAccessed: new Date('2024-01-12')
-    },
-    {
-      id: 5,
-      name: 'Química Geral',
-      icon: '🧪',
-      progress: 0,
-      videoCount: 15,
-      color: 'bg-[#ffb646]',
-      isMine: false,
-      isFavorite: false,
-      lastAccessed: null
-    },
-    {
-      id: 6,
-      name: 'Estatística',
-      icon: '📈',
-      progress: 0,
-      videoCount: 22,
-      color: 'bg-[#001cab]',
-      isMine: false,
-      isFavorite: false,
-      lastAccessed: null
-    }
-  ]);
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
+import { Subject, Video, FilterType } from '../types/index';
+import { COLORS } from '../constants/index';
+import { MOCK_SUBJECTS } from '../data/mockData';
+import { useSubjects } from '../hooks/useSubjects';
 
-  const recentVideos = [
+const Biblioteca: React.FC = () => {
+  const {
+    filteredSubjects,
+    searchTerm,
+    setSearchTerm,
+    selectedFilter,
+    setSelectedFilter,
+    toggleFavorite,
+  } = useSubjects(MOCK_SUBJECTS);
+
+  const recentVideos: Video[] = [
     {
       id: 1,
       title: 'Introdução aos Limites',
@@ -109,50 +59,7 @@ const Biblioteca = () => {
     }
   ];
 
-  const filters = ['Todas', 'Minhas Disciplinas', 'Favoritas', 'Recentes'];
-
-  // Filter subjects based on selected filter and search term
-  const getFilteredSubjects = () => {
-    let filtered = subjects;
-
-    // Apply filter
-    switch (selectedFilter) {
-      case 'Minhas Disciplinas':
-        filtered = filtered.filter(subject => subject.isMine);
-        break;
-      case 'Favoritas':
-        filtered = filtered.filter(subject => subject.isFavorite);
-        break;
-      case 'Recentes':
-        filtered = filtered.filter(subject => subject.lastAccessed)
-          .sort((a, b) => b.lastAccessed!.getTime() - a.lastAccessed!.getTime());
-        break;
-      default:
-        // 'Todas' - no additional filtering
-        break;
-    }
-
-    // Apply search term
-    if (searchTerm.trim()) {
-      filtered = filtered.filter(subject =>
-        subject.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    return filtered;
-  };
-
-  const toggleFavorite = (subjectId: number) => {
-    setSubjects(prevSubjects => 
-      prevSubjects.map(subject =>
-        subject.id === subjectId 
-          ? { ...subject, isFavorite: !subject.isFavorite }
-          : subject
-      )
-    );
-  };
-
-  const filteredSubjects = getFilteredSubjects();
+  const filters: FilterType[] = ['Todas', 'Minhas Disciplinas', 'Favoritas', 'Recentes'];
 
   return (
     <div className="min-h-screen bg-[#f0f6ff] pb-20">

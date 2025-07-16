@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import Navigation from '../components/Navigation';
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
 
 const Mascote = () => {
   const [mascotStats, setMascotStats] = useState({

@@ -1,13 +1,13 @@
 
 import React, { useEffect } from 'react';
-import { useGameState } from './racing/useGameState';
-import { LANES, GAME_CONFIG } from './racing/constants';
-import PlayerCar from './racing/PlayerCar';
-import OpponentCars from './racing/OpponentCars';
-import QuestionOverlay from './racing/QuestionOverlay';
-import GameHeader from './racing/GameHeader';
-import GameControls from './racing/GameControls';
-import GameEndScreen from './racing/GameEndScreen';
+import { useGameState } from '../../components/racing/useGameState';
+import { LANES, GAME_CONFIG } from '../../components/racing/constants';
+import PlayerCar from '../../components/racing/PlayerCar';
+import OpponentCars from '../../components/racing/OpponentCars';
+import QuestionOverlay from '../../components/racing/QuestionOverlay';
+import GameHeader from '../../components/racing/GameHeader';
+import GameControls from '../../components/racing/GameControls';
+import GameEndScreen from '../../components/racing/GameEndScreen';
 
 interface RacingGameProps {
   onGameEnd: (score: number, coins: number) => void;

@@ -1,6 +1,7 @@
 import React, { useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SocialButton {
   name: string;
@@ -14,6 +15,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPassword }) => {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -71,7 +73,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
     }
     
     console.log('Login submitted:', formData);
-    localStorage.setItem('engenha_token', 'authenticated');
+    login('authenticated');
     navigate('/home');
   };
 
