@@ -84,10 +84,12 @@ const ResponsiveCarousel = <T extends { id?: string | number }>({
             {items.map((item, index) => (
               <div
                 key={item.id || index}
-                className="flex-shrink-0 px-2"
+                className="flex-shrink-0 px-2 h-full flex items-center"
                 style={{ width: `${100 / itemsToShow}%` }}
               >
-                {renderItem(item, index)}
+                <div className="w-full h-[170px] md:h-[180px] flex flex-col justify-center">
+                  {renderItem(item, index)}
+                </div>
               </div>
             ))}
           </div>
@@ -95,7 +97,7 @@ const ResponsiveCarousel = <T extends { id?: string | number }>({
 
         {/* Indicadores - Visíveis apenas no mobile quando há mais itens que os visíveis */}
         {showArrows && itemsToShow === 1 && (
-          <div className="flex justify-center mt-4 space-x-2 md:hidden">
+          <div className="flex justify-center space-x-2 md:hidden">
             {Array.from({ length: items.length }).map((_, index) => (
               <button
                 key={index}
