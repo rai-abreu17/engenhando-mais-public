@@ -10,6 +10,14 @@ import Biblioteca from "./pages/Biblioteca";
 import MascoteNovo from './pages/MascoteNovo';
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
+
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import TeacherManagement from './pages/admin/TeacherManagement';
+import ClassManagement from './pages/admin/ClassManagement';
+import LessonManagement from './pages/admin/LessonManagement';
+import ReportsPage from './pages/admin/ReportsPage';
+import AdminSettings from './pages/admin/AdminSettings';
 import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
@@ -39,6 +47,15 @@ const App = () => {
             <Route path="/biblioteca" element={<Biblioteca />} />
             <Route path="/mascote" element={<MascoteNovo />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/teachers" element={<TeacherManagement />} />
+            <Route path="/admin/classes" element={<ClassManagement />} />
+            <Route path="/admin/lessons" element={<LessonManagement />} />
+            <Route path="/admin/reports" element={<ReportsPage />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
+            
             <Route path="*" element={<Login />} />
           </Routes>
         </BrowserRouter>
