@@ -23,12 +23,12 @@ const GameEndScreen: React.FC<GameEndScreenProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-6 mx-4 max-w-md w-full">
         <div className="text-center">
-          <Trophy className="mx-auto text-yellow-500 mb-4" size={48} />
+          <Trophy className="mx-auto text-[#ffb646] mb-4" size={48} />
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
             Corrida Finalizada!
           </h2>
           
-          <div className="text-red-600 mb-3">
+          <div className="text-[#d75200] mb-3">
             {gameOverReason}
           </div>
           
@@ -43,7 +43,7 @@ const GameEndScreen: React.FC<GameEndScreenProps> = ({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-700">Moedas ganhas:</span>
-              <span className="font-bold text-yellow-600">🪙 {coinsEarned}</span>
+              <span className="font-bold text-[#ffb646]">🪙 {coinsEarned}</span>
             </div>
           </div>
 

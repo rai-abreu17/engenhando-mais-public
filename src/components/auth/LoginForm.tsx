@@ -50,28 +50,36 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validações
     const newErrors = {
       email: '',
       password: ''
     };
-    
+
     if (!formData.email) {
       newErrors.email = 'Email é obrigatório';
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'Email inválido';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Senha é obrigatória';
     }
-    
+
     if (newErrors.email || newErrors.password) {
       setErrors(newErrors);
       return;
     }
-    
+
+    // Login administrador
+    if (formData.email === 'Administrador@email.com' && formData.password === '1234') {
+      login('admin');
+      navigate('/admin/dashboard');
+      return;
+    }
+
+    // Login aluno
     console.log('Login submitted:', formData);
     login('authenticated');
     navigate('/home');

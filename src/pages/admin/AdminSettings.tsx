@@ -85,7 +85,7 @@ const AdminSettings: React.FC = () => {
       case 'inactive':
         return <Badge className="bg-red-100 text-red-800 border-red-200">Inativo</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pendente</Badge>;
+        return <Badge className="bg-[#fffaf0] text-[#d75200] border-[#ff7a28]">Pendente</Badge>;
       default:
         return <Badge variant="secondary">Desconhecido</Badge>;
     }

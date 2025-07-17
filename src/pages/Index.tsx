@@ -14,10 +14,10 @@ const Index = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-[#f0f6ff] flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">ENGENHA+</h1>
-        <p className="text-gray-600">Carregando...</p>
+        <h1 className="text-2xl font-bold text-[#030025] mb-4">ENGENHA+</h1>
+        <p className="text-[#030025]">Carregando...</p>
       </div>
     </div>
   );

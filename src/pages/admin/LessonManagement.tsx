@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,14 +24,49 @@ import {
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/components/admin/AdminNavigation';
+import RejectLessonModal from '@/components/admin/RejectLessonModal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '@/components/ui/dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+
+interface Lesson {
+  id: number;
+  title: string;
+  subject: string;
+  teacher: string;
+  class: string;
+  duration: number;
+  type: 'video' | 'practical' | 'theoretical';
+  status: 'approved' | 'pending' | 'rejected';
+  views: number;
+  createdAt: string;
+  scheduledFor: string;
+  description: string;
+  rejectionComment?: string;
+}
 
 const LessonManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterSubject, setFilterSubject] = useState('all');
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [selectedLessonForRejection, setSelectedLessonForRejection] = useState<{id: number, title: string} | null>(null);
 
   // Mock data - em produção viria de APIs
-  const lessons = [
+  const [lessons, setLessons] = useState<Lesson[]>([
     {
       id: 1,
       title: 'Introdução ao Cálculo Diferencial',
@@ -85,29 +121,69 @@ const LessonManagement: React.FC = () => {
       views: 0,
       createdAt: '2024-01-16',
       scheduledFor: '2024-01-25',
-      description: 'Tipos de reações orgânicas e mecanismos de reação'
+      description: 'Tipos de reações orgânicas e mecanismos de reação',
+      rejectionComment: 'A aula precisa de mais exemplos práticos e experimentos demonstrativos. O conteúdo teórico está bom, mas falta aplicação prática dos conceitos apresentados.'
+    },
+    {
+      id: 5,
+      title: 'Álgebra Linear - Espaços Vetoriais',
+      subject: 'Matemática',
+      teacher: 'Prof. Maria Silva',
+      class: 'Álgebra Linear - Turma A',
+      duration: 90,
+      type: 'video',
+      status: 'pending',
+      views: 0,
+      createdAt: '2024-01-18',
+      scheduledFor: '2024-01-28',
+      description: 'Introdução aos espaços vetoriais e suas propriedades fundamentais'
     }
-  ];
+  ]);
 
   const filteredLessons = lessons.filter(lesson => {
     const matchesSearch = lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lesson.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lesson.teacher.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = filterStatus === 'all' || lesson.status === filterStatus;
-    const matchesSubject = filterSubject === 'all' || lesson.subject === filterSubject;
+    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(lesson.status);
+    const matchesSubject = selectedSubjects.length === 0 || selectedSubjects.includes(lesson.subject);
     
     return matchesSearch && matchesStatus && matchesSubject;
   });
 
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const handleSubjectToggle = (subject: string) => {
+    setSelectedSubjects(prev => 
+      prev.includes(subject) 
+        ? prev.filter(s => s !== subject)
+        : [...prev, subject]
+    );
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedStatuses([]);
+    setSelectedSubjects([]);
+    setIsFilterOpen(false);
+  };
+
+  const hasActiveFilters = searchTerm || selectedStatuses.length > 0 || selectedSubjects.length > 0;
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800 border-green-200">Aprovada</Badge>;
+        return <Badge className="bg-[#f0f6ff] text-[#001cab] border-[#28b0ff]">Aprovada</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pendente</Badge>;
+        return <Badge className="bg-[#fffaf0] text-[#ff7a28] border-[#ffb646]">Pendente</Badge>;
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-800 border-red-200">Rejeitada</Badge>;
+        return <Badge className="bg-[#fffaf0] text-[#d75200] border-[#d75200]">Rejeitada</Badge>;
       default:
         return <Badge variant="secondary">Desconhecido</Badge>;
     }
@@ -140,11 +216,59 @@ const LessonManagement: React.FC = () => {
   };
 
   const handleApprove = (lessonId: number) => {
-    console.log(`Approving lesson ${lessonId}`);
+    const lesson = lessons.find(l => l.id === lessonId);
+    setLessons(prev => prev.map(lesson => 
+      lesson.id === lessonId 
+        ? { ...lesson, status: 'approved', rejectionComment: undefined }
+        : lesson
+    ));
+    
+    // Feedback visual para o usuário
+    console.log(`✅ Aula "${lesson?.title}" aprovada com sucesso!`);
+    
+    // Aqui você faria a chamada para a API
+    // try {
+    //   await api.approveLesson(lessonId);
+    //   // Mostrar toast de sucesso
+    // } catch (error) {
+    //   // Reverter estado e mostrar erro
+    // }
   };
 
   const handleReject = (lessonId: number) => {
-    console.log(`Rejecting lesson ${lessonId}`);
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (lesson) {
+      setSelectedLessonForRejection({ id: lessonId, title: lesson.title });
+      setShowRejectModal(true);
+    }
+  };
+
+  const handleConfirmReject = (lessonId: number, rejectionComment: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    setLessons(prev => prev.map(lesson => 
+      lesson.id === lessonId 
+        ? { ...lesson, status: 'rejected', rejectionComment }
+        : lesson
+    ));
+    setShowRejectModal(false);
+    setSelectedLessonForRejection(null);
+    
+    // Feedback visual para o usuário
+    console.log(`❌ Aula "${lesson?.title}" rejeitada. Comentário: ${rejectionComment}`);
+    
+    // Aqui você faria a chamada para a API
+    // try {
+    //   await api.rejectLesson(lessonId, rejectionComment);
+    //   // Enviar notificação para o professor
+    //   // Mostrar toast de sucesso
+    // } catch (error) {
+    //   // Reverter estado e mostrar erro
+    // }
+  };
+
+  const handleCloseRejectModal = () => {
+    setShowRejectModal(false);
+    setSelectedLessonForRejection(null);
   };
 
   const subjects = ['Matemática', 'Física', 'Química', 'Programação'];
@@ -170,29 +294,97 @@ const LessonManagement: React.FC = () => {
           </div>
           
           <div className="flex gap-2">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="approved">Aprovadas</option>
-              <option value="pending">Pendentes</option>
-              <option value="rejected">Rejeitadas</option>
-            </select>
+            {/* Botão de Filtros */}
+            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filtros
+                  {hasActiveFilters && (
+                    <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
+                      {selectedStatuses.length + selectedSubjects.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-[#030025]">Filtrar Aulas</h4>
+                    {hasActiveFilters && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearFilters}
+                        className="h-6 px-2 text-xs text-[#0029ff]"
+                      >
+                        Limpar tudo
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-medium text-[#001cab]">Status</h5>
+                    {[
+                      { value: 'approved', label: 'Aprovadas', count: lessons.filter(l => l.status === 'approved').length },
+                      { value: 'pending', label: 'Pendentes', count: lessons.filter(l => l.status === 'pending').length },
+                      { value: 'rejected', label: 'Rejeitadas', count: lessons.filter(l => l.status === 'rejected').length }
+                    ].map((status) => (
+                      <div key={status.value} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={status.value}
+                          checked={selectedStatuses.includes(status.value)}
+                          onCheckedChange={() => handleStatusToggle(status.value)}
+                        />
+                        <label 
+                          htmlFor={status.value}
+                          className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                        >
+                          <span className="text-[#030025]">{status.label}</span>
+                          <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                            {status.count}
+                          </Badge>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
 
-            <select
-              value={filterSubject}
-              onChange={(e) => setFilterSubject(e.target.value)}
-              className="px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none"
-            >
-              <option value="all">Todas as Matérias</option>
-              {subjects.map(subject => (
-                <option key={subject} value={subject}>{subject}</option>
-              ))}
-            </select>
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-medium text-[#001cab]">Matérias</h5>
+                    {subjects.map((subject) => (
+                      <div key={subject} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={subject}
+                          checked={selectedSubjects.includes(subject)}
+                          onCheckedChange={() => handleSubjectToggle(subject)}
+                        />
+                        <label 
+                          htmlFor={subject}
+                          className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                        >
+                          <span className="text-[#030025]">{subject}</span>
+                          <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                            {lessons.filter(l => l.subject === subject).length}
+                          </Badge>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             
-            <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white">
+            <Button 
+              className="bg-[#0029ff] hover:bg-[#001cab] text-white"
+              onClick={() => navigate('/admin/lessons/add')}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Nova Aula
             </Button>
@@ -229,6 +421,45 @@ const LessonManagement: React.FC = () => {
 
         {/* Lista de Aulas */}
         <section>
+          {/* Resultado da busca/filtro */}
+          {hasActiveFilters && (
+            <div className="mb-4 p-3 bg-[#f0f6ff] border border-[#28b0ff] rounded-lg">
+              <p className="text-sm text-[#001cab]">
+                {filteredLessons.length === 0 ? (
+                  <>Nenhum resultado encontrado</>
+                ) : (
+                  <>
+                    Mostrando <strong>{filteredLessons.length}</strong> de <strong>{lessons.length}</strong> {filteredLessons.length === 1 ? 'aula' : 'aulas'}
+                    {searchTerm && <> para "<strong>{searchTerm}</strong>"</>}
+                    {selectedStatuses.length > 0 && (
+                      <> com status: <strong>
+                        {selectedStatuses.map(status => 
+                          status === 'approved' ? 'Aprovadas' : 
+                          status === 'pending' ? 'Pendentes' : 'Rejeitadas'
+                        ).join(', ')}
+                      </strong></>
+                    )}
+                    {selectedSubjects.length > 0 && (
+                      <> nas matérias: <strong>
+                        {selectedSubjects.join(', ')}
+                      </strong></>
+                    )}
+                  </>
+                )}
+              </p>
+              {hasActiveFilters && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="mt-2 h-6 px-2 text-xs text-[#0029ff]"
+                  onClick={clearFilters}
+                >
+                  Limpar filtros
+                </Button>
+              )}
+            </div>
+          )}
+
           <div className="space-y-4">
             {filteredLessons.map((lesson) => (
               <Card key={lesson.id} className="bg-[#fffaf0] border-[#28b0ff] hover:shadow-md transition-shadow">
@@ -258,7 +489,7 @@ const LessonManagement: React.FC = () => {
                       <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm" className="border-[#d75200] text-[#d75200] hover:bg-red-50">
+                      <Button variant="outline" size="sm" className="border-[#d75200] text-[#d75200] hover:bg-[#fffaf0]">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -303,7 +534,7 @@ const LessonManagement: React.FC = () => {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="border-[#d75200] text-[#d75200] hover:bg-red-50"
+                        className="border-[#d75200] text-[#d75200] hover:bg-[#fffaf0]"
                         onClick={() => handleReject(lesson.id)}
                       >
                         <X className="h-4 w-4 mr-2" />
@@ -326,19 +557,29 @@ const LessonManagement: React.FC = () => {
                   )}
 
                   {lesson.status === 'rejected' && (
-                    <div className="flex items-center justify-between pt-3 border-t border-[#e0e7ff]">
+                    <div className="pt-3 border-t border-[#e0e7ff] space-y-3">
                       <div className="flex items-center space-x-2 text-sm text-[#d75200]">
                         <X className="h-4 w-4" />
                         <span>Aula rejeitada - requer revisão</span>
                       </div>
-                      <Button 
-                        size="sm" 
-                        className="bg-[#00a86b] hover:bg-[#008853] text-white"
-                        onClick={() => handleApprove(lesson.id)}
-                      >
-                        <Check className="h-4 w-4 mr-2" />
-                        Revisar e Aprovar
-                      </Button>
+                      
+                      {lesson.rejectionComment && (
+                        <div className="bg-[#fff4f4] border border-[#ffcdd2] rounded-lg p-3">
+                          <h4 className="text-sm font-medium text-[#d32f2f] mb-2">Comentários da Revisão:</h4>
+                          <p className="text-sm text-[#b71c1c] leading-relaxed">{lesson.rejectionComment}</p>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-end">
+                        <Button 
+                          size="sm" 
+                          className="bg-[#00a86b] hover:bg-[#008853] text-white"
+                          onClick={() => handleApprove(lesson.id)}
+                        >
+                          <Check className="h-4 w-4 mr-2" />
+                          Revisar e Aprovar
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -355,6 +596,17 @@ const LessonManagement: React.FC = () => {
           )}
         </section>
       </div>
+
+      {/* Modal para rejeitar aula */}
+      {selectedLessonForRejection && (
+        <RejectLessonModal
+          isOpen={showRejectModal}
+          onClose={handleCloseRejectModal}
+          onConfirm={handleConfirmReject}
+          lessonId={selectedLessonForRejection.id}
+          lessonTitle={selectedLessonForRejection.title}
+        />
+      )}
 
       <AdminNavigation />
     </div>

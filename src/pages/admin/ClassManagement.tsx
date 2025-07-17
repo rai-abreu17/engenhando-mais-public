@@ -3,54 +3,57 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
+import {
   Plus, 
   Search, 
-  Users, 
   Clock, 
-  Calendar,
-  MapPin,
   Edit,
   Trash2,
-  UserPlus,
   BookOpen,
-  GraduationCap
+  Filter,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/components/admin/AdminNavigation';
+import AddClass from '@/components/admin/AddClass';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '@/components/ui/dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
 
 const ClassManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterPeriod, setFilterPeriod] = useState('all');
-
-  // Mock data - em produção viria de APIs
-  const classes = [
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [showAddClass, setShowAddClass] = useState(false);
+  const [classes, setClasses] = useState([
     {
       id: 1,
       name: 'Cálculo I - Turma A',
       subject: 'Matemática',
       teacher: 'Prof. Maria Silva',
-      period: 'Manhã',
-      schedule: 'Seg/Qua/Sex - 08:00-10:00',
-      room: 'Sala 101',
       studentsEnrolled: 25,
-      maxStudents: 30,
-      startDate: '2024-02-01',
-      endDate: '2024-06-30',
+      lessonsRecorded: 8,
       status: 'active'
     },
     {
       id: 2,
       name: 'Física Experimental',
-      subject: 'Física',
+      subject: 'Física', 
       teacher: 'Prof. João Santos',
-      period: 'Tarde',
-      schedule: 'Ter/Qui - 14:00-16:00',
-      room: 'Lab 202',
       studentsEnrolled: 18,
-      maxStudents: 20,
-      startDate: '2024-02-01',
-      endDate: '2024-06-30',
+      lessonsRecorded: 12,
       status: 'active'
     },
     {
@@ -58,13 +61,8 @@ const ClassManagement: React.FC = () => {
       name: 'Química Orgânica',
       subject: 'Química',
       teacher: 'Prof. Ana Costa',
-      period: 'Noite',
-      schedule: 'Seg/Qua - 19:00-21:00',
-      room: 'Lab 301',
       studentsEnrolled: 0,
-      maxStudents: 25,
-      startDate: '2024-03-01',
-      endDate: '2024-07-15',
+      lessonsRecorded: 0,
       status: 'pending'
     },
     {
@@ -72,116 +70,222 @@ const ClassManagement: React.FC = () => {
       name: 'Programação Avançada',
       subject: 'Tecnologia',
       teacher: 'Prof. Carlos Lima',
-      period: 'Manhã',
-      schedule: 'Ter/Qui/Sex - 09:00-11:00',
-      room: 'Lab Info 401',
       studentsEnrolled: 22,
-      maxStudents: 25,
-      startDate: '2024-01-15',
-      endDate: '2024-05-30',
+      lessonsRecorded: 15,
       status: 'active'
     }
-  ];
+  ]);
 
   const filteredClasses = classes.filter(classItem => {
     const matchesSearch = classItem.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          classItem.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          classItem.teacher.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesFilter = filterPeriod === 'all' || classItem.period.toLowerCase() === filterPeriod;
+    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(classItem.status);
     
-    return matchesSearch && matchesFilter;
+    return matchesSearch && matchesStatus;
   });
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedStatuses([]);
+    setIsFilterOpen(false);
+  };
+
+  const hasActiveFilters = searchTerm || selectedStatuses.length > 0;
+
+  const handleAddClass = (newClass: any) => {
+    setClasses(prev => [...prev, newClass]);
+    setShowAddClass(false);
+  };
+
+  const handleCancelAddClass = () => {
+    setShowAddClass(false);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
         return <Badge className="bg-green-100 text-green-800 border-green-200">Ativa</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pendente</Badge>;
-      case 'completed':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Concluída</Badge>;
+        return <Badge className="bg-[#fffaf0] text-[#d75200] border-[#ff7a28]">Pendente</Badge>;
+      case 'inactive':
+        return <Badge className="bg-red-100 text-red-800 border-red-200">Inativa</Badge>;
       default:
         return <Badge variant="secondary">Desconhecido</Badge>;
     }
   };
 
-  const getOccupancyColor = (enrolled: number, max: number) => {
-    const percentage = (enrolled / max) * 100;
-    if (percentage >= 90) return 'bg-red-500';
-    if (percentage >= 70) return 'bg-yellow-500';
-    return 'bg-green-500';
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <CheckCircle className="h-4 w-4 text-[#0029ff]" />;
+      case 'pending':
+        return <Clock className="h-4 w-4 text-[#ff7a28]" />;
+      case 'inactive':
+        return <XCircle className="h-4 w-4 text-[#d75200]" />;
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#f0f6ff] pb-20">
+      <Dialog open={showAddClass} onOpenChange={setShowAddClass}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Criar Nova Turma</DialogTitle>
+            <DialogDescription>Cadastre uma nova turma no sistema</DialogDescription>
+          </DialogHeader>
+          <AddClass 
+            onSave={handleAddClass} 
+            onCancel={handleCancelAddClass}
+          />
+        </DialogContent>
+      </Dialog>
+
       <Header 
         title="Gerenciar Turmas"
-        subtitle="Crie e gerencie turmas e horários"
+        subtitle="Crie e gerencie turmas e aulas gravadas"
       />
 
       <div className="px-6 space-y-6">
-        {/* Barra de Ações */}
-        <section className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-4 w-4" />
-            <Input
-              placeholder="Buscar por nome, matéria ou professor..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
-            />
+        {/* Cabeçalho com Título e Ação Principal */}
+        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-[#030025]">Turmas Cadastradas</h2>
+            <p className="text-sm text-[#001cab]">{classes.length} {classes.length === 1 ? 'turma' : 'turmas'} no total</p>
           </div>
-          
-          <div className="flex gap-2">
-            <select
-              value={filterPeriod}
-              onChange={(e) => setFilterPeriod(e.target.value)}
-              className="px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none"
-            >
-              <option value="all">Todos os Períodos</option>
-              <option value="manhã">Manhã</option>
-              <option value="tarde">Tarde</option>
-              <option value="noite">Noite</option>
-            </select>
-            
-            <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Turma
-            </Button>
-          </div>
+          <Button 
+            className="bg-[#0029ff] hover:bg-[#001cab] text-white"
+            onClick={() => setShowAddClass(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Turma
+          </Button>
         </section>
 
-        {/* Estatísticas Rápidas */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-[#fffaf0] border-[#28b0ff]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-[#0029ff]">{classes.filter(c => c.status === 'active').length}</p>
-              <p className="text-sm text-[#001cab]">Turmas Ativas</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-[#fffaf0] border-[#28b0ff]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-[#ff7a28]">{classes.reduce((sum, c) => sum + c.studentsEnrolled, 0)}</p>
-              <p className="text-sm text-[#001cab]">Total Alunos</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-[#fffaf0] border-[#28b0ff]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-[#d75200]">{classes.reduce((sum, c) => sum + c.maxStudents, 0)}</p>
-              <p className="text-sm text-[#001cab]">Vagas Totais</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-[#fffaf0] border-[#28b0ff]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-[#0029ff]">{Math.round((classes.reduce((sum, c) => sum + c.studentsEnrolled, 0) / classes.reduce((sum, c) => sum + c.maxStudents, 0)) * 100)}%</p>
-              <p className="text-sm text-[#001cab]">Ocupação</p>
-            </CardContent>
-          </Card>
+        {/* Barra de Busca e Filtros */}
+        <section className="space-y-4">
+          <div className="flex gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-4 w-4" />
+              <Input
+                placeholder="Buscar por nome, matéria ou professor..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+              />
+            </div>
+            
+            {/* Botão de Filtros */}
+            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filtros
+                  {hasActiveFilters && (
+                    <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
+                      {selectedStatuses.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-[#030025]">Filtrar Turmas</h4>
+                    {hasActiveFilters && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearFilters}
+                        className="h-6 px-2 text-xs text-[#0029ff]"
+                      >
+                        Limpar tudo
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-medium text-[#001cab]">Status</h5>
+                    {[
+                      { value: 'active', label: 'Ativas', count: classes.filter(c => c.status === 'active').length },
+                      { value: 'pending', label: 'Pendentes', count: classes.filter(c => c.status === 'pending').length },
+                      { value: 'completed', label: 'Concluídas', count: classes.filter(c => c.status === 'completed').length }
+                    ].map((status) => (
+                      <div key={status.value} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={status.value}
+                          checked={selectedStatuses.includes(status.value)}
+                          onCheckedChange={() => handleStatusToggle(status.value)}
+                        />
+                        <label 
+                          htmlFor={status.value}
+                          className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                        >
+                          <span className="text-[#030025]">{status.label}</span>
+                          <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                            {status.count}
+                          </Badge>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </section>
 
         {/* Lista de Turmas */}
         <section>
+          {/* Resultado da busca/filtro */}
+          {hasActiveFilters && (
+            <div className="mb-4 p-3 bg-[#f0f6ff] border border-[#28b0ff] rounded-lg">
+              <p className="text-sm text-[#001cab]">
+                {filteredClasses.length === 0 ? (
+                  <>Nenhum resultado encontrado</>
+                ) : (
+                  <>
+                    Mostrando <strong>{filteredClasses.length}</strong> de <strong>{classes.length}</strong> {filteredClasses.length === 1 ? 'turma' : 'turmas'}
+                    {searchTerm && <> para "<strong>{searchTerm}</strong>"</>}
+                    {selectedStatuses.length > 0 && (
+                      <> com status: <strong>
+                        {selectedStatuses.map(status => 
+                          status === 'active' ? 'Ativas' : 
+                          status === 'pending' ? 'Pendentes' : 'Concluídas'
+                        ).join(', ')}
+                      </strong></>
+                    )}
+                  </>
+                )}
+              </p>
+              {hasActiveFilters && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="mt-2 h-6 px-2 text-xs text-[#0029ff]"
+                  onClick={clearFilters}
+                >
+                  Limpar filtros
+                </Button>
+              )}
+            </div>
+          )}
           <div className="space-y-4">
             {filteredClasses.map((classItem) => (
               <Card key={classItem.id} className="bg-[#fffaf0] border-[#28b0ff] hover:shadow-md transition-shadow">
@@ -190,6 +294,7 @@ const ClassManagement: React.FC = () => {
                     <div>
                       <CardTitle className="text-lg text-[#030025] flex items-center space-x-2">
                         <span>{classItem.name}</span>
+                        {getStatusIcon(classItem.status)}
                         {getStatusBadge(classItem.status)}
                       </CardTitle>
                       <CardDescription className="text-[#001cab] mt-1">
@@ -208,66 +313,25 @@ const ClassManagement: React.FC = () => {
                 </CardHeader>
 
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {/* Informações de Horário */}
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-sm text-[#001cab]">
-                        <Clock className="h-4 w-4" />
-                        <span>{classItem.schedule}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-[#001cab]">
-                        <MapPin className="h-4 w-4" />
-                        <span>{classItem.room}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-[#001cab]">
-                        <Calendar className="h-4 w-4" />
-                        <span>{classItem.period}</span>
-                      </div>
-                    </div>
-
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Alunos Matriculados */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-[#030025]">Matriculados</span>
-                        <span className="text-sm text-[#001cab]">{classItem.studentsEnrolled}/{classItem.maxStudents}</span>
-                      </div>
-                      <div className="w-full bg-[#f0f6ff] rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full transition-all duration-300 ${getOccupancyColor(classItem.studentsEnrolled, classItem.maxStudents)}`}
-                          style={{ width: `${(classItem.studentsEnrolled / classItem.maxStudents) * 100}%` }}
-                        />
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Users className="h-4 w-4 text-[#001cab]" />
-                        <span className="text-sm text-[#001cab]">
-                          {classItem.maxStudents - classItem.studentsEnrolled} vagas disponíveis
-                        </span>
-                      </div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-[#0029ff]">{classItem.studentsEnrolled}</p>
+                      <p className="text-xs text-[#001cab]">Alunos</p>
                     </div>
 
-                    {/* Ações Rápidas */}
-                    <div className="space-y-2">
-                      <Button variant="outline" size="sm" className="w-full border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Gerenciar Alunos
-                      </Button>
-                      <Button variant="outline" size="sm" className="w-full border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
+                    {/* Aulas Gravadas */}
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-[#0029ff]">{classItem.lessonsRecorded}</p>
+                      <p className="text-xs text-[#001cab]">Aulas Gravadas</p>
+                    </div>
+
+                    {/* Ações */}
+                    <div className="flex justify-center">
+                      <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
                         <BookOpen className="h-4 w-4 mr-2" />
-                        Ver Aulas
+                        Gerenciar Aulas
                       </Button>
-                    </div>
-                  </div>
-
-                  {/* Período da Turma */}
-                  <div className="mt-4 pt-3 border-t border-[#e0e7ff]">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#001cab]">
-                        Período: {new Date(classItem.startDate).toLocaleDateString('pt-BR')} - {new Date(classItem.endDate).toLocaleDateString('pt-BR')}
-                      </span>
-                      <div className="flex items-center space-x-1">
-                        <GraduationCap className="h-4 w-4 text-[#0029ff]" />
-                        <span className="text-[#0029ff] font-medium">{classItem.subject}</span>
-                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -278,7 +342,27 @@ const ClassManagement: React.FC = () => {
           {filteredClasses.length === 0 && (
             <Card className="bg-[#fffaf0] border-[#28b0ff]">
               <CardContent className="p-8 text-center">
-                <p className="text-[#001cab]">Nenhuma turma encontrada com os filtros aplicados.</p>
+                {hasActiveFilters ? (
+                  <div className="space-y-2">
+                    <p className="text-[#001cab]">Nenhuma turma encontrada com os critérios atuais.</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]"
+                      onClick={clearFilters}
+                    >
+                      Limpar filtros
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-[#001cab]">Nenhuma turma cadastrada ainda.</p>
+                    <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar Primeira Turma
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

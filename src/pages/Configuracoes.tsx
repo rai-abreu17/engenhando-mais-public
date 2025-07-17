@@ -346,50 +346,50 @@ const Configuracoes = () => {
           >
             ← Voltar
           </button>
-          <h3 className="font-semibold text-gray-800">Perfil e Conta</h3>
+          <h3 className="font-semibold text-[#030025]">Perfil e Conta</h3>
           <div></div>
         </div>
         
         <div className="bg-engenha-light-cream p-4 rounded-lg space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nome Completo <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-[#001cab] mb-1">
+              Nome Completo <span className="text-[#d75200]">*</span>
             </label>
             <input
               type="text"
               value={localName}
               onChange={(e) => setLocalName(e.target.value)}
               className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue ${
-                !isLocalValid('name') ? 'border-red-500' : 'border-gray-200'
+                !isLocalValid('name') ? 'border-[#d75200]' : 'border-[#28b0ff]'
               }`}
               placeholder="Digite seu nome completo"
             />
             {!isLocalValid('name') && (
-              <p className="text-red-500 text-xs mt-1">Nome é obrigatório</p>
+              <p className="text-[#d75200] text-xs mt-1">Nome é obrigatório</p>
             )}
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-[#001cab] mb-1">
+              Email <span className="text-[#d75200]">*</span>
             </label>
             <input
               type="email"
               value={localEmail}
               onChange={(e) => setLocalEmail(e.target.value)}
               className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-blue ${
-                !isLocalValid('email') ? 'border-red-500' : 'border-gray-200'
+                !isLocalValid('email') ? 'border-[#d75200]' : 'border-[#28b0ff]'
               }`}
               placeholder="Digite seu email"
             />
             {!isLocalValid('email') && (
-              <p className="text-red-500 text-xs mt-1">Email válido é obrigatório</p>
+              <p className="text-[#d75200] text-xs mt-1">Email válido é obrigatório</p>
             )}
           </div>
           
           <div className="relative" ref={localUnivRef}>
             <label className="block text-sm font-medium text-engenha-dark-navy mb-1">
-              Universidade <span className="text-red-500">*</span>
+              Universidade <span className="text-[#d75200]">*</span>
             </label>
             <div className="relative">
               <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
@@ -403,13 +403,13 @@ const Configuracoes = () => {
                 }}
                 onFocus={() => setShowLocalUnivList(true)}
                 className={`w-full border rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy ${
-                  !isLocalValid('university') ? 'border-red-500' : 'border-engenha-sky-blue'
+                  !isLocalValid('university') ? 'border-[#d75200]' : 'border-[#28b0ff]'
                 }`}
                 autoComplete="off"
               />
             </div>
             {!isLocalValid('university') && (
-              <p className="text-red-500 text-xs mt-1">Universidade é obrigatória</p>
+              <p className="text-[#d75200] text-xs mt-1">Universidade é obrigatória</p>
             )}
             {showLocalUnivList && (
               <div className="absolute top-full left-0 right-0 bg-white border border-engenha-sky-blue rounded-lg mt-1 max-h-48 overflow-y-auto z-50 shadow-lg">
@@ -422,14 +422,14 @@ const Configuracoes = () => {
                       setShowLocalUnivList(false);
                     }}
                     className={`w-full text-left px-4 py-2 hover:bg-engenha-light-blue focus:bg-engenha-light-blue focus:outline-none text-engenha-dark-navy text-sm ${
-                      university === 'Não tenho universidade' ? 'border-b border-gray-200 font-medium text-gray-600' : ''
+                      university === 'Não tenho universidade' ? 'border-b border-[#28b0ff] font-medium text-[#001cab]' : ''
                     }`}
                   >
                     {university}
                   </button>
                 ))}
                 {localFilteredUniversities.length > 10 && (
-                  <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-200">
+                  <div className="px-4 py-2 text-xs text-[#001cab] border-t border-[#28b0ff]">
                     Mostrando primeiros 10 resultados. Continue digitando para refinar.
                   </div>
                 )}
@@ -439,7 +439,7 @@ const Configuracoes = () => {
           
           <div className="relative" ref={localCourseRef}>
             <label className="block text-sm font-medium text-engenha-dark-navy mb-1">
-              Curso {localUniversity !== 'Não tenho universidade' && <span className="text-red-500">*</span>}
+              Curso {localUniversity !== 'Não tenho universidade' && <span className="text-[#d75200]">*</span>}
             </label>
             <div className="relative">
               <BookOpen className="absolute left-3 top-1/2 transform -translate-y-1/2 text-engenha-sky-blue" size={20} />
@@ -454,9 +454,9 @@ const Configuracoes = () => {
                 onFocus={() => setShowLocalCourseList(true)}
                 disabled={localUniversity === 'Não tenho universidade'}
                 className={`w-full border rounded-lg pl-11 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-engenha-orange text-engenha-dark-navy ${
-                  localUniversity === 'Não tenho universidade' ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''
+                  localUniversity === 'Não tenho universidade' ? 'opacity-50 cursor-not-allowed bg-[#f0f6ff]' : ''
                 } ${
-                  !isLocalValid('course') ? 'border-red-500' : 'border-engenha-sky-blue'
+                  !isLocalValid('course') ? 'border-[#d75200]' : 'border-[#28b0ff]'
                 }`}
                 autoComplete="off"
               />
@@ -646,7 +646,7 @@ const Configuracoes = () => {
             <p className="text-sm text-gray-500">
               {key === 'studyReminders' && 'Notificações diárias para manter rotina'}
               {key === 'mascotAlerts' && 'Quando seu mascote precisar de cuidados'}
-              {key === 'newContent' && 'Novas videoaulas e materiais'}
+              {key === 'newContent' && 'Novos conteúdos e materiais'}
               {key === 'achievements' && 'Troféus e marcos importantes'}
             </p>
           </div>

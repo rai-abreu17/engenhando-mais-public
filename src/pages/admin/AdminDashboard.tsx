@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,9 +15,21 @@ import {
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/components/admin/AdminNavigation';
+import AddTeacher from '@/components/admin/AddTeacher';
+import AddClass from '@/components/admin/AddClass';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '@/components/ui/dialog';
 
 const AdminDashboard: React.FC = () => {
   // Mock data - em produção viria de APIs
+  const [showAddTeacher, setShowAddTeacher] = useState(false);
+  const [showAddClass, setShowAddClass] = useState(false);
   const stats = {
     totalStudents: 1247,
     totalTeachers: 45,
@@ -54,18 +66,18 @@ const AdminDashboard: React.FC = () => {
 
   const quickActions = [
     {
-      title: 'Adicionar Professor',
-      description: 'Cadastrar novo professor no sistema',
+      title: 'Convidar Professor',
+      description: 'Enviar convite para professor se cadastrar',
       icon: Plus,
-      action: () => console.log('Adicionar professor'),
-      variant: 'default' as const
+      action: () => setShowAddTeacher(true),
+      variant: 'outline' as const
     },
     {
       title: 'Criar Turma',
       description: 'Criar nova turma e definir horários',
       icon: GraduationCap,
-      action: () => console.log('Criar turma'),
-      variant: 'secondary' as const
+      action: () => setShowAddClass(true),
+      variant: 'outline' as const
     },
     {
       title: 'Relatórios',
@@ -78,15 +90,41 @@ const AdminDashboard: React.FC = () => {
 
   const getVariantColor = (variant: 'success' | 'info' | 'warning') => {
     switch (variant) {
-      case 'success': return 'text-green-600 bg-green-50';
-      case 'info': return 'text-blue-600 bg-blue-50';
-      case 'warning': return 'text-yellow-600 bg-yellow-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'success': return 'text-[#0029ff] bg-[#f0f6ff]';
+      case 'info': return 'text-[#28b0ff] bg-[#f0f6ff]';
+      case 'warning': return 'text-[#ff7a28] bg-[#fffaf0]';
+      default: return 'text-[#030025] bg-[#f0f6ff]';
     }
   };
 
   return (
     <div className="min-h-screen bg-[#f0f6ff] pb-20">
+      <Dialog open={showAddTeacher} onOpenChange={setShowAddTeacher}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Convidar Professor</DialogTitle>
+            <DialogDescription>Envie um convite para o professor se cadastrar no sistema</DialogDescription>
+          </DialogHeader>
+          <AddTeacher onCancel={() => setShowAddTeacher(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAddClass} onOpenChange={setShowAddClass}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Criar Nova Turma</DialogTitle>
+            <DialogDescription>Cadastre uma nova turma no sistema</DialogDescription>
+          </DialogHeader>
+          <AddClass 
+            onSave={(newClass) => {
+              console.log('Nova turma criada:', newClass);
+              setShowAddClass(false);
+            }} 
+            onCancel={() => setShowAddClass(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
       <Header 
         title="Painel Administrativo"
         subtitle="Gerencie o sistema educacional"
@@ -166,7 +204,7 @@ const AdminDashboard: React.FC = () => {
                     variant={action.variant} 
                     size="sm" 
                     onClick={action.action}
-                    className="w-full"
+                    className="w-full border-[#28b0ff] text-[#001cab] hover:bg-[#0029ff] hover:text-white hover:border-[#0029ff] transition-colors"
                   >
                     Executar
                   </Button>
