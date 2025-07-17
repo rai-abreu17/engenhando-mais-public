@@ -108,7 +108,7 @@ const AdminSettings: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
                 <p className="text-xs sm:text-sm text-[#001cab]">Versão</p>
                 <p className="font-bold text-[#030025] text-sm sm:text-base">{systemInfo.version}</p>
@@ -146,50 +146,54 @@ const AdminSettings: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-[#030025]">Notificações por Email</p>
-                <p className="text-sm text-[#001cab]">Receber alertas importantes por email</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-[#030025] text-sm sm:text-base">Notificações por Email</p>
+                <p className="text-xs sm:text-sm text-[#001cab]">Receber alertas importantes por email</p>
               </div>
               <Switch
                 checked={emailNotifications}
                 onCheckedChange={setEmailNotifications}
+                className="self-start sm:self-auto"
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-[#030025]">Backup Automático</p>
-                <p className="text-sm text-[#001cab]">Backup diário dos dados do sistema</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-[#030025] text-sm sm:text-base">Backup Automático</p>
+                <p className="text-xs sm:text-sm text-[#001cab]">Backup diário dos dados do sistema</p>
               </div>
               <Switch
                 checked={autoBackup}
                 onCheckedChange={setAutoBackup}
+                className="self-start sm:self-auto"
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-[#030025]">Aprovação de Professores</p>
-                <p className="text-sm text-[#001cab]">Requer aprovação para novos professores</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-[#030025] text-sm sm:text-base">Aprovação de Professores</p>
+                <p className="text-xs sm:text-sm text-[#001cab]">Requer aprovação para novos professores</p>
               </div>
               <Switch
                 checked={requireApproval}
                 onCheckedChange={setRequireApproval}
+                className="self-start sm:self-auto"
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-4 w-4 text-[#d75200]" />
-                <div>
-                  <p className="font-medium text-[#030025]">Modo Manutenção</p>
-                  <p className="text-sm text-[#001cab]">Bloqueia acesso de usuários temporariamente</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+              <div className="flex items-start sm:items-center space-x-2 flex-1 min-w-0">
+                <AlertTriangle className="h-4 w-4 text-[#d75200] flex-shrink-0 mt-0.5 sm:mt-0" />
+                <div className="min-w-0">
+                  <p className="font-medium text-[#030025] text-sm sm:text-base">Modo Manutenção</p>
+                  <p className="text-xs sm:text-sm text-[#001cab]">Bloqueia acesso de usuários temporariamente</p>
                 </div>
               </div>
               <Switch
                 checked={maintenanceMode}
                 onCheckedChange={setMaintenanceMode}
+                className="self-start sm:self-auto"
               />
             </div>
           </CardContent>
@@ -198,36 +202,37 @@ const AdminSettings: React.FC = () => {
         {/* Gerenciamento de Usuários */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025]">
-              <Users className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Controle de Acesso</span>
             </CardTitle>
-            <CardDescription className="text-[#001cab]">
+            <CardDescription className="text-[#001cab] text-sm">
               Gerencie permissões e status dos usuários
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {userManagement.map((user) => (
-                <div key={user.id} className="flex items-center justify-between p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-1">
-                      <p className="font-medium text-[#030025]">{user.name}</p>
+                <div key={user.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <p className="font-medium text-[#030025] text-sm sm:text-base truncate">{user.name}</p>
                       {getRoleBadge(user.role)}
                       {getStatusBadge(user.status)}
                     </div>
-                    <p className="text-sm text-[#001cab]">{user.email}</p>
+                    <p className="text-xs sm:text-sm text-[#001cab] truncate">{user.email}</p>
                     <p className="text-xs text-[#001cab]">Último acesso: {new Date(user.lastAccess).toLocaleDateString('pt-BR')}</p>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                      <Key className="h-4 w-4 mr-1" />
-                      Reset Senha
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 sm:flex-shrink-0">
+                    <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm">
+                      <Key className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      <span className="hidden sm:inline">Reset Senha</span>
+                      <span className="sm:hidden">Reset</span>
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className={user.status === 'active' ? 'border-[#d75200] text-[#d75200] hover:bg-red-50' : 'border-[#00a86b] text-[#00a86b] hover:bg-green-50'}
+                      className={`text-xs sm:text-sm ${user.status === 'active' ? 'border-[#d75200] text-[#d75200] hover:bg-red-50' : 'border-[#00a86b] text-[#00a86b] hover:bg-green-50'}`}
                     >
                       {user.status === 'active' ? 'Desativar' : 'Ativar'}
                     </Button>
@@ -241,42 +246,44 @@ const AdminSettings: React.FC = () => {
         {/* Segurança */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025]">
-              <Shield className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
+              <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Configurações de Segurança</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[#030025] mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-2">
                 Tempo de Sessão (minutos)
               </label>
               <Input
                 type="number"
                 defaultValue="60"
-                className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+                className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#030025] mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-2">
                 Tentativas de Login Máximas
               </label>
               <Input
                 type="number"
                 defaultValue="5"
-                className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+                className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] text-sm"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                <Lock className="h-4 w-4 mr-2" />
-                Alterar Senha Admin
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm">
+                <Lock className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="hidden sm:inline">Alterar Senha Admin</span>
+                <span className="sm:hidden">Senha Admin</span>
               </Button>
-              <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                <Shield className="h-4 w-4 mr-2" />
-                Log de Segurança
+              <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm">
+                <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="hidden sm:inline">Log de Segurança</span>
+                <span className="sm:hidden">Logs</span>
               </Button>
             </div>
           </CardContent>
@@ -285,28 +292,32 @@ const AdminSettings: React.FC = () => {
         {/* Backup e Manutenção */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025]">
-              <Database className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
+              <Database className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Backup e Manutenção</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white">
-                <Download className="h-4 w-4 mr-2" />
-                Fazer Backup Agora
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white text-xs sm:text-sm">
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="hidden sm:inline">Fazer Backup Agora</span>
+                <span className="sm:hidden">Backup</span>
               </Button>
-              <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                <Upload className="h-4 w-4 mr-2" />
-                Restaurar Backup
+              <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm">
+                <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="hidden sm:inline">Restaurar Backup</span>
+                <span className="sm:hidden">Restaurar</span>
               </Button>
-              <Button variant="outline" className="border-[#ff7a28] text-[#ff7a28] hover:bg-orange-50">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Limpar Cache
+              <Button variant="outline" className="border-[#ff7a28] text-[#ff7a28] hover:bg-orange-50 text-xs sm:text-sm">
+                <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="hidden sm:inline">Limpar Cache</span>
+                <span className="sm:hidden">Cache</span>
               </Button>
-              <Button variant="outline" className="border-[#d75200] text-[#d75200] hover:bg-red-50">
-                <AlertTriangle className="h-4 w-4 mr-2" />
-                Reiniciar Sistema
+              <Button variant="outline" className="border-[#d75200] text-[#d75200] hover:bg-red-50 text-xs sm:text-sm">
+                <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <span className="hidden sm:inline">Reiniciar Sistema</span>
+                <span className="sm:hidden">Reiniciar</span>
               </Button>
             </div>
           </CardContent>
@@ -314,10 +325,11 @@ const AdminSettings: React.FC = () => {
 
         {/* Salvar Configurações */}
         <Card className="bg-gradient-to-r from-[#00a86b] to-[#008853] text-white border-[#00a86b]">
-          <CardContent className="p-4">
-            <Button className="w-full bg-white text-[#00a86b] hover:bg-gray-100">
-              <Save className="h-4 w-4 mr-2" />
-              Salvar Todas as Configurações
+          <CardContent className="p-3 sm:p-4">
+            <Button className="w-full bg-white text-[#00a86b] hover:bg-gray-100 text-sm sm:text-base">
+              <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span className="hidden sm:inline">Salvar Todas as Configurações</span>
+              <span className="sm:hidden">Salvar Configurações</span>
             </Button>
           </CardContent>
         </Card>
