@@ -3,15 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
 import { 
   Shield, 
   Users, 
   Key, 
   Search,
-  UserPlus,
   MoreVertical,
   Eye,
-  EyeOff
+  EyeOff,
+  Filter
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/admin/components/AdminNavigation';
@@ -21,13 +23,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 const AccessControlPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterRole, setFilterRole] = useState('all');
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Mock data - em produção viria de APIs
-  const users = [
+  const [users, setUsers] = useState([
     {
       id: 1,
       name: 'João Silva',
@@ -64,14 +73,65 @@ const AccessControlPage: React.FC = () => {
       lastAccess: '2024-01-16',
       permissions: ['full_access']
     }
-  ];
+  ]);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
-    return matchesSearch && matchesRole;
+    const matchesRole = selectedRoles.length === 0 || selectedRoles.includes(user.role);
+    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(user.status);
+    return matchesSearch && matchesRole && matchesStatus;
   });
+
+  const handleRoleToggle = (role: string) => {
+    setSelectedRoles(prev => 
+      prev.includes(role) 
+        ? prev.filter(r => r !== role)
+        : [...prev, role]
+    );
+  };
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  // Função para alternar status do usuário (ativar/desativar)
+  const handleToggleUserStatus = (userId: number) => {
+    setUsers(prevUsers => 
+      prevUsers.map(user => 
+        user.id === userId 
+          ? { 
+              ...user, 
+              status: user.status === 'active' ? 'inactive' : 'active',
+              lastAccess: user.status === 'inactive' ? new Date().toISOString().split('T')[0] : user.lastAccess
+            }
+          : user
+      )
+    );
+  };
+
+  // Função para reset de senha
+  const handlePasswordReset = (userId: number) => {
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      // Simular reset de senha - em produção faria uma chamada API
+      alert(`Reset de senha enviado para ${user.email}`);
+      console.log(`Password reset requested for user: ${user.name} (${user.email})`);
+    }
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedRoles([]);
+    setSelectedStatuses([]);
+    setIsFilterOpen(false);
+  };
+
+  const hasActiveFilters = searchTerm || selectedRoles.length > 0 || selectedStatuses.length > 0;
 
   const getRoleBadge = (role: string) => {
     switch (role) {
@@ -142,38 +202,126 @@ const AccessControlPage: React.FC = () => {
           </Card>
         </div>
 
-        {/* Controles */}
-        <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#001cab]" />
-                <Input
-                  placeholder="Buscar usuários..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white border-[#28b0ff] focus:border-[#0029ff] h-9 sm:h-10"
-                />
-              </div>
-              <div className="flex gap-2">
-                <select
-                  value={filterRole}
-                  onChange={(e) => setFilterRole(e.target.value)}
-                  className="px-3 py-2 bg-white border border-[#28b0ff] rounded-md text-sm focus:border-[#0029ff] outline-none"
-                >
-                  <option value="all">Todos</option>
-                  <option value="admin">Admin</option>
-                  <option value="teacher">Professor</option>
-                  <option value="student">Aluno</option>
-                </select>
-                <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white h-9 sm:h-10">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Novo
-                </Button>
-              </div>
+        {/* Controles de Busca e Filtros */}
+        <section>
+          <div className="flex gap-2 items-center mb-2 sm:mb-0">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-[#001cab]" />
+              <Input
+                placeholder="Buscar por nome ou email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 sm:pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-8 sm:h-10 text-xs sm:text-sm"
+              />
             </div>
-          </CardContent>
-        </Card>
+            
+            {/* Botão de Filtros */}
+            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                >
+                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Filtros</span>
+                  {hasActiveFilters && (
+                    <Badge variant="secondary" className="hidden sm:inline-flex ml-2 bg-white/20 text-white text-xs">
+                      {selectedRoles.length + selectedStatuses.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-[#030025]">Filtrar Usuários</h4>
+                    {hasActiveFilters && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearFilters}
+                        className="h-6 px-2 text-xs text-[#0029ff]"
+                      >
+                        Limpar tudo
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-medium text-[#001cab]">Função</h5>
+                    {[
+                      { value: 'admin', label: 'Administradores', count: users.filter(u => u.role === 'admin').length },
+                      { value: 'teacher', label: 'Professores', count: users.filter(u => u.role === 'teacher').length },
+                      { value: 'student', label: 'Alunos', count: users.filter(u => u.role === 'student').length }
+                    ].map((role) => (
+                      <div key={role.value} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={role.value}
+                          checked={selectedRoles.includes(role.value)}
+                          onCheckedChange={() => handleRoleToggle(role.value)}
+                        />
+                        <label 
+                          htmlFor={role.value}
+                          className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                        >
+                          <span className="text-[#030025]">{role.label}</span>
+                          <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                            {role.count}
+                          </Badge>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-medium text-[#001cab]">Status</h5>
+                    {[
+                      { value: 'active', label: 'Ativos', count: users.filter(u => u.status === 'active').length },
+                      { value: 'inactive', label: 'Inativos', count: users.filter(u => u.status === 'inactive').length },
+                      { value: 'pending', label: 'Pendentes', count: users.filter(u => u.status === 'pending').length }
+                    ].map((status) => (
+                      <div key={status.value} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={status.value}
+                          checked={selectedStatuses.includes(status.value)}
+                          onCheckedChange={() => handleStatusToggle(status.value)}
+                        />
+                        <label 
+                          htmlFor={status.value}
+                          className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                        >
+                          <span className="text-[#030025]">{status.label}</span>
+                          <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                            {status.count}
+                          </Badge>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </section>
+
+        {/* Resultado da busca/filtro */}
+        {hasActiveFilters && (
+          <div className="mb-4 p-3 bg-[#f0f6ff] border border-[#28b0ff] rounded-lg">
+            <p className="text-sm text-[#001cab]">
+              {filteredUsers.length === 0 ? (
+                'Nenhum usuário encontrado com os critérios atuais.'
+              ) : (
+                `${filteredUsers.length} ${filteredUsers.length === 1 ? 'usuário encontrado' : 'usuários encontrados'}.`
+              )}
+              {hasActiveFilters && ` • ${filteredUsers.length} ${filteredUsers.length === 1 ? 'corresponde' : 'correspondem'} aos filtros`}
+            </p>
+          </div>
+        )}
 
         {/* Lista de Usuários */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
@@ -203,7 +351,8 @@ const AccessControlPage: React.FC = () => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] h-8 px-2 sm:px-3"
+                      onClick={() => handlePasswordReset(user.id)}
+                      className="border-[#28b0ff] text-[#0029ff] hover:bg-[#0029ff] hover:text-white hover:border-[#0029ff] transition-all duration-200 h-8 px-2 sm:px-3"
                     >
                       <Key className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
                       <span className="hidden sm:inline">Reset</span>
@@ -212,10 +361,11 @@ const AccessControlPage: React.FC = () => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className={`h-8 px-2 sm:px-3 ${
+                      onClick={() => handleToggleUserStatus(user.id)}
+                      className={`h-8 px-2 sm:px-3 transition-all duration-200 ${
                         user.status === 'active' 
-                          ? 'border-[#d75200] text-[#d75200] hover:bg-red-50' 
-                          : 'border-[#00a86b] text-[#00a86b] hover:bg-green-50'
+                          ? 'border-[#d75200] text-[#d75200] hover:bg-[#d75200] hover:text-white hover:border-[#d75200]' 
+                          : 'border-[#00a86b] text-[#00a86b] hover:bg-[#00a86b] hover:text-white hover:border-[#00a86b]'
                       }`}
                     >
                       {user.status === 'active' ? (
@@ -233,7 +383,7 @@ const AccessControlPage: React.FC = () => {
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-[#f0f6ff] text-[#001cab] hover:text-[#0029ff]">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>

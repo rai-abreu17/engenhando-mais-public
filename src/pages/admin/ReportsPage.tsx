@@ -156,7 +156,7 @@ const ReportsPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="border-[#28b0ff] hover:bg-[#f0f6ff] w-auto text-xs sm:text-sm h-8 sm:h-10 text-[#0029ff]"
+                className="border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 text-[#0029ff]"
               >
                 <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Filtrar Período</span>
