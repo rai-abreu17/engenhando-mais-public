@@ -363,7 +363,7 @@ const TeacherManagement: React.FC = () => {
             {filteredTeachers.map((teacher) => (
               <Card key={teacher.id} className="bg-[#fffaf0] border-[#28b0ff] hover:shadow-md transition-shadow">
                 <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
                         <h3 className="font-semibold text-[#030025] text-sm sm:text-base truncate">{teacher.name}</h3>
@@ -403,7 +403,7 @@ const TeacherManagement: React.FC = () => {
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 flex-shrink-0">
                           <MoreVertical className="h-4 w-4" />
                           <span className="sr-only">Abrir menu</span>
                         </Button>
