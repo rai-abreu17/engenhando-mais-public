@@ -20,6 +20,7 @@ import AddLessonPage from './pages/admin/AddLessonPage';
 import ReviewLessonPage from './pages/admin/ReviewLessonPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import AdminSettings from './pages/admin/AdminSettings';
+import AccessControlPage from './pages/admin/AccessControlPage';
 import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => {
             <Route path="/admin/lessons" element={<LessonManagement />} />
             <Route path="/admin/lessons/add" element={<AddLessonPage />} />
             <Route path="/admin/lessons/review/:id" element={<ReviewLessonPage />} />
+            <Route path="/admin/access-control" element={<AccessControlPage />} />
             <Route path="/admin/reports" element={<ReportsPage />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             

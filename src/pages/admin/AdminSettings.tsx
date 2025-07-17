@@ -199,48 +199,6 @@ const AdminSettings: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Gerenciamento de Usuários */}
-        <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025] text-sm sm:text-base lg:text-lg">
-              <Users className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-              <span>Controle de Acesso</span>
-            </CardTitle>
-            <CardDescription className="text-[#001cab] text-xs sm:text-sm">
-              Gerencie permissões e status dos usuários
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 sm:space-y-3">
-              {userManagement.map((user) => (
-                <div key={user.id} className="flex flex-col gap-2 p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff] sm:flex-row sm:items-center sm:gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-1">
-                      <p className="font-medium text-[#030025] text-xs sm:text-sm lg:text-base truncate">{user.name}</p>
-                      {getRoleBadge(user.role)}
-                      {getStatusBadge(user.status)}
-                    </div>
-                    <p className="text-xs text-[#001cab] truncate">{user.email}</p>
-                    <p className="text-xs text-[#001cab]">Último acesso: {new Date(user.lastAccess).toLocaleDateString('pt-BR')}</p>
-                  </div>
-                  <div className="flex gap-2 self-end sm:self-auto sm:flex-shrink-0">
-                    <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none">
-                      <Key className="h-3 w-3 mr-1" />
-                      <span>Reset</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className={`text-xs h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none ${user.status === 'active' ? 'border-[#d75200] text-[#d75200] hover:bg-red-50' : 'border-[#00a86b] text-[#00a86b] hover:bg-green-50'}`}
-                    >
-                      {user.status === 'active' ? 'Desativar' : 'Ativar'}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Segurança */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
