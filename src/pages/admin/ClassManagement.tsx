@@ -234,7 +234,7 @@ const ClassManagement: React.FC = () => {
 
         {/* Barra de Busca e Filtros */}
         <section className="space-y-2 sm:space-y-3 lg:space-y-4">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <div className="flex-1 relative">
               <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
               <Input
@@ -251,11 +251,10 @@ const ClassManagement: React.FC = () => {
                 <Button 
                   variant="outline"
                   size="sm"
-                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto text-xs sm:text-sm h-8 sm:h-10 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-auto text-xs sm:text-sm h-8 sm:h-10 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
                 >
-                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
                   <span className="hidden sm:inline">Filtros</span>
-                  <span className="sm:hidden">Filtrar</span>
                   {hasActiveFilters && (
                     <Badge variant="secondary" className="ml-1 sm:ml-2 bg-white/20 text-white text-xs">
                       {selectedStatuses.length}

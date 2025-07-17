@@ -273,7 +273,7 @@ const LessonManagement: React.FC = () => {
         </section>
 
         {/* Barra de Ações */}
-        <section className="flex flex-col lg:flex-row gap-2 sm:gap-3">
+        <section className="flex gap-2 sm:gap-3">
           <div className="flex-1 relative">
             <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
             <Input
@@ -284,25 +284,23 @@ const LessonManagement: React.FC = () => {
             />
           </div>
           
-          <div className="flex gap-2">
-            {/* Botão de Filtros */}
-            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto text-xs sm:text-sm h-8 sm:h-10 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
-                >
-                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Filtros</span>
-                  <span className="sm:hidden">Filtrar</span>
-                  {hasActiveFilters && (
-                    <Badge variant="secondary" className="ml-1 sm:ml-2 bg-white/20 text-white text-xs">
-                      {selectedStatuses.length + selectedSubjects.length}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
+          {/* Botão de Filtros */}
+          <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline"
+                size="sm"
+                className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-auto text-xs sm:text-sm h-8 sm:h-10 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+              >
+                <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Filtros</span>
+                {hasActiveFilters && (
+                  <Badge variant="secondary" className="ml-1 sm:ml-2 bg-white/20 text-white text-xs">
+                    {selectedStatuses.length + selectedSubjects.length}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
               <PopoverContent className="w-80" align="end">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -373,7 +371,6 @@ const LessonManagement: React.FC = () => {
                 </div>
               </PopoverContent>
             </Popover>
-          </div>
         </section>
 
         {/* Estatísticas Rápidas */}

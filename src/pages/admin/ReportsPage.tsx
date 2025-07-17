@@ -26,11 +26,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 const ReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Mock data - em produção viria de APIs
   const reportTypes = [
@@ -139,62 +145,76 @@ const ReportsPage: React.FC = () => {
         </section>
 
         {/* Filtros de Período */}
-        <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardHeader className="pb-2 sm:pb-3 lg:pb-4">
-            <CardTitle className="flex items-center space-x-2 text-[#030025] text-sm sm:text-base lg:text-lg">
-              <Filter className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-              <span>Filtros de Período</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-2">Período Predefinido</label>
-                <select
-                  value={selectedPeriod}
-                  onChange={(e) => setSelectedPeriod(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-xs sm:text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none h-10"
-                >
-                  <option value="week">Última Semana</option>
-                  <option value="month">Último Mês</option>
-                  <option value="quarter">Último Trimestre</option>
-                  <option value="year">Último Ano</option>
-                  <option value="custom">Período Personalizado</option>
-                </select>
-              </div>
-              
-              {selectedPeriod === 'custom' && (
-                <>
+        <section className="flex justify-between items-center">
+          <div>
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#030025]">Relatórios do Sistema</h2>
+            <p className="text-xs sm:text-sm text-[#001cab]">Gere e baixe relatórios personalizados</p>
+          </div>
+          
+          <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-[#28b0ff] hover:bg-[#f0f6ff] w-auto text-xs sm:text-sm h-8 sm:h-10 text-[#0029ff]"
+              >
+                <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Filtrar Período</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-[#030025]">Filtrar por Período</h4>
+                </div>
+                
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-[#030025] mb-2">Data Inicial</label>
-                    <Input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
-                    />
+                    <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-2">Período Predefinido</label>
+                    <select
+                      value={selectedPeriod}
+                      onChange={(e) => setSelectedPeriod(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-xs sm:text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none h-10"
+                    >
+                      <option value="week">Última Semana</option>
+                      <option value="month">Último Mês</option>
+                      <option value="quarter">Último Trimestre</option>
+                      <option value="year">Último Ano</option>
+                      <option value="custom">Período Personalizado</option>
+                    </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[#030025] mb-2">Data Final</label>
-                    <Input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
-                    />
-                  </div>
-                </>
-              )}
-              
-              <div className="flex items-end">
-                <Button className="w-full bg-[#0029ff] hover:bg-[#001cab] text-white">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Aplicar Filtros
-                </Button>
+                  
+                  {selectedPeriod === 'custom' && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-[#030025] mb-2">Data Inicial</label>
+                        <Input
+                          type="date"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[#030025] mb-2">Data Final</label>
+                        <Input
+                          type="date"
+                          value={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+                        />
+                      </div>
+                    </>
+                  )}
+                  
+                  <Button className="w-full bg-[#0029ff] hover:bg-[#001cab] text-white text-xs sm:text-sm">
+                    Aplicar Filtros
+                  </Button>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </PopoverContent>
+          </Popover>
+        </section>
 
         {/* Tipos de Relatórios */}
         <section>
