@@ -20,11 +20,12 @@ import {
   BookOpen,
   Video,
   FileText,
-  Eye
+  Eye,
+  MoreVertical
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/components/admin/AdminNavigation';
-import RejectLessonModal from '@/components/admin/RejectLessonModal';
+import RemoveLesson from '@/components/admin/RemoveLesson';
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,13 @@ import {
   DialogTitle,
   DialogDescription
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Popover,
   PopoverContent,
@@ -62,8 +70,8 @@ const LessonManagement: React.FC = () => {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [selectedLessonForRejection, setSelectedLessonForRejection] = useState<{id: number, title: string} | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedLessonForDeletion, setSelectedLessonForDeletion] = useState<Lesson | null>(null);
 
   // Mock data - em produção viria de APIs
   const [lessons, setLessons] = useState<Lesson[]>([
@@ -215,60 +223,24 @@ const LessonManagement: React.FC = () => {
     }
   };
 
-  const handleApprove = (lessonId: number) => {
-    const lesson = lessons.find(l => l.id === lessonId);
-    setLessons(prev => prev.map(lesson => 
-      lesson.id === lessonId 
-        ? { ...lesson, status: 'approved', rejectionComment: undefined }
-        : lesson
-    ));
-    
-    // Feedback visual para o usuário
-    console.log(`✅ Aula "${lesson?.title}" aprovada com sucesso!`);
-    
-    // Aqui você faria a chamada para a API
-    // try {
-    //   await api.approveLesson(lessonId);
-    //   // Mostrar toast de sucesso
-    // } catch (error) {
-    //   // Reverter estado e mostrar erro
-    // }
-  };
-
-  const handleReject = (lessonId: number) => {
+  const handleDeleteLesson = (lessonId: number) => {
     const lesson = lessons.find(l => l.id === lessonId);
     if (lesson) {
-      setSelectedLessonForRejection({ id: lessonId, title: lesson.title });
-      setShowRejectModal(true);
+      setSelectedLessonForDeletion(lesson);
+      setShowDeleteModal(true);
     }
   };
 
-  const handleConfirmReject = (lessonId: number, rejectionComment: string) => {
-    const lesson = lessons.find(l => l.id === lessonId);
-    setLessons(prev => prev.map(lesson => 
-      lesson.id === lessonId 
-        ? { ...lesson, status: 'rejected', rejectionComment }
-        : lesson
-    ));
-    setShowRejectModal(false);
-    setSelectedLessonForRejection(null);
-    
-    // Feedback visual para o usuário
-    console.log(`❌ Aula "${lesson?.title}" rejeitada. Comentário: ${rejectionComment}`);
-    
-    // Aqui você faria a chamada para a API
-    // try {
-    //   await api.rejectLesson(lessonId, rejectionComment);
-    //   // Enviar notificação para o professor
-    //   // Mostrar toast de sucesso
-    // } catch (error) {
-    //   // Reverter estado e mostrar erro
-    // }
+  const handleConfirmDeleteLesson = (lessonId: number) => {
+    setLessons(prev => prev.filter(lesson => lesson.id !== lessonId));
+    setShowDeleteModal(false);
+    setSelectedLessonForDeletion(null);
+    console.log(`🗑️ Aula ${lessonId} excluída`);
   };
 
-  const handleCloseRejectModal = () => {
-    setShowRejectModal(false);
-    setSelectedLessonForRejection(null);
+  const handleCancelDeleteLesson = () => {
+    setShowDeleteModal(false);
+    setSelectedLessonForDeletion(null);
   };
 
   const subjects = ['Matemática', 'Física', 'Química', 'Programação'];
@@ -280,16 +252,34 @@ const LessonManagement: React.FC = () => {
         subtitle="Aprove, edite e monitore as aulas do sistema"
       />
 
-      <div className="px-6 space-y-6">
+      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
+        {/* Cabeçalho da seção */}
+        <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-[#030025]">Aulas Cadastradas</h2>
+            <p className="text-xs sm:text-sm text-[#001cab]">
+              {lessons.length} {lessons.length === 1 ? 'aula' : 'aulas'} no total
+              {hasActiveFilters && ` • ${filteredLessons.length} ${filteredLessons.length === 1 ? 'corresponde' : 'correspondem'} aos filtros`}
+            </p>
+          </div>
+          <Button 
+            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto"
+            onClick={() => navigate('/admin/lessons/add')}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Aula
+          </Button>
+        </section>
+
         {/* Barra de Ações */}
-        <section className="flex flex-col lg:flex-row gap-4">
+        <section className="flex flex-col lg:flex-row gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-4 w-4" />
             <Input
               placeholder="Buscar por título, professor ou matéria..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+              className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-auto"
             />
           </div>
           
@@ -299,7 +289,7 @@ const LessonManagement: React.FC = () => {
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
                 >
                   <Filter className="h-4 w-4 mr-2" />
                   Filtros
@@ -380,14 +370,6 @@ const LessonManagement: React.FC = () => {
                 </div>
               </PopoverContent>
             </Popover>
-            
-            <Button 
-              className="bg-[#0029ff] hover:bg-[#001cab] text-white"
-              onClick={() => navigate('/admin/lessons/add')}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Aula
-            </Button>
           </div>
         </section>
 
@@ -482,17 +464,23 @@ const LessonManagement: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" className="border-[#d75200] text-[#d75200] hover:bg-[#fffaf0]">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Abrir menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={() => handleDeleteLesson(lesson.id)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir aula
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </CardHeader>
 
@@ -521,38 +509,12 @@ const LessonManagement: React.FC = () => {
                     </div>
                   </div>
 
-                  {lesson.status === 'pending' && (
-                    <div className="flex space-x-2 pt-3 border-t border-[#e0e7ff]">
-                      <Button 
-                        size="sm" 
-                        className="bg-[#00a86b] hover:bg-[#008853] text-white"
-                        onClick={() => handleApprove(lesson.id)}
-                      >
-                        <Check className="h-4 w-4 mr-2" />
-                        Aprovar
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="border-[#d75200] text-[#d75200] hover:bg-[#fffaf0]"
-                        onClick={() => handleReject(lesson.id)}
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Rejeitar
-                      </Button>
-                    </div>
-                  )}
-
                   {lesson.status === 'approved' && (
-                    <div className="flex items-center justify-between pt-3 border-t border-[#e0e7ff]">
+                    <div className="flex items-center pt-3 border-t border-[#e0e7ff]">
                       <div className="flex items-center space-x-2 text-sm text-[#00a86b]">
                         <Check className="h-4 w-4" />
                         <span>Aula aprovada e publicada</span>
                       </div>
-                      <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]">
-                        <Play className="h-4 w-4 mr-2" />
-                        Visualizar
-                      </Button>
                     </div>
                   )}
 
@@ -569,19 +531,34 @@ const LessonManagement: React.FC = () => {
                           <p className="text-sm text-[#b71c1c] leading-relaxed">{lesson.rejectionComment}</p>
                         </div>
                       )}
-                      
-                      <div className="flex justify-end">
-                        <Button 
-                          size="sm" 
-                          className="bg-[#00a86b] hover:bg-[#008853] text-white"
-                          onClick={() => handleApprove(lesson.id)}
-                        >
-                          <Check className="h-4 w-4 mr-2" />
-                          Revisar e Aprovar
-                        </Button>
-                      </div>
                     </div>
                   )}
+
+                  {/* Botão de ação principal */}
+                  <div className="pt-4 border-t border-[#e0e7ff] mt-4">
+                    <div className="flex justify-end">
+                      {lesson.status === 'approved' ? (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className="border-[#0029ff] text-[#0029ff] hover:bg-[#0029ff] hover:text-white"
+                          onClick={() => navigate(`/admin/lessons/review/${lesson.id}`)}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Visualizar
+                        </Button>
+                      ) : (
+                        <Button 
+                          size="sm" 
+                          className="bg-[#0029ff] hover:bg-[#001cab] text-white"
+                          onClick={() => navigate(`/admin/lessons/review/${lesson.id}`)}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Revisar
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -597,16 +574,18 @@ const LessonManagement: React.FC = () => {
         </section>
       </div>
 
-      {/* Modal para rejeitar aula */}
-      {selectedLessonForRejection && (
-        <RejectLessonModal
-          isOpen={showRejectModal}
-          onClose={handleCloseRejectModal}
-          onConfirm={handleConfirmReject}
-          lessonId={selectedLessonForRejection.id}
-          lessonTitle={selectedLessonForRejection.title}
-        />
-      )}
+      {/* Modal para excluir aula */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent>
+          {selectedLessonForDeletion && (
+            <RemoveLesson
+              lesson={selectedLessonForDeletion}
+              onConfirm={handleConfirmDeleteLesson}
+              onCancel={handleCancelDeleteLesson}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AdminNavigation />
     </div>

@@ -130,53 +130,53 @@ const AdminDashboard: React.FC = () => {
         subtitle="Gerencie o sistema educacional"
       />
 
-      <div className="px-6 space-y-6">
+      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
         {/* Estatísticas Principais */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card className="bg-gradient-to-r from-[#28b0ff] to-[#0029ff] text-white border-[#28b0ff]">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/80 text-sm">Alunos</p>
-                  <p className="text-2xl font-bold">{stats.totalStudents.toLocaleString()}</p>
+                  <p className="text-white/80 text-xs sm:text-sm">Alunos</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.totalStudents.toLocaleString()}</p>
                 </div>
-                <Users className="h-8 w-8 text-white/60" />
+                <Users className="h-6 w-6 sm:h-8 sm:w-8 text-white/60" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-r from-[#ff7a28] to-[#d75200] text-white border-[#ff7a28]">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/80 text-sm">Professores</p>
-                  <p className="text-2xl font-bold">{stats.totalTeachers}</p>
+                  <p className="text-white/80 text-xs sm:text-sm">Professores</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.totalTeachers}</p>
                 </div>
-                <GraduationCap className="h-8 w-8 text-white/60" />
+                <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-white/60" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-r from-[#28b0ff] to-[#0029ff] text-white border-[#28b0ff]">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/80 text-sm">Turmas Ativas</p>
-                  <p className="text-2xl font-bold">{stats.activeClasses}</p>
+                  <p className="text-white/80 text-xs sm:text-sm">Turmas Ativas</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.activeClasses}</p>
                 </div>
-                <BookOpen className="h-8 w-8 text-white/60" />
+                <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-white/60" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-r from-[#00a86b] to-[#008853] text-white border-[#00a86b]">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/80 text-sm">Aulas Completas</p>
-                  <p className="text-2xl font-bold">{stats.completedLessons.toLocaleString()}</p>
+                  <p className="text-white/80 text-xs sm:text-sm">Aulas Completas</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.completedLessons.toLocaleString()}</p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-white/60" />
+                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-white/60" />
               </div>
             </CardContent>
           </Card>
@@ -184,18 +184,18 @@ const AdminDashboard: React.FC = () => {
 
         {/* Ações Rápidas */}
         <section>
-          <h2 className="text-lg font-semibold text-[#030025] mb-4">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <h2 className="text-base sm:text-lg font-semibold text-[#030025] mb-3 sm:mb-4">Ações Rápidas</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {quickActions.map((action, index) => (
               <Card key={index} className="bg-[#fffaf0] border-[#28b0ff] hover:shadow-md transition-shadow cursor-pointer">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                      <action.icon className="h-5 w-5 text-[#0029ff]" />
+                <CardHeader className="pb-2 sm:pb-3">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="p-1.5 sm:p-2 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                      <action.icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#0029ff]" />
                     </div>
-                    <div>
-                      <CardTitle className="text-sm text-[#030025]">{action.title}</CardTitle>
-                      <CardDescription className="text-xs text-[#001cab]">{action.description}</CardDescription>
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-xs sm:text-sm text-[#030025] truncate">{action.title}</CardTitle>
+                      <CardDescription className="text-xs text-[#001cab] line-clamp-2">{action.description}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -204,7 +204,7 @@ const AdminDashboard: React.FC = () => {
                     variant={action.variant} 
                     size="sm" 
                     onClick={action.action}
-                    className="w-full border-[#28b0ff] text-[#001cab] hover:bg-[#0029ff] hover:text-white hover:border-[#0029ff] transition-colors"
+                    className="w-full border-[#28b0ff] text-[#001cab] hover:bg-[#0029ff] hover:text-white hover:border-[#0029ff] transition-colors text-xs sm:text-sm"
                   >
                     Executar
                   </Button>
@@ -216,24 +216,24 @@ const AdminDashboard: React.FC = () => {
 
         {/* Atividades Recentes */}
         <section>
-          <h2 className="text-lg font-semibold text-[#030025] mb-4">Atividades Recentes</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-[#030025] mb-3 sm:mb-4">Atividades Recentes</h2>
           <Card className="bg-[#fffaf0] border-[#28b0ff]">
             <CardContent className="p-0">
               <div className="space-y-0">
                 {recentActivities.map((activity, index) => (
                   <div 
                     key={activity.id} 
-                    className={`p-4 flex items-center space-x-3 ${
+                    className={`p-3 sm:p-4 flex items-center space-x-2 sm:space-x-3 ${
                       index !== recentActivities.length - 1 ? 'border-b border-[#e0e7ff]' : ''
                     }`}
                   >
-                    <div className={`p-2 rounded-full ${getVariantColor(activity.variant)}`}>
-                      <activity.icon className="h-4 w-4" />
+                    <div className={`p-1.5 sm:p-2 rounded-full flex-shrink-0 ${getVariantColor(activity.variant)}`}>
+                      <activity.icon className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-[#030025]">{activity.message}</p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Clock className="h-3 w-3 text-[#001cab]" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm text-[#030025] line-clamp-2">{activity.message}</p>
+                      <div className="flex items-center space-x-1 sm:space-x-2 mt-1">
+                        <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-[#001cab] flex-shrink-0" />
                         <span className="text-xs text-[#001cab]">{activity.time}</span>
                       </div>
                     </div>
@@ -247,17 +247,17 @@ const AdminDashboard: React.FC = () => {
         {/* Avisos Importantes */}
         <section>
           <Card className="bg-gradient-to-r from-[#ffb646] to-[#ff9800] text-white border-[#ffb646]">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <AlertTriangle className="h-5 w-5" />
+            <CardHeader className="pb-3 sm:pb-4">
+              <CardTitle className="flex items-center space-x-2 text-sm sm:text-base">
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                 <span>Avisos Importantes</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-sm text-white/90">• Backup do sistema programado para hoje às 23:00</p>
-                <p className="text-sm text-white/90">• 3 professores pendentes de aprovação</p>
-                <p className="text-sm text-white/90">• Relatório mensal deve ser enviado até sexta-feira</p>
+            <CardContent className="pt-0">
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm text-white/90">• Backup do sistema programado para hoje às 23:00</p>
+                <p className="text-xs sm:text-sm text-white/90">• 3 professores pendentes de aprovação</p>
+                <p className="text-xs sm:text-sm text-white/90">• Relatório mensal deve ser enviado até sexta-feira</p>
               </div>
             </CardContent>
           </Card>

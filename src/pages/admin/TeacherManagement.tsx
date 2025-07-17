@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Filter, MoreVertical, Edit, Trash2, Mail, Phone, MapPin, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Search, Filter, MoreVertical, Edit, Trash2, Mail, Clock, CheckCircle, XCircle } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import AddTeacher from '@/components/admin/AddTeacher';
@@ -17,6 +17,13 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -29,49 +36,45 @@ const initialTeachers = [
     id: 1,
     name: 'Prof. Maria Silva',
     email: 'maria.silva@escola.com',
-    phone: '(11) 99999-9999',
+    university: 'BICT - UFMA',
     subject: 'Matemática',
     status: 'active',
     classesAssigned: 5,
     studentsCount: 120,
-    joinDate: '2023-01-15',
-    location: 'São Paulo - SP'
+    joinDate: '2023-01-15'
   },
   {
     id: 2,
     name: 'Prof. João Santos',
     email: 'joao.santos@escola.com',
-    phone: '(11) 88888-8888',
+    university: 'Engenharia Física - USP',
     subject: 'Física',
     status: 'active',
     classesAssigned: 3,
     studentsCount: 89,
-    joinDate: '2023-03-20',
-    location: 'Rio de Janeiro - RJ'
+    joinDate: '2023-03-20'
   },
   {
     id: 3,
     name: 'Prof. Ana Costa',
     email: 'ana.costa@escola.com',
-    phone: '(11) 77777-7777',
+    university: 'Química Industrial - UFRJ',
     subject: 'Química',
     status: 'pending',
     classesAssigned: 0,
     studentsCount: 0,
-    joinDate: '2024-01-10',
-    location: 'Belo Horizonte - MG'
+    joinDate: '2024-01-10'
   },
   {
     id: 4,
     name: 'Prof. Carlos Lima',
     email: 'carlos.lima@escola.com',
-    phone: '(11) 66666-6666',
+    university: 'Ciência da Computação - UNICAMP',
     subject: 'Programação',
     status: 'inactive',
     classesAssigned: 2,
     studentsCount: 45,
-    joinDate: '2022-08-05',
-    location: 'Brasília - DF'
+    joinDate: '2022-08-05'
   }
 ];
 
@@ -79,13 +82,12 @@ interface Teacher {
   id: number;
   name: string;
   email: string;
-  phone: string;
+  university: string;
   subject: string;
   status: 'active' | 'pending' | 'inactive';
   classesAssigned: number;
   studentsCount: number;
   joinDate: string;
-  location: string;
 }
 
 const TeacherManagement: React.FC = () => {
@@ -163,14 +165,13 @@ const TeacherManagement: React.FC = () => {
       id: updatedTeacher.id,
       name: updatedTeacher.name,
       email: updatedTeacher.email,
-      phone: updatedTeacher.phone,
+      university: updatedTeacher.university,
       subject: updatedTeacher.subject,
       status: updatedTeacher.status === 'Ativo' ? 'active' : 
               updatedTeacher.status === 'Inativo' ? 'inactive' : 'pending',
       classesAssigned: selectedTeacher?.classesAssigned || 0,
       studentsCount: selectedTeacher?.studentsCount || 0,
-      joinDate: updatedTeacher.joinDate,
-      location: updatedTeacher.address || updatedTeacher.location
+      joinDate: updatedTeacher.joinDate
     };
 
     setTeachers(prev => prev.map(t => t.id === teacherToSave.id ? teacherToSave : t));
@@ -199,14 +200,13 @@ const TeacherManagement: React.FC = () => {
       id: Date.now(),
       name: newTeacherData.name,
       email: newTeacherData.email,
-      phone: newTeacherData.phone,
+      university: newTeacherData.university,
       subject: newTeacherData.subject,
       status: newTeacherData.status === 'Ativo' ? 'active' : 
               newTeacherData.status === 'Inativo' ? 'inactive' : 'pending',
       classesAssigned: 0,
       studentsCount: 0,
-      joinDate: newTeacherData.joinDate,
-      location: newTeacherData.address
+      joinDate: newTeacherData.joinDate
     };
 
     setTeachers(prev => [...prev, newTeacher]);
@@ -220,7 +220,7 @@ const TeacherManagement: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f0f6ff] pb-20">
       <Dialog open={showAddTeacher} onOpenChange={setShowAddTeacher}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md w-[90vw] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Convidar Professor</DialogTitle>
             <DialogDescription>Envie um convite para o professor se cadastrar no sistema</DialogDescription>
@@ -234,14 +234,14 @@ const TeacherManagement: React.FC = () => {
         subtitle="Cadastre e gerencie professores do sistema"
       />
 
-      <div className="px-6 space-y-6">
-        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
+        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-[#030025]">Professores Cadastrados</h2>
-            <p className="text-sm text-[#001cab]">{teachers.length} {teachers.length === 1 ? 'professor' : 'professores'} no total</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-[#030025]">Professores Cadastrados</h2>
+            <p className="text-xs sm:text-sm text-[#001cab]">{teachers.length} {teachers.length === 1 ? 'professor' : 'professores'} no total</p>
           </div>
           <Button 
-            className="bg-[#0029ff] hover:bg-[#001cab] text-white"
+            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto"
             onClick={() => setShowAddTeacher(true)}
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -249,15 +249,15 @@ const TeacherManagement: React.FC = () => {
           </Button>
         </section>
 
-        <section className="space-y-4">
-          <div className="flex gap-3">
+        <section className="space-y-3 sm:space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-4 w-4" />
               <Input
                 placeholder="Buscar por nome, email ou matéria..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff]"
+                className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-auto"
               />
             </div>
             
@@ -265,7 +265,7 @@ const TeacherManagement: React.FC = () => {
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
                 >
                   <Filter className="h-4 w-4 mr-2" />
                   Filtros
@@ -359,29 +359,25 @@ const TeacherManagement: React.FC = () => {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredTeachers.map((teacher) => (
               <Card key={teacher.id} className="bg-[#fffaf0] border-[#28b0ff] hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="font-semibold text-[#030025]">{teacher.name}</h3>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
+                        <h3 className="font-semibold text-[#030025] text-sm sm:text-base truncate">{teacher.name}</h3>
                         {getStatusIcon(teacher.status)}
                         {getStatusBadge(teacher.status)}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-[#001cab]">
+                      <div className="grid grid-cols-1 gap-1.5 sm:gap-2 text-xs sm:text-sm text-[#001cab]">
                         <div className="flex items-center space-x-2">
-                          <Mail className="h-4 w-4" />
-                          <span>{teacher.email}</span>
+                          <Mail className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <span className="truncate">{teacher.email}</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Phone className="h-4 w-4" />
-                          <span>{teacher.phone}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-4 w-4" />
-                          <span>{teacher.location}</span>
+                          <span className="font-medium">Universidade:</span>
+                          <span className="truncate">{teacher.university}</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className="font-medium">Matéria:</span>
@@ -389,42 +385,44 @@ const TeacherManagement: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-3 pt-3 border-t border-[#e0e7ff]">
+                      <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-[#e0e7ff]">
                         <div className="text-center">
-                          <p className="text-lg font-bold text-[#0029ff]">{teacher.classesAssigned}</p>
+                          <p className="text-sm sm:text-lg font-bold text-[#0029ff]">{teacher.classesAssigned}</p>
                           <p className="text-xs text-[#001cab]">Turmas</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-lg font-bold text-[#0029ff]">{teacher.studentsCount}</p>
+                          <p className="text-sm sm:text-lg font-bold text-[#0029ff]">{teacher.studentsCount}</p>
                           <p className="text-xs text-[#001cab]">Alunos</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-sm font-medium text-[#001cab]">{new Date(teacher.joinDate).toLocaleDateString('pt-BR')}</p>
+                          <p className="text-xs sm:text-sm font-medium text-[#001cab]">{new Date(teacher.joinDate).toLocaleDateString('pt-BR')}</p>
                           <p className="text-xs text-[#001cab]">Admissão</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col space-y-2 ml-4">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]"
-                        onClick={() => handleEditTeacher(teacher)}
-                      >
-                        <Edit className="h-4 w-4 mr-1" />
-                        Editar
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="border-[#d75200] text-[#d75200] hover:bg-[#fffaf0]"
-                        onClick={() => handleRemoveTeacher(teacher)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Remover
-                      </Button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Abrir menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => handleEditTeacher(teacher)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Editar professor
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => handleRemoveTeacher(teacher)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Remover professor
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </CardContent>
               </Card>
@@ -466,14 +464,13 @@ const TeacherManagement: React.FC = () => {
 
       {showEditTeacher && selectedTeacher && (
         <Dialog open={showEditTeacher} onOpenChange={setShowEditTeacher}>
-          <DialogContent className="sm:max-w-4xl">
+          <DialogContent className="sm:max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
             <EditTeacher
               teacher={{
                 ...selectedTeacher,
                 status: selectedTeacher.status === 'active' ? 'Ativo' : 
                        selectedTeacher.status === 'inactive' ? 'Inativo' : 'Pendente',
-                classes: [`${selectedTeacher.classesAssigned} ${selectedTeacher.classesAssigned === 1 ? 'turma' : 'turmas'}`],
-                address: selectedTeacher.location
+                classes: [`${selectedTeacher.classesAssigned} ${selectedTeacher.classesAssigned === 1 ? 'turma' : 'turmas'}`]
               }}
               onSave={handleSaveTeacher}
               onCancel={handleCancelEdit}
@@ -484,7 +481,7 @@ const TeacherManagement: React.FC = () => {
 
       {showRemoveTeacher && selectedTeacher && (
         <Dialog open={showRemoveTeacher} onOpenChange={setShowRemoveTeacher}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md w-[90vw]">
             <RemoveTeacher
               teacher={selectedTeacher}
               onConfirm={handleConfirmRemove}

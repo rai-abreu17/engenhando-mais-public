@@ -7,11 +7,10 @@ interface Teacher {
   id: number;
   name: string;
   email: string;
-  phone: string;
+  university: string;
   subject: string;
   status: string;
   classes: string[];
-  address: string;
   joinDate: string;
 }
 
@@ -99,14 +98,14 @@ const EditTeacher: React.FC<EditTeacherProps> = ({ teacher, onSave, onCancel }) 
         </div>
         
         <div>
-          <Label htmlFor="phone">Telefone</Label>
+          <Label htmlFor="university">Universidade</Label>
           <Input
-            id="phone"
-            name="phone"
-            value={formData.phone}
+            id="university"
+            name="university"
+            value={formData.university}
             onChange={handleInputChange}
             required
-            placeholder="(11) 99999-9999"
+            placeholder="Ex: BICT - UFMA"
           />
         </div>
         
@@ -135,18 +134,6 @@ const EditTeacher: React.FC<EditTeacherProps> = ({ teacher, onSave, onCancel }) 
             <option value="Ativo">Ativo</option>
             <option value="Inativo">Inativo</option>
           </select>
-        </div>
-        
-        <div>
-          <Label htmlFor="address">Endereço</Label>
-          <Input
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            required
-            placeholder="São Paulo, SP"
-          />
         </div>
       </div>
       

@@ -18,20 +18,20 @@ const AdminNavigation: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#28b0ff] z-50">
-      <div className="flex justify-around items-center py-2 max-w-6xl mx-auto overflow-x-auto">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#28b0ff] z-50 safe-area-pb">
+      <div className="flex justify-around items-center py-1 sm:py-2 max-w-6xl mx-auto overflow-x-auto px-2">
         {navItems.map(({ icon: Icon, label, path }) => (
           <button
             key={path}
             onClick={() => navigate(path)}
-            className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors min-w-0 ${
+            className={`flex flex-col items-center py-1 sm:py-2 px-2 sm:px-3 rounded-lg transition-colors min-w-0 flex-1 max-w-[80px] ${
               isActive(path) 
                 ? 'text-[#0029ff] bg-[#f0f6ff] border border-[#28b0ff]' 
                 : 'text-[#001cab] hover:text-[#0029ff] hover:bg-[#f0f6ff]/50'
             }`}
           >
-            <Icon size={18} className="mb-1 flex-shrink-0" />
-            <span className="text-xs truncate max-w-[60px]">{label}</span>
+            <Icon size={16} className="sm:size-[18px] mb-0.5 sm:mb-1 flex-shrink-0" />
+            <span className="text-xs leading-tight truncate max-w-full text-center">{label}</span>
           </button>
         ))}
       </div>

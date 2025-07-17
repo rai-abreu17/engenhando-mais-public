@@ -7,13 +7,12 @@ interface Teacher {
   id: number;
   name: string;
   email: string;
-  phone: string;
+  university: string;
   subject: string;
   status: 'active' | 'pending' | 'inactive';
   classesAssigned: number;
   studentsCount: number;
   joinDate: string;
-  location: string;
 }
 
 interface RemoveTeacherProps {
@@ -45,6 +44,7 @@ const RemoveTeacher: React.FC<RemoveTeacherProps> = ({ teacher, onConfirm, onCan
           <div className="space-y-1 text-sm text-red-700">
             <p><strong>Nome:</strong> {teacher.name}</p>
             <p><strong>Email:</strong> {teacher.email}</p>
+            <p><strong>Universidade:</strong> {teacher.university}</p>
             <p><strong>Matéria:</strong> {teacher.subject}</p>
             <p><strong>Turmas Atribuídas:</strong> {teacher.classesAssigned}</p>
             <p><strong>Alunos:</strong> {teacher.studentsCount}</p>

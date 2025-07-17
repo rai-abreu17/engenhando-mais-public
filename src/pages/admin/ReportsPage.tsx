@@ -12,10 +12,20 @@ import {
   Users,
   BookOpen,
   Clock,
-  PieChart
+  PieChart,
+  MoreVertical,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/components/admin/AdminNavigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const ReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
@@ -99,51 +109,51 @@ const ReportsPage: React.FC = () => {
         subtitle="Gere e visualize relatórios do sistema"
       />
 
-      <div className="px-6 space-y-6">
+      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
         {/* Estatísticas Rápidas */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <Card className="bg-gradient-to-r from-[#28b0ff] to-[#0029ff] text-white border-[#28b0ff]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold">{quickStats.totalReports}</p>
-              <p className="text-sm text-white/80">Total de Relatórios</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <p className="text-xl sm:text-2xl font-bold">{quickStats.totalReports}</p>
+              <p className="text-xs sm:text-sm text-white/80">Total de Relatórios</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#ff7a28] to-[#d75200] text-white border-[#ff7a28]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold">{quickStats.thisMonth}</p>
-              <p className="text-sm text-white/80">Este Mês</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <p className="text-xl sm:text-2xl font-bold">{quickStats.thisMonth}</p>
+              <p className="text-xs sm:text-sm text-white/80">Este Mês</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#ffb646] to-[#ff9800] text-white border-[#ffb646]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold">{quickStats.pendingReports}</p>
-              <p className="text-sm text-white/80">Pendentes</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <p className="text-xl sm:text-2xl font-bold">{quickStats.pendingReports}</p>
+              <p className="text-xs sm:text-sm text-white/80">Pendentes</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#00a86b] to-[#008853] text-white border-[#00a86b]">
-            <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold">{quickStats.automatedReports}</p>
-              <p className="text-sm text-white/80">Automatizados</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <p className="text-xl sm:text-2xl font-bold">{quickStats.automatedReports}</p>
+              <p className="text-xs sm:text-sm text-white/80">Automatizados</p>
             </CardContent>
           </Card>
         </section>
 
         {/* Filtros de Período */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025]">
-              <Filter className="h-5 w-5" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Filtros de Período</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#030025] mb-2">Período Predefinido</label>
+                <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-2">Período Predefinido</label>
                 <select
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none"
+                  className="w-full px-3 py-2 bg-[#fffaf0] border border-[#28b0ff] rounded-md text-xs sm:text-sm text-[#030025] focus:border-[#0029ff] focus:outline-none h-10"
                 >
                   <option value="week">Última Semana</option>
                   <option value="month">Último Mês</option>
@@ -249,14 +259,25 @@ const ReportsPage: React.FC = () => {
                   <p className="font-medium text-[#030025]">Relatório Mensal de Alunos</p>
                   <p className="text-sm text-[#001cab]">Todo dia 1 às 09:00</p>
                 </div>
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff]">
-                    Editar
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-[#d75200] text-[#d75200]">
-                    Remover
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">Abrir menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar relatório
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-red-600">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remover relatório
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
@@ -264,14 +285,25 @@ const ReportsPage: React.FC = () => {
                   <p className="font-medium text-[#030025]">Relatório Semanal de Frequência</p>
                   <p className="text-sm text-[#001cab]">Toda sexta-feira às 17:00</p>
                 </div>
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff]">
-                    Editar
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-[#d75200] text-[#d75200]">
-                    Remover
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">Abrir menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar relatório
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-red-600">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remover relatório
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <Button className="w-full bg-[#0029ff] hover:bg-[#001cab] text-white mt-4">

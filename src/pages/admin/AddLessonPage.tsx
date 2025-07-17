@@ -74,20 +74,20 @@ const AddLessonPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f6ff]">
+    <div className="min-h-screen bg-[#f0f6ff] pb-20">
       <Header 
         title="Adicionar Nova Aula"
         subtitle="Crie e configure uma nova aula para seus alunos"
       />
 
-      <div className="px-6 pb-20">
+      <div className="px-4 sm:px-6 pb-20">
         <div className="max-w-6xl mx-auto">
           {/* Botão Voltar */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <Button 
               variant="outline" 
               onClick={handleBack}
-              className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]"
+              className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] w-full sm:w-auto"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar para Gerenciar Aulas
@@ -95,49 +95,49 @@ const AddLessonPage: React.FC = () => {
           </div>
 
           <Card className="bg-[#fffaf0] border-[#28b0ff]">
-            <CardHeader>
-              <CardTitle className="text-[#030025]">Nova Aula</CardTitle>
+            <CardHeader className="pb-4 sm:pb-6">
+              <CardTitle className="text-[#030025] text-lg sm:text-xl">Nova Aula</CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 mb-8">
-                  <TabsTrigger value="basic" className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    Informações Básicas
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-6 sm:mb-8 h-auto">
+                  <TabsTrigger value="basic" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+                    <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="text-center">Informações<br className="sm:hidden" /> Básicas</span>
                   </TabsTrigger>
-                  <TabsTrigger value="video" className="flex items-center gap-2">
-                    <Video className="h-4 w-4" />
-                    Vídeo YouTube
+                  <TabsTrigger value="video" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+                    <Video className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="text-center">Vídeo<br className="sm:hidden" /> YouTube</span>
                   </TabsTrigger>
-                  <TabsTrigger value="materials" className="flex items-center gap-2">
-                    <Upload className="h-4 w-4" />
-                    Materiais
+                  <TabsTrigger value="materials" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+                    <Upload className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>Materiais</span>
                   </TabsTrigger>
-                  <TabsTrigger value="preview" className="flex items-center gap-2">
-                    <Play className="h-4 w-4" />
-                    Visualizar
+                  <TabsTrigger value="preview" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+                    <Play className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>Visualizar</span>
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="basic" className="space-y-8">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <TabsContent value="basic" className="space-y-6 sm:space-y-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Título da Aula */}
                     <div className="lg:col-span-2 space-y-2">
-                      <Label htmlFor="title" className="text-[#030025] font-medium text-lg">Título da Aula *</Label>
+                      <Label htmlFor="title" className="text-[#030025] font-medium text-base sm:text-lg">Título da Aula *</Label>
                       <Input
                         id="title"
                         placeholder="Ex: Introdução ao Cálculo Diferencial"
                         value={formData.title}
                         onChange={(e) => handleInputChange('title', e.target.value)}
-                        className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-12 text-lg"
+                        className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-12 text-sm sm:text-lg"
                       />
                     </div>
 
                     {/* Matéria */}
                     <div className="space-y-2">
-                      <Label htmlFor="subject" className="text-[#030025] font-medium text-lg">Matéria *</Label>
+                      <Label htmlFor="subject" className="text-[#030025] font-medium text-base sm:text-lg">Matéria *</Label>
                       <Select onValueChange={(value) => handleInputChange('subject', value)}>
-                        <SelectTrigger className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-12 text-lg">
+                        <SelectTrigger className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-12 text-sm sm:text-lg">
                           <SelectValue placeholder="Selecione a matéria" />
                         </SelectTrigger>
                         <SelectContent>
@@ -155,9 +155,9 @@ const AddLessonPage: React.FC = () => {
 
                     {/* Professor */}
                     <div className="space-y-2">
-                      <Label htmlFor="teacher" className="text-[#030025] font-medium text-lg">Professor *</Label>
+                      <Label htmlFor="teacher" className="text-[#030025] font-medium text-base sm:text-lg">Professor *</Label>
                       <Select onValueChange={(value) => handleInputChange('teacher', value)}>
-                        <SelectTrigger className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-12 text-lg">
+                        <SelectTrigger className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-12 text-sm sm:text-lg">
                           <SelectValue placeholder="Selecione o professor" />
                         </SelectTrigger>
                         <SelectContent>
@@ -171,9 +171,9 @@ const AddLessonPage: React.FC = () => {
 
                     {/* Turma */}
                     <div className="space-y-2">
-                      <Label htmlFor="class" className="text-[#030025] font-medium text-lg">Turma *</Label>
+                      <Label htmlFor="class" className="text-[#030025] font-medium text-base sm:text-lg">Turma *</Label>
                       <Select onValueChange={(value) => handleInputChange('class', value)}>
-                        <SelectTrigger className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-12 text-lg">
+                        <SelectTrigger className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-12 text-sm sm:text-lg">
                           <SelectValue placeholder="Selecione a turma" />
                         </SelectTrigger>
                         <SelectContent>
@@ -189,52 +189,52 @@ const AddLessonPage: React.FC = () => {
 
                     {/* Duração */}
                     <div className="space-y-2">
-                      <Label htmlFor="duration" className="text-[#030025] font-medium text-lg">Duração (minutos) *</Label>
+                      <Label htmlFor="duration" className="text-[#030025] font-medium text-base sm:text-lg">Duração (minutos) *</Label>
                       <Input
                         id="duration"
                         type="number"
                         placeholder="Ex: 60"
                         value={formData.duration}
                         onChange={(e) => handleInputChange('duration', e.target.value)}
-                        className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-12 text-lg"
+                        className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-12 text-sm sm:text-lg"
                       />
                     </div>
 
                     {/* Descrição */}
                     <div className="lg:col-span-2 space-y-2">
-                      <Label htmlFor="description" className="text-[#030025] font-medium text-lg">Descrição</Label>
+                      <Label htmlFor="description" className="text-[#030025] font-medium text-base sm:text-lg">Descrição</Label>
                       <Textarea
                         id="description"
                         placeholder="Descreva o conteúdo e objetivos da aula..."
                         value={formData.description}
                         onChange={(e) => handleInputChange('description', e.target.value)}
-                        className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] min-h-[120px] text-lg"
-                        rows={6}
+                        className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] min-h-[100px] sm:min-h-[120px] text-sm sm:text-lg"
+                        rows={4}
                       />
                     </div>
                   </div>
                 </TabsContent>
 
-                <TabsContent value="video" className="space-y-8">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="space-y-6">
+                <TabsContent value="video" className="space-y-6 sm:space-y-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                    <div className="space-y-4 sm:space-y-6">
                       <div className="space-y-2">
-                        <Label htmlFor="youtube-url" className="text-[#030025] font-medium text-lg">URL do YouTube *</Label>
+                        <Label htmlFor="youtube-url" className="text-[#030025] font-medium text-base sm:text-lg">URL do YouTube *</Label>
                         <Input
                           id="youtube-url"
                           placeholder="https://www.youtube.com/watch?v=..."
                           value={youtubeUrl}
                           onChange={(e) => handleYouTubeUrl(e.target.value)}
-                          className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-12 text-lg"
+                          className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-12 text-sm sm:text-lg"
                         />
-                        <p className="text-sm text-[#001cab] mt-2">
+                        <p className="text-xs sm:text-sm text-[#001cab] mt-2">
                           Cole o link do vídeo do YouTube que será usado na aula
                         </p>
                       </div>
 
-                      <div className="bg-[#f0f6ff] border border-[#28b0ff] rounded-lg p-4">
-                        <h4 className="font-medium text-[#030025] mb-2">Dicas para o vídeo:</h4>
-                        <ul className="text-sm text-[#001cab] space-y-1">
+                      <div className="bg-[#f0f6ff] border border-[#28b0ff] rounded-lg p-3 sm:p-4">
+                        <h4 className="font-medium text-[#030025] mb-2 text-sm sm:text-base">Dicas para o vídeo:</h4>
+                        <ul className="text-xs sm:text-sm text-[#001cab] space-y-1">
                           <li>• Use vídeos educativos de qualidade</li>
                           <li>• Verifique se o vídeo está público</li>
                           <li>• Prefira vídeos com duração adequada à aula</li>
@@ -243,10 +243,10 @@ const AddLessonPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       {videoPreview ? (
                         <div className="space-y-2">
-                          <Label className="text-[#030025] font-medium text-lg">Pré-visualização do Vídeo</Label>
+                          <Label className="text-[#030025] font-medium text-base sm:text-lg">Pré-visualização do Vídeo</Label>
                           <div className="w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
                             <iframe
                               src={videoPreview}
@@ -370,30 +370,30 @@ const AddLessonPage: React.FC = () => {
               </Tabs>
 
               {/* Botões de Ação Fixos */}
-              <div className="flex justify-between items-center pt-8 border-t border-[#e0e7ff] mt-8">
+              <div className="flex flex-col sm:flex-row justify-between items-center pt-6 sm:pt-8 border-t border-[#e0e7ff] mt-6 sm:mt-8 gap-3 sm:gap-0">
                 <Button 
                   variant="outline" 
                   onClick={handleBack}
-                  className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] h-12 px-6 text-lg"
+                  className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] h-10 sm:h-12 px-4 sm:px-6 text-sm sm:text-lg w-full sm:w-auto order-3 sm:order-1"
                 >
-                  <ArrowLeft className="h-5 w-5 mr-2" />
+                  <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                   Cancelar
                 </Button>
-                <div className="flex space-x-4">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto order-1 sm:order-2">
                   <Button 
                     variant="outline"
                     onClick={() => setActiveTab('preview')}
-                    className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] h-12 px-6 text-lg"
+                    className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] h-10 sm:h-12 px-4 sm:px-6 text-sm sm:text-lg w-full sm:w-auto"
                   >
-                    <Play className="h-5 w-5 mr-2" />
+                    <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                     Visualizar
                   </Button>
                   <Button 
                     onClick={handleSubmit}
-                    className="bg-[#0029ff] hover:bg-[#001cab] text-white h-12 px-8 text-lg"
+                    className="bg-[#0029ff] hover:bg-[#001cab] text-white h-10 sm:h-12 px-6 sm:px-8 text-sm sm:text-lg w-full sm:w-auto"
                     disabled={!formData.title || !formData.subject || !formData.teacher || !formData.class}
                   >
-                    <Save className="h-5 w-5 mr-2" />
+                    <Save className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                     Criar Aula
                   </Button>
                 </div>

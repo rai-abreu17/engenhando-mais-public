@@ -98,40 +98,40 @@ const AdminSettings: React.FC = () => {
         subtitle="Gerencie configurações e controle de acesso"
       />
 
-      <div className="px-6 space-y-6">
+      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
         {/* Informações do Sistema */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025]">
-              <Database className="h-5 w-5" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
+              <Database className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Informações do Sistema</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="text-center p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                <p className="text-sm text-[#001cab]">Versão</p>
-                <p className="font-bold text-[#030025]">{systemInfo.version}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <p className="text-xs sm:text-sm text-[#001cab]">Versão</p>
+                <p className="font-bold text-[#030025] text-sm sm:text-base">{systemInfo.version}</p>
               </div>
-              <div className="text-center p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                <p className="text-sm text-[#001cab]">Uptime</p>
-                <p className="font-bold text-[#030025]">{systemInfo.uptime}</p>
+              <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <p className="text-xs sm:text-sm text-[#001cab]">Uptime</p>
+                <p className="font-bold text-[#030025] text-sm sm:text-base">{systemInfo.uptime}</p>
               </div>
-              <div className="text-center p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                <p className="text-sm text-[#001cab]">Armazenamento</p>
-                <p className="font-bold text-[#030025]">{systemInfo.storage}</p>
+              <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <p className="text-xs sm:text-sm text-[#001cab]">Armazenamento</p>
+                <p className="font-bold text-[#030025] text-sm sm:text-base">{systemInfo.storage}</p>
               </div>
-              <div className="text-center p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                <p className="text-sm text-[#001cab]">Usuários</p>
-                <p className="font-bold text-[#030025]">{systemInfo.users.toLocaleString()}</p>
+              <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <p className="text-xs sm:text-sm text-[#001cab]">Usuários</p>
+                <p className="font-bold text-[#030025] text-sm sm:text-base">{systemInfo.users.toLocaleString()}</p>
               </div>
-              <div className="text-center p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                <p className="text-sm text-[#001cab]">Último Backup</p>
-                <p className="font-bold text-[#030025]">{systemInfo.lastBackup}</p>
+              <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <p className="text-xs sm:text-sm text-[#001cab]">Último Backup</p>
+                <p className="font-bold text-[#030025] text-xs sm:text-sm">{systemInfo.lastBackup}</p>
               </div>
-              <div className="text-center p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
-                <p className="text-sm text-[#001cab]">Atualização</p>
-                <p className="font-bold text-[#030025]">{systemInfo.lastUpdate}</p>
+              <div className="text-center p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <p className="text-xs sm:text-sm text-[#001cab]">Atualização</p>
+                <p className="font-bold text-[#030025] text-sm sm:text-base">{systemInfo.lastUpdate}</p>
               </div>
             </div>
           </CardContent>
@@ -139,13 +139,13 @@ const AdminSettings: React.FC = () => {
 
         {/* Configurações Gerais */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-[#030025]">
-              <Settings className="h-5 w-5" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
+              <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Configurações Gerais</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-[#030025]">Notificações por Email</p>

@@ -126,20 +126,20 @@ const AddTeacher: React.FC<AddTeacherProps> = ({ onAddTeacher, onCancel }) => {
         </Alert>
       </div>
 
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
         <Button 
           type="button" 
           variant="outline" 
           onClick={onCancel}
           disabled={isLoading}
-          className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff]"
+          className="w-full sm:w-auto border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] order-2 sm:order-1"
         >
           Cancelar
         </Button>
         <Button 
           type="submit" 
           disabled={isLoading || !email.trim()}
-          className="bg-[#0029ff] hover:bg-[#001cab] text-white"
+          className="w-full sm:w-auto bg-[#0029ff] hover:bg-[#001cab] text-white order-1 sm:order-2"
         >
           {isLoading ? (
             <div className="flex items-center gap-2">

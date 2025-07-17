@@ -1,0 +1,199 @@
+/* Responsive utilities for mobile-first design */
+
+/* Safe area utilities for mobile devices */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+/* Touch-friendly button sizing */
+@media (max-width: 640px) {
+  .btn-touch {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+  
+  .input-touch {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+}
+
+/* Mobile-specific layouts */
+@media (max-width: 768px) {
+  .mobile-stack > * {
+    width: 100% !important;
+    margin-bottom: 0.75rem;
+  }
+  
+  .mobile-stack > *:last-child {
+    margin-bottom: 0;
+  }
+  
+  .mobile-center {
+    text-align: center;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+  }
+}
+
+/* Card responsive spacing */
+.card-responsive {
+  padding: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .card-responsive {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .card-responsive {
+    padding: 1.5rem;
+  }
+}
+
+/* Modal responsive sizing */
+.modal-responsive {
+  width: 95vw;
+  max-width: 28rem;
+}
+
+@media (min-width: 640px) {
+  .modal-responsive {
+    width: auto;
+    max-width: 32rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .modal-responsive {
+    max-width: 42rem;
+  }
+}
+
+/* Navigation responsive */
+.nav-mobile {
+  padding: 0.25rem 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .nav-mobile {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Text responsive sizing */
+.text-responsive-xs {
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-xs {
+    font-size: 0.875rem;
+  }
+}
+
+.text-responsive-sm {
+  font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-sm {
+    font-size: 1rem;
+  }
+}
+
+.text-responsive-base {
+  font-size: 1rem;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-base {
+    font-size: 1.125rem;
+  }
+}
+
+.text-responsive-lg {
+  font-size: 1.125rem;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-lg {
+    font-size: 1.25rem;
+  }
+}
+
+/* Scroll behavior */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  outline: 2px solid #0029ff;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card-contrast {
+    border-width: 2px;
+  }
+  
+  .text-contrast {
+    font-weight: 600;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode support for system preference */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-text {
+    color: #f0f6ff;
+  }
+  
+  .dark-mode-bg {
+    background-color: #030025;
+  }
+}

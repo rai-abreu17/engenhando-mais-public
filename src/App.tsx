@@ -17,6 +17,7 @@ import TeacherManagement from './pages/admin/TeacherManagement';
 import ClassManagement from './pages/admin/ClassManagement';
 import LessonManagement from './pages/admin/LessonManagement';
 import AddLessonPage from './pages/admin/AddLessonPage';
+import ReviewLessonPage from './pages/admin/ReviewLessonPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import AdminSettings from './pages/admin/AdminSettings';
 import { useAuth } from './hooks/useAuth';
@@ -55,6 +56,7 @@ const App = () => {
             <Route path="/admin/classes" element={<ClassManagement />} />
             <Route path="/admin/lessons" element={<LessonManagement />} />
             <Route path="/admin/lessons/add" element={<AddLessonPage />} />
+            <Route path="/admin/lessons/review/:id" element={<ReviewLessonPage />} />
             <Route path="/admin/reports" element={<ReportsPage />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             
