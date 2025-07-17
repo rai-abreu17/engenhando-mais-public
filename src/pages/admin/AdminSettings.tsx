@@ -213,7 +213,7 @@ const AdminSettings: React.FC = () => {
           <CardContent>
             <div className="space-y-2 sm:space-y-3">
               {userManagement.map((user) => (
-                <div key={user.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff]">
+                <div key={user.id} className="flex flex-col gap-2 p-2 sm:p-3 bg-[#f0f6ff] rounded-lg border border-[#28b0ff] sm:flex-row sm:items-center sm:gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-1">
                       <p className="font-medium text-[#030025] text-xs sm:text-sm lg:text-base truncate">{user.name}</p>
@@ -223,16 +223,15 @@ const AdminSettings: React.FC = () => {
                     <p className="text-xs text-[#001cab] truncate">{user.email}</p>
                     <p className="text-xs text-[#001cab]">Último acesso: {new Date(user.lastAccess).toLocaleDateString('pt-BR')}</p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 sm:flex-shrink-0">
-                    <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs h-7 sm:h-8">
+                  <div className="flex gap-2 self-end sm:self-auto sm:flex-shrink-0">
+                    <Button variant="outline" size="sm" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none">
                       <Key className="h-3 w-3 mr-1" />
-                      <span className="hidden sm:inline">Reset Senha</span>
-                      <span className="sm:hidden">Reset</span>
+                      <span>Reset</span>
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className={`text-xs h-7 sm:h-8 ${user.status === 'active' ? 'border-[#d75200] text-[#d75200] hover:bg-red-50' : 'border-[#00a86b] text-[#00a86b] hover:bg-green-50'}`}
+                      className={`text-xs h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none ${user.status === 'active' ? 'border-[#d75200] text-[#d75200] hover:bg-red-50' : 'border-[#00a86b] text-[#00a86b] hover:bg-green-50'}`}
                     >
                       {user.status === 'active' ? 'Desativar' : 'Ativar'}
                     </Button>
@@ -252,38 +251,38 @@ const AdminSettings: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 sm:space-y-3 lg:space-y-4">
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-1 sm:mb-2">
-                Tempo de Sessão (minutos)
-              </label>
-              <Input
-                type="number"
-                defaultValue="60"
-                className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] text-xs sm:text-sm h-8 sm:h-10"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-1 sm:mb-2">
-                Tentativas de Login Máximas
-              </label>
-              <Input
-                type="number"
-                defaultValue="5"
-                className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] text-xs sm:text-sm h-8 sm:h-10"
-              />
-            </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-1 sm:mb-2">
+                  Tempo de Sessão (min)
+                </label>
+                <Input
+                  type="number"
+                  defaultValue="60"
+                  className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] text-xs sm:text-sm h-8 sm:h-10"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-1 sm:mb-2">
+                  Max Tentativas Login
+                </label>
+                <Input
+                  type="number"
+                  defaultValue="5"
+                  className="bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] text-xs sm:text-sm h-8 sm:h-10"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
               <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm h-8 sm:h-10">
                 <Lock className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Alterar Senha Admin</span>
-                <span className="sm:hidden">Senha Admin</span>
+                <span>Senha Admin</span>
               </Button>
               <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm h-8 sm:h-10">
                 <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Log de Segurança</span>
-                <span className="sm:hidden">Logs</span>
+                <span>Logs Segurança</span>
               </Button>
             </div>
           </CardContent>
@@ -298,26 +297,22 @@ const AdminSettings: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-2 lg:gap-3">
               <Button className="bg-[#0029ff] hover:bg-[#001cab] text-white text-xs sm:text-sm h-8 sm:h-10">
-                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Fazer Backup Agora</span>
-                <span className="sm:hidden">Backup</span>
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span>Backup</span>
               </Button>
               <Button variant="outline" className="border-[#28b0ff] text-[#0029ff] hover:bg-[#f0f6ff] text-xs sm:text-sm h-8 sm:h-10">
-                <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Restaurar Backup</span>
-                <span className="sm:hidden">Restaurar</span>
+                <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span>Restaurar</span>
               </Button>
               <Button variant="outline" className="border-[#ff7a28] text-[#ff7a28] hover:bg-orange-50 text-xs sm:text-sm h-8 sm:h-10">
-                <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Limpar Cache</span>
-                <span className="sm:hidden">Cache</span>
+                <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span>Cache</span>
               </Button>
               <Button variant="outline" className="border-[#d75200] text-[#d75200] hover:bg-red-50 text-xs sm:text-sm h-8 sm:h-10">
-                <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Reiniciar Sistema</span>
-                <span className="sm:hidden">Reiniciar</span>
+                <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span>Reiniciar</span>
               </Button>
             </div>
           </CardContent>
@@ -326,10 +321,9 @@ const AdminSettings: React.FC = () => {
         {/* Salvar Configurações */}
         <Card className="bg-gradient-to-r from-[#00a86b] to-[#008853] text-white border-[#00a86b]">
           <CardContent className="p-2 sm:p-3 lg:p-4">
-            <Button className="w-full bg-white text-[#00a86b] hover:bg-gray-100 text-xs sm:text-sm lg:text-base h-8 sm:h-10">
+            <Button className="w-full bg-white text-[#00a86b] hover:bg-gray-100 text-xs sm:text-sm lg:text-base h-8 sm:h-10 lg:h-12">
               <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Salvar Todas as Configurações</span>
-              <span className="sm:hidden">Salvar Configurações</span>
+              <span>Salvar Configurações</span>
             </Button>
           </CardContent>
         </Card>
