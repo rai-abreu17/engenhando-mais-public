@@ -234,30 +234,31 @@ const TeacherManagement: React.FC = () => {
         subtitle="Cadastre e gerencie professores do sistema"
       />
 
-      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
-        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+      <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
+        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-[#030025]">Professores Cadastrados</h2>
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#030025]">Professores Cadastrados</h2>
             <p className="text-xs sm:text-sm text-[#001cab]">{teachers.length} {teachers.length === 1 ? 'professor' : 'professores'} no total</p>
           </div>
           <Button 
-            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto"
+            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto text-xs sm:text-sm"
             onClick={() => setShowAddTeacher(true)}
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Convidar Professor
+            <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Convidar Professor</span>
+            <span className="sm:hidden">Convidar</span>
           </Button>
         </section>
 
-        <section className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
+        <section className="space-y-2 sm:space-y-3 lg:space-y-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-4 w-4" />
+              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
               <Input
                 placeholder="Buscar por nome, email ou matéria..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-auto"
+                className="pl-8 sm:pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-8 sm:h-10 text-xs sm:text-sm"
               />
             </div>
             
@@ -265,12 +266,14 @@ const TeacherManagement: React.FC = () => {
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                  size="sm"
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto text-xs sm:text-sm h-8 sm:h-10 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
                 >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filtros
+                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Filtros</span>
+                  <span className="sm:hidden">Filtrar</span>
                   {hasActiveFilters && (
-                    <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
+                    <Badge variant="secondary" className="ml-1 sm:ml-2 bg-white/20 text-white text-xs">
                       {selectedStatuses.length}
                     </Badge>
                   )}
@@ -359,39 +362,39 @@ const TeacherManagement: React.FC = () => {
             </div>
           )}
 
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-2 sm:space-y-3 lg:space-y-4">
             {filteredTeachers.map((teacher) => (
               <Card key={teacher.id} className="bg-[#fffaf0] border-[#28b0ff] hover:shadow-md transition-shadow">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex items-start justify-between gap-3">
+                <CardContent className="p-2 sm:p-3 lg:p-4">
+                  <div className="flex items-start justify-between gap-2 sm:gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
-                        <h3 className="font-semibold text-[#030025] text-sm sm:text-base truncate">{teacher.name}</h3>
+                      <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-1 sm:mb-2 lg:mb-3">
+                        <h3 className="font-semibold text-[#030025] text-xs sm:text-sm lg:text-base truncate">{teacher.name}</h3>
                         {getStatusIcon(teacher.status)}
                         {getStatusBadge(teacher.status)}
                       </div>
-                      <div className="grid grid-cols-1 gap-1.5 sm:gap-2 text-xs sm:text-sm text-[#001cab]">
-                        <div className="flex items-center space-x-2">
-                          <Mail className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <div className="grid grid-cols-1 gap-0.5 sm:gap-1 lg:gap-2 text-xs sm:text-sm text-[#001cab]">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                          <Mail className="h-2.5 w-2.5 sm:h-3 sm:w-3 lg:h-4 lg:w-4 flex-shrink-0" />
                           <span className="truncate">{teacher.email}</span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium">Universidade:</span>
-                          <span className="truncate">{teacher.university}</span>
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                          <span className="font-medium text-xs sm:text-sm">Universidade:</span>
+                          <span className="truncate text-xs sm:text-sm">{teacher.university}</span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium">Matéria:</span>
-                          <span>{teacher.subject}</span>
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                          <span className="font-medium text-xs sm:text-sm">Matéria:</span>
+                          <span className="text-xs sm:text-sm">{teacher.subject}</span>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-[#e0e7ff]">
+                      <div className="grid grid-cols-3 gap-1 sm:gap-2 lg:gap-4 mt-1 sm:mt-2 lg:mt-3 pt-1 sm:pt-2 lg:pt-3 border-t border-[#e0e7ff]">
                         <div className="text-center">
-                          <p className="text-sm sm:text-lg font-bold text-[#0029ff]">{teacher.classesAssigned}</p>
+                          <p className="text-xs sm:text-sm lg:text-lg font-bold text-[#0029ff]">{teacher.classesAssigned}</p>
                           <p className="text-xs text-[#001cab]">Turmas</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-sm sm:text-lg font-bold text-[#0029ff]">{teacher.studentsCount}</p>
+                          <p className="text-xs sm:text-sm lg:text-lg font-bold text-[#0029ff]">{teacher.studentsCount}</p>
                           <p className="text-xs text-[#001cab]">Alunos</p>
                         </div>
                         <div className="text-center">
@@ -403,23 +406,23 @@ const TeacherManagement: React.FC = () => {
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 flex-shrink-0">
-                          <MoreVertical className="h-4 w-4" />
+                        <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-8 sm:w-8 p-0 flex-shrink-0">
+                          <MoreVertical className="h-3 w-3 sm:h-4 sm:w-4" />
                           <span className="sr-only">Abrir menu</span>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuContent align="end" className="w-40 sm:w-48">
                         <DropdownMenuItem onClick={() => handleEditTeacher(teacher)}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Editar professor
+                          <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                          <span className="text-xs sm:text-sm">Editar professor</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           onClick={() => handleRemoveTeacher(teacher)}
                           className="text-red-600"
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Remover professor
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                          <span className="text-xs sm:text-sm">Remover professor</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

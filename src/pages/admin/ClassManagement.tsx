@@ -213,34 +213,35 @@ const ClassManagement: React.FC = () => {
         subtitle="Administre as turmas do sistema"
       />
 
-      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
-        <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+      <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
+        <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 lg:gap-4">
           <div>
-            <h2 className="text-lg sm:text-xl font-bold text-[#030025]">Turmas Cadastradas</h2>
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-[#030025]">Turmas Cadastradas</h2>
             <p className="text-xs sm:text-sm text-[#001cab]">
               {classes.length} {classes.length === 1 ? 'turma' : 'turmas'} no total
               {hasActiveFilters && ` • ${filteredClasses.length} ${filteredClasses.length === 1 ? 'corresponde' : 'correspondem'} aos filtros`}
             </p>
           </div>
           <Button 
-            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto"
+            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto text-xs sm:text-sm"
             onClick={() => setShowAddClass(true)}
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Criar Turma
+            <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Criar Turma</span>
+            <span className="sm:hidden">Criar</span>
           </Button>
         </section>
 
         {/* Barra de Busca e Filtros */}
-        <section className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
+        <section className="space-y-2 sm:space-y-3 lg:space-y-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-4 w-4" />
+              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
               <Input
                 placeholder="Buscar por nome, matéria ou professor..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-10 sm:h-auto"
+                className="pl-8 sm:pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-8 sm:h-10 text-xs sm:text-sm"
               />
             </div>
             
@@ -248,13 +249,15 @@ const ClassManagement: React.FC = () => {
             <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <PopoverTrigger asChild>
                 <Button 
-                  variant="outline" 
-                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                  variant="outline"
+                  size="sm"
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-full sm:w-auto text-xs sm:text-sm h-8 sm:h-10 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
                 >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filtros
+                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Filtros</span>
+                  <span className="sm:hidden">Filtrar</span>
                   {hasActiveFilters && (
-                    <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
+                    <Badge variant="secondary" className="ml-1 sm:ml-2 bg-white/20 text-white text-xs">
                       {selectedStatuses.length}
                     </Badge>
                   )}

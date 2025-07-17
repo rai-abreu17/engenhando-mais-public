@@ -109,45 +109,45 @@ const ReportsPage: React.FC = () => {
         subtitle="Gere e visualize relatórios do sistema"
       />
 
-      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6">
+      <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
         {/* Estatísticas Rápidas */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
           <Card className="bg-gradient-to-r from-[#28b0ff] to-[#0029ff] text-white border-[#28b0ff]">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <p className="text-xl sm:text-2xl font-bold">{quickStats.totalReports}</p>
-              <p className="text-xs sm:text-sm text-white/80">Total de Relatórios</p>
+            <CardContent className="p-2 sm:p-3 lg:p-4 text-center">
+              <p className="text-base sm:text-xl lg:text-2xl font-bold">{quickStats.totalReports}</p>
+              <p className="text-xs lg:text-sm text-white/80">Total de Relatórios</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#ff7a28] to-[#d75200] text-white border-[#ff7a28]">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <p className="text-xl sm:text-2xl font-bold">{quickStats.thisMonth}</p>
-              <p className="text-xs sm:text-sm text-white/80">Este Mês</p>
+            <CardContent className="p-2 sm:p-3 lg:p-4 text-center">
+              <p className="text-base sm:text-xl lg:text-2xl font-bold">{quickStats.thisMonth}</p>
+              <p className="text-xs lg:text-sm text-white/80">Este Mês</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#ffb646] to-[#ff9800] text-white border-[#ffb646]">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <p className="text-xl sm:text-2xl font-bold">{quickStats.pendingReports}</p>
-              <p className="text-xs sm:text-sm text-white/80">Pendentes</p>
+            <CardContent className="p-2 sm:p-3 lg:p-4 text-center">
+              <p className="text-base sm:text-xl lg:text-2xl font-bold">{quickStats.pendingReports}</p>
+              <p className="text-xs lg:text-sm text-white/80">Pendentes</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#00a86b] to-[#008853] text-white border-[#00a86b]">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <p className="text-xl sm:text-2xl font-bold">{quickStats.automatedReports}</p>
-              <p className="text-xs sm:text-sm text-white/80">Automatizados</p>
+            <CardContent className="p-2 sm:p-3 lg:p-4 text-center">
+              <p className="text-base sm:text-xl lg:text-2xl font-bold">{quickStats.automatedReports}</p>
+              <p className="text-xs lg:text-sm text-white/80">Automatizados</p>
             </CardContent>
           </Card>
         </section>
 
         {/* Filtros de Período */}
         <Card className="bg-[#fffaf0] border-[#28b0ff]">
-          <CardHeader className="pb-3 sm:pb-4">
-            <CardTitle className="flex items-center space-x-2 text-[#030025] text-base sm:text-lg">
-              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardHeader className="pb-2 sm:pb-3 lg:pb-4">
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-sm sm:text-base lg:text-lg">
+              <Filter className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
               <span>Filtros de Período</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
               <div>
                 <label className="block text-xs sm:text-sm font-medium text-[#030025] mb-2">Período Predefinido</label>
                 <select
