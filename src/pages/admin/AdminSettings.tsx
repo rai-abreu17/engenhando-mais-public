@@ -20,7 +20,7 @@ import {
   Upload
 } from 'lucide-react';
 import Header from '@/components/common/Header';
-import AdminNavigation from '@/components/admin/AdminNavigation';
+import AdminNavigation from '@/admin/components/AdminNavigation';
 
 const AdminSettings: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);

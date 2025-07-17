@@ -18,7 +18,7 @@ import {
   Trash2
 } from 'lucide-react';
 import Header from '@/components/common/Header';
-import AdminNavigation from '@/components/admin/AdminNavigation';
+import AdminNavigation from '@/admin/components/AdminNavigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
