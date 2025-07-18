@@ -66,24 +66,13 @@ const CreateLesson: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="md:flex">
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block w-64 border-r border-border bg-card">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-primary mb-6">Portal do Professor</h2>
-            <TeacherNavigation />
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#f0f6ff] pb-20">
+      <Header 
+        title="Criar Nova Aula ✏️"
+        subtitle="Compartilhe seu conhecimento com os alunos"
+      />
 
-        {/* Main Content */}
-        <div className="flex-1 pb-20 md:pb-0">
-          <Header 
-            title="Criar Nova Aula ✏️"
-            subtitle="Compartilhe seu conhecimento com os alunos"
-          />
-
-          <div className="p-6">
+          <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
             <form onSubmit={(e) => handleSubmit(e)} className="space-y-6">
               {/* Back Button */}
               <Button variant="outline" asChild className="mb-4">
@@ -343,13 +332,8 @@ const CreateLesson: React.FC = () => {
               </div>
             </form>
           </div>
-        </div>
-      </div>
 
-      {/* Mobile Navigation */}
-      <div className="md:hidden">
-        <TeacherNavigation />
-      </div>
+      <TeacherNavigation />
     </div>
   );
 };

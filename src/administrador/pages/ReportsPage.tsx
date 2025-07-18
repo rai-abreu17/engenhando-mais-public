@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { 
   Download, 
   FileText, 
@@ -38,9 +37,6 @@ const ReportsPage: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  // Verificar se há filtros ativos (não padrão)
-  const hasActiveFilters = selectedPeriod !== 'month' || startDate || endDate;
 
   // Mock data - em produção viria de APIs
   const reportTypes = [
@@ -160,15 +156,10 @@ const ReportsPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                className="border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 text-[#0029ff]"
               >
                 <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Filtrar Período</span>
-                {hasActiveFilters && (
-                  <Badge variant="secondary" className="hidden sm:inline-flex ml-2 bg-white/20 text-white text-xs">
-                    1
-                  </Badge>
-                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">

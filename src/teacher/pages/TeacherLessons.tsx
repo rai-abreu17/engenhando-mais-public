@@ -16,6 +16,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import TeacherNavigation from '../components/TeacherNavigation';
 import Header from '@/components/common/Header';
 import { NavLink } from 'react-router-dom';
@@ -66,29 +73,72 @@ const lessons = [
     difficulty: 'Básico',
     tags: ['física', 'movimento', 'cinemática'],
   },
+  {
+    id: 4,
+    title: 'Equações Diferenciais',
+    description: 'Introdução às equações diferenciais ordinárias',
+    subject: 'Cálculo II',
+    class: 'Turma A',
+    duration: '55 min',
+    views: 0,
+    avgRating: 0,
+    totalRatings: 0,
+    status: 'Rejeitada',
+    publishedAt: null,
+    difficulty: 'Avançado',
+    tags: ['equações', 'diferenciais', 'cálculo'],
+    rejectionReason: 'Áudio com problema técnico, necessita regravação'
+  },
 ];
 
 const TeacherLessons: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('Todas');
-  const [selectedSubject, setSelectedSubject] = useState('Todas');
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const subjects = ['Todas', ...Array.from(new Set(lessons.map(lesson => lesson.subject)))];
+  const subjects = Array.from(new Set(lessons.map(lesson => lesson.subject)));
 
   const filteredLessons = lessons.filter(lesson => {
     const matchesSearch = lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lesson.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = selectedFilter === 'Todas' || lesson.status === selectedFilter;
-    const matchesSubject = selectedSubject === 'Todas' || lesson.subject === selectedSubject;
-    return matchesSearch && matchesFilter && matchesSubject;
+    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(lesson.status);
+    const matchesSubject = selectedSubjects.length === 0 || selectedSubjects.includes(lesson.subject);
+    return matchesSearch && matchesStatus && matchesSubject;
   });
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const handleSubjectToggle = (subject: string) => {
+    setSelectedSubjects(prev => 
+      prev.includes(subject) 
+        ? prev.filter(s => s !== subject)
+        : [...prev, subject]
+    );
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedStatuses([]);
+    setSelectedSubjects([]);
+    setIsFilterOpen(false);
+  };
+
+  const hasActiveFilters = searchTerm || selectedStatuses.length > 0 || selectedSubjects.length > 0;
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Publicada': return 'bg-green-100 text-green-800';
-      case 'Rascunho': return 'bg-yellow-100 text-yellow-800';
-      case 'Arquivada': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Publicada': return 'bg-[#f0f6ff] text-[#001cab] border-[#28b0ff]';
+      case 'Rascunho': return 'bg-[#fffaf0] text-[#ff7a28] border-[#ffb646]';
+      case 'Rejeitada': return 'bg-[#fffaf0] text-[#d75200] border-[#d75200]';
+      case 'Arquivada': return 'bg-gray-100 text-gray-800 border-gray-300';
+      default: return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };
 
@@ -102,174 +152,244 @@ const TeacherLessons: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="md:flex">
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block w-64 border-r border-border bg-card">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-primary mb-6">Portal do Professor</h2>
-            <TeacherNavigation />
+    <div className="min-h-screen bg-[#f0f6ff] pb-20">
+      <Header 
+        title="Minhas Aulas 📚"
+        subtitle="Gerencie e acompanhe suas videoaulas"
+      />
+
+      <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
+        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
+          <div>
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#030025]">Aulas Criadas</h2>
+            <p className="text-xs sm:text-sm text-[#001cab]">
+              {lessons.length} {lessons.length === 1 ? 'aula' : 'aulas'} no total
+              {hasActiveFilters && ` • ${filteredLessons.length} ${filteredLessons.length === 1 ? 'corresponde' : 'correspondem'} aos filtros`}
+            </p>
           </div>
-        </div>
+          <Button 
+            className="bg-[#0029ff] hover:bg-[#001cab] text-white w-full sm:w-auto text-xs sm:text-sm"
+            asChild
+          >
+            <NavLink to="/teacher/lessons/create">
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Nova Aula</span>
+              <span className="sm:hidden">Nova</span>
+            </NavLink>
+          </Button>
+        </section>
 
-        {/* Main Content */}
-        <div className="flex-1 pb-20 md:pb-0">
-          <Header 
-            title="Minhas Aulas 📚"
-            subtitle="Gerencie e acompanhe suas videoaulas"
-          />
-
-          <div className="p-6 space-y-6">
-            {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Buscar aulas..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Todas', 'Publicada', 'Rascunho', 'Arquivada'].map((filter) => (
-                  <Button
-                    key={filter}
-                    variant={selectedFilter === filter ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedFilter(filter)}
-                  >
-                    {filter}
-                  </Button>
-                ))}
-              </div>
-              <select
-                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
+        <section className="flex gap-2 sm:gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
+            <Input
+              placeholder="Buscar por título ou descrição..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8 sm:pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-8 sm:h-10 text-xs sm:text-sm"
+            />
+          </div>
+          
+          {/* Botão de Filtros */}
+          <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline"
+                size="sm"
+                className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
               >
-                {subjects.map((subject) => (
-                  <option key={subject} value={subject}>{subject}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Create Lesson Button */}
-            <div className="flex justify-end">
-              <Button asChild>
-                <NavLink to="/teacher/lessons/create">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Criar Nova Aula
-                </NavLink>
+                <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Filtros</span>
+                {hasActiveFilters && (
+                  <Badge variant="secondary" className="hidden sm:inline-flex ml-2 bg-white/20 text-white text-xs">
+                    {selectedStatuses.length + selectedSubjects.length}
+                  </Badge>
+                )}
               </Button>
-            </div>
-
-            {/* Lessons Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredLessons.map((lesson) => (
-                <Card key={lesson.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg line-clamp-2">{lesson.title}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{lesson.subject} • {lesson.class}</p>
-                      </div>
-                      <Badge className={getStatusColor(lesson.status)}>
-                        {lesson.status}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{lesson.description}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Metadata */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span>{lesson.duration}</span>
-                      </div>
-                      <Badge className={getDifficultyColor(lesson.difficulty)}>
-                        {lesson.difficulty}
-                      </Badge>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="flex items-center gap-2">
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{lesson.views} visualizações</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        <span className="text-sm">{lesson.avgRating} ({lesson.totalRatings})</span>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1">
-                      {lesson.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-[#030025]">Filtrar Aulas</h4>
+                  {hasActiveFilters && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={clearFilters}
+                      className="h-6 px-2 text-xs text-[#0029ff]"
+                    >
+                      Limpar tudo
+                    </Button>
+                  )}
+                </div>
+                
+                <Separator />
+                
+                <div className="space-y-3">
+                  <h5 className="text-sm font-medium text-[#001cab]">Status</h5>
+                  {[
+                    { value: 'Publicada', label: 'Publicadas', count: lessons.filter(l => l.status === 'Publicada').length },
+                    { value: 'Rascunho', label: 'Rascunhos', count: lessons.filter(l => l.status === 'Rascunho').length },
+                    { value: 'Rejeitada', label: 'Rejeitadas', count: lessons.filter(l => l.status === 'Rejeitada').length },
+                    { value: 'Arquivada', label: 'Arquivadas', count: lessons.filter(l => l.status === 'Arquivada').length }
+                  ].map((status) => (
+                    <div key={status.value} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={status.value}
+                        checked={selectedStatuses.includes(status.value)}
+                        onCheckedChange={() => handleStatusToggle(status.value)}
+                      />
+                      <label 
+                        htmlFor={status.value}
+                        className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                      >
+                        <span className="text-[#030025]">{status.label}</span>
+                        <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                          {status.count}
                         </Badge>
-                      ))}
-                      {lesson.tags.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{lesson.tags.length - 3}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                <Separator />
+                
+                <div className="space-y-3">
+                  <h5 className="text-sm font-medium text-[#001cab]">Matérias</h5>
+                  {subjects.map((subject) => (
+                    <div key={subject} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={subject}
+                        checked={selectedSubjects.includes(subject)}
+                        onCheckedChange={() => handleSubjectToggle(subject)}
+                      />
+                      <label 
+                        htmlFor={subject}
+                        className="text-sm flex-1 flex items-center justify-between cursor-pointer"
+                      >
+                        <span className="text-[#030025]">{subject}</span>
+                        <Badge variant="secondary" className="bg-[#f0f6ff] text-[#001cab]">
+                          {lessons.filter(l => l.subject === subject).length}
                         </Badge>
-                      )}
+                      </label>
                     </div>
-
-                    {/* Publication Date */}
-                    {lesson.publishedAt && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        <span>Publicada em {new Date(lesson.publishedAt).toLocaleDateString('pt-BR')}</span>
-                      </div>
-                    )}
-
-                    {/* Actions */}
-                    <div className="flex gap-2 pt-2">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Eye className="h-4 w-4 mr-2" />
-                        Ver
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {filteredLessons.length === 0 && (
-              <div className="text-center py-12">
-                <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">
-                  Nenhuma aula encontrada
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Você ainda não criou nenhuma aula.'}
-                </p>
-                <Button asChild>
-                  <NavLink to="/teacher/lessons/create">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Criar Primeira Aula
-                  </NavLink>
-                </Button>
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
-        </div>
+            </PopoverContent>
+          </Popover>
+        </section>
+
+        {/* Lessons Grid */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredLessons.map((lesson) => (
+            <Card key={lesson.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg line-clamp-2">{lesson.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{lesson.subject} • {lesson.class}</p>
+                  </div>
+                  <Badge className={getStatusColor(lesson.status)}>
+                    {lesson.status}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground line-clamp-2">{lesson.description}</p>
+                
+                {/* Rejection Reason */}
+                {lesson.status === 'Rejeitada' && lesson.rejectionReason && (
+                  <div className="bg-red-50 border border-red-200 rounded-md p-2 mt-2">
+                    <p className="text-xs text-red-700">
+                      <strong>Motivo da rejeição:</strong> {lesson.rejectionReason}
+                    </p>
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Metadata */}
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span>{lesson.duration}</span>
+                  </div>
+                  <Badge className={getDifficultyColor(lesson.difficulty)}>
+                    {lesson.difficulty}
+                  </Badge>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{lesson.views} visualizações</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                    <span className="text-sm">{lesson.avgRating} ({lesson.totalRatings})</span>
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1">
+                  {lesson.tags.slice(0, 3).map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {lesson.tags.length > 3 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{lesson.tags.length - 3}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Publication Date */}
+                {lesson.publishedAt && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>Publicada em {new Date(lesson.publishedAt).toLocaleDateString('pt-BR')}</span>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Ver
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+
+        {/* Empty State */}
+        {filteredLessons.length === 0 && (
+          <section className="text-center py-12">
+            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              Nenhuma aula encontrada
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Você ainda não criou nenhuma aula.'}
+            </p>
+            <Button asChild>
+              <NavLink to="/teacher/lessons/create">
+                <Plus className="h-4 w-4 mr-2" />
+                Criar Primeira Aula
+              </NavLink>
+            </Button>
+          </section>
+        )}
       </div>
 
-      {/* Mobile Navigation */}
-      <div className="md:hidden">
-        <TeacherNavigation />
-      </div>
+      <TeacherNavigation />
     </div>
   );
 };

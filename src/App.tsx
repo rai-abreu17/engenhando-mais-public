@@ -34,7 +34,7 @@ import { useAuth } from './hooks/useAuth';
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, userType } = useAuth();
 
   // Se estiver carregando, pode mostrar um spinner ou tela de loading
   if (isLoading) {
@@ -44,6 +44,26 @@ const App = () => {
       </div>
     );
   }
+
+  // Componente para proteger rotas
+  const ProtectedRoute = ({ children, allowedUserTypes }: { children: React.ReactNode, allowedUserTypes: string[] }) => {
+    if (!isAuthenticated) {
+      return <Navigate to="/login" replace />;
+    }
+    
+    if (allowedUserTypes.length > 0 && userType && !allowedUserTypes.includes(userType)) {
+      // Redirecionar para a página apropriada baseada no tipo de usuário
+      if (userType === 'admin') {
+        return <Navigate to="/admin/dashboard" replace />;
+      } else if (userType === 'teacher') {
+        return <Navigate to="/teacher/dashboard" replace />;
+      } else {
+        return <Navigate to="/home" replace />;
+      }
+    }
+    
+    return <>{children}</>;
+  };
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -54,29 +74,107 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Login />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/biblioteca" element={<Biblioteca />} />
-            <Route path="/mascote" element={<MascoteNovo />} />
-            <Route path="/configuracoes" element={<Configuracoes />} />
+            
+            {/* Student Routes */}
+            <Route path="/home" element={
+              <ProtectedRoute allowedUserTypes={['authenticated']}>
+                <Home />
+              </ProtectedRoute>
+            } />
+            <Route path="/biblioteca" element={
+              <ProtectedRoute allowedUserTypes={['authenticated']}>
+                <Biblioteca />
+              </ProtectedRoute>
+            } />
+            <Route path="/mascote" element={
+              <ProtectedRoute allowedUserTypes={['authenticated']}>
+                <MascoteNovo />
+              </ProtectedRoute>
+            } />
+            <Route path="/configuracoes" element={
+              <ProtectedRoute allowedUserTypes={['authenticated']}>
+                <Configuracoes />
+              </ProtectedRoute>
+            } />
             
             {/* Admin Routes */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/teachers" element={<TeacherManagement />} />
-            <Route path="/admin/classes" element={<ClassManagement />} />
-            <Route path="/admin/lessons" element={<LessonManagement />} />
-            <Route path="/admin/lessons/add" element={<AddLessonPage />} />
-            <Route path="/admin/lessons/review/:id" element={<ReviewLessonPage />} />
-            <Route path="/admin/access-control" element={<AccessControlPage />} />
-            <Route path="/admin/reports" element={<ReportsPage />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/teachers" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <TeacherManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/classes" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <ClassManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/lessons" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <LessonManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/lessons/add" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <AddLessonPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/lessons/review/:id" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <ReviewLessonPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/access-control" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <AccessControlPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/reports" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <ReportsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <ProtectedRoute allowedUserTypes={['admin']}>
+                <AdminSettings />
+              </ProtectedRoute>
+            } />
             
             {/* Teacher Routes */}
-            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-            <Route path="/teacher/classes" element={<TeacherClasses />} />
-            <Route path="/teacher/lessons" element={<TeacherLessons />} />
-            <Route path="/teacher/lessons/create" element={<CreateLesson />} />
-            <Route path="/teacher/feedback" element={<TeacherFeedback />} />
-            <Route path="/teacher/analytics" element={<TeacherAnalytics />} />
+            <Route path="/teacher/dashboard" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <TeacherDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/classes" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <TeacherClasses />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/lessons" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <TeacherLessons />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/lessons/create" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <CreateLesson />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/feedback" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <TeacherFeedback />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/analytics" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <TeacherAnalytics />
+              </ProtectedRoute>
+            } />
             
             <Route path="*" element={<Login />} />
           </Routes>

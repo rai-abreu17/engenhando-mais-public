@@ -21,8 +21,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
 
   return (
     <Card 
-      className="text-white border-0"
-      style={{ background: gradient }}
+      className={`text-white border-0 bg-gradient-to-br ${gradient}`}
     >
       <CardContent className="p-2 sm:p-3 lg:p-4">
         <div className="flex items-center justify-between">

@@ -11,6 +11,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import TeacherNavigation from '../components/TeacherNavigation';
 import Header from '@/components/common/Header';
 
@@ -55,159 +63,194 @@ const classes = [
 
 const TeacherClasses: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('Todas');
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const filteredClasses = classes.filter(classItem => {
     const matchesSearch = classItem.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          classItem.code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = selectedFilter === 'Todas' || classItem.status === selectedFilter;
+    const matchesFilter = selectedStatuses.length === 0 || selectedStatuses.includes(classItem.status);
     return matchesSearch && matchesFilter;
   });
 
+  const toggleStatus = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedStatuses([]);
+    setSearchTerm('');
+    setIsFilterOpen(false);
+  };
+
+  const hasActiveFilters = searchTerm || selectedStatuses.length > 0;
+
+  // Estatísticas dos status
+  const statusStats = [
+    { value: 'Ativa', label: 'Ativas', count: classes.filter(c => c.status === 'Ativa').length },
+    { value: 'Concluída', label: 'Concluídas', count: classes.filter(c => c.status === 'Concluída').length },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="md:flex">
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block w-64 border-r border-border bg-card">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-primary mb-6">Portal do Professor</h2>
-            <TeacherNavigation />
+    <div className="min-h-screen bg-[#f0f6ff] pb-20">
+      <Header 
+        title="Minhas Turmas 👥"
+        subtitle="Gerencie suas turmas e acompanhe o progresso"
+      />
+
+      <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
+        <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
+          <div>
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#030025]">Turmas Ativas</h2>
+            <p className="text-xs sm:text-sm text-[#001cab]">{classes.length} {classes.length === 1 ? 'turma' : 'turmas'} no total</p>
           </div>
-        </div>
+        </section>
 
-        {/* Main Content */}
-        <div className="flex-1 pb-20 md:pb-0">
-          <Header 
-            title="Minhas Turmas 👥"
-            subtitle="Gerencie suas turmas e acompanhe o progresso"
-          />
+        <section className="space-y-2 sm:space-y-3 lg:space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#030025]">
+              Turmas ({classes.length})
+              {hasActiveFilters && ` • ${filteredClasses.length} ${filteredClasses.length === 1 ? 'corresponde' : 'correspondem'} aos filtros`}
+            </h2>
+          </div>
 
-          <div className="p-6 space-y-6">
-            {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Buscar por nome ou código da turma..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="flex gap-2">
-                {['Todas', 'Ativa', 'Concluída'].map((filter) => (
-                  <Button
-                    key={filter}
-                    variant={selectedFilter === filter ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedFilter(filter)}
-                  >
-                    <Filter className="h-4 w-4 mr-2" />
-                    {filter}
-                  </Button>
-                ))}
-              </div>
+          <div className="flex gap-2 sm:gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
+              <Input
+                placeholder="Buscar por nome ou código da turma..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 sm:pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-8 sm:h-10 text-xs sm:text-sm"
+              />
             </div>
-
-            {/* Classes Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredClasses.map((classItem) => (
-                <Card key={classItem.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{classItem.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{classItem.code}</p>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        classItem.status === 'Ativa' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {classItem.status}
-                      </span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{classItem.students} alunos</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{classItem.completedLessons}/{classItem.totalLessons} aulas</span>
-                      </div>
-                    </div>
-
-                    {/* Progress */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Progresso</span>
-                        <span>{Math.round((classItem.completedLessons / classItem.totalLessons) * 100)}%</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-primary h-2 rounded-full transition-all duration-300" 
-                          style={{ width: `${(classItem.completedLessons / classItem.totalLessons) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Rating */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        <span className="text-sm font-medium">{classItem.avgRating}</span>
-                        <span className="text-sm text-muted-foreground">avaliação</span>
-                      </div>
-                    </div>
-
-                    {/* Schedule */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
-                      <span>{classItem.schedule}</span>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-2 pt-2">
-                      <Button size="sm" className="flex-1">
-                        Ver Detalhes
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {filteredClasses.length === 0 && (
-              <div className="text-center py-12">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">
-                  Nenhuma turma encontrada
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Você ainda não possui turmas cadastradas.'}
-                </p>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Criar Nova Turma
+            
+            {/* Botão de Filtros */}
+            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
+                >
+                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Filtros</span>
+                  {hasActiveFilters && (
+                    <Badge variant="secondary" className="hidden sm:inline-flex ml-2 bg-white/20 text-white text-xs">
+                      {selectedStatuses.length}
+                    </Badge>
+                  )}
                 </Button>
-              </div>
-            )}
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-[#030025]">Filtrar Turmas</h4>
+                    {hasActiveFilters && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearFilters}
+                        className="text-xs text-[#d75200] hover:text-[#d75200] hover:bg-[#fffaf0] h-8 px-2"
+                      >
+                        Limpar
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <h5 className="text-xs sm:text-sm font-medium text-[#030025] mb-3">Status</h5>
+                      <div className="space-y-2">
+                        {statusStats.map((status) => (
+                          <div key={status.value} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`status-${status.value}`}
+                              checked={selectedStatuses.includes(status.value)}
+                              onCheckedChange={() => toggleStatus(status.value)}
+                              className="border-[#28b0ff] data-[state=checked]:bg-[#0029ff] data-[state=checked]:border-[#0029ff]"
+                            />
+                            <label 
+                              htmlFor={`status-${status.value}`} 
+                              className="text-xs sm:text-sm text-[#030025] cursor-pointer flex items-center gap-2"
+                            >
+                              {status.label}
+                              <Badge variant="secondary" className="bg-[#f0f6ff] text-[#0029ff] text-xs">
+                                {status.count}
+                              </Badge>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
-        </div>
+        </section>
+
+        {/* Classes Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredClasses.map((classItem) => (
+            <Card key={classItem.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-lg">{classItem.name}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{classItem.code}</p>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    classItem.status === 'Ativa' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {classItem.status}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{classItem.students} alunos</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{classItem.completedLessons}/{classItem.totalLessons} aulas</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                  <span className="text-sm font-medium">{classItem.avgRating}</span>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" className="flex-1">Ver Detalhes</Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+
+        {/* Empty State */}
+        {filteredClasses.length === 0 && (
+          <section className="text-center py-12">
+            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">Nenhuma turma encontrada</h3>
+            <p className="text-muted-foreground mb-6">
+              {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Você ainda não possui turmas cadastradas.'}
+            </p>
+          </section>
+        )}
       </div>
 
-      {/* Mobile Navigation */}
-      <div className="md:hidden">
-        <TeacherNavigation />
-      </div>
+      <TeacherNavigation />
     </div>
   );
 };

@@ -79,6 +79,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
       return;
     }
 
+    // Login professor
+    if (formData.email === 'professor@gmail.com' && formData.password === '1234') {
+      login('teacher');
+      navigate('/teacher/dashboard');
+      return;
+    }
+
     // Login aluno
     console.log('Login submitted:', formData);
     login('authenticated');

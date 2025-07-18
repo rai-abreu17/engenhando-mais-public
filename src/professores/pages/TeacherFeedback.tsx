@@ -14,13 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import TeacherNavigation from '../components/TeacherNavigation';
 import Header from '@/components/common/Header';
 
@@ -94,64 +87,25 @@ const feedbacks = [
 
 const TeacherFeedback: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedRating, setSelectedRating] = useState('Todas');
+  const [selectedSubject, setSelectedSubject] = useState('Todas');
 
-  const subjects = Array.from(new Set(feedbacks.map(f => f.subject)));
-  const ratings = ['5', '4', '3', '2', '1'];
+  const subjects = ['Todas', ...Array.from(new Set(feedbacks.map(f => f.subject)))];
+  const ratings = ['Todas', '5', '4', '3', '2', '1'];
 
   const filteredFeedbacks = feedbacks.filter(feedback => {
     const matchesSearch = feedback.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          feedback.lesson.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          feedback.comment.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRating = selectedRatings.length === 0 || selectedRatings.includes(feedback.rating.toString());
-    const matchesSubject = selectedSubjects.length === 0 || selectedSubjects.includes(feedback.subject);
+    const matchesRating = selectedRating === 'Todas' || feedback.rating.toString() === selectedRating;
+    const matchesSubject = selectedSubject === 'Todas' || feedback.subject === selectedSubject;
     return matchesSearch && matchesRating && matchesSubject;
   });
-
-  const toggleRating = (rating: string) => {
-    setSelectedRatings(prev => 
-      prev.includes(rating) 
-        ? prev.filter(r => r !== rating)
-        : [...prev, rating]
-    );
-  };
-
-  const toggleSubject = (subject: string) => {
-    setSelectedSubjects(prev => 
-      prev.includes(subject) 
-        ? prev.filter(s => s !== subject)
-        : [...prev, subject]
-    );
-  };
-
-  const clearFilters = () => {
-    setSelectedRatings([]);
-    setSelectedSubjects([]);
-    setSearchTerm('');
-    setIsFilterOpen(false);
-  };
-
-  const hasActiveFilters = searchTerm || selectedRatings.length > 0 || selectedSubjects.length > 0;
 
   // Statistics
   const totalFeedbacks = feedbacks.length;
   const averageRating = (feedbacks.reduce((sum, f) => sum + f.rating, 0) / totalFeedbacks).toFixed(1);
   const positivePercentage = Math.round((feedbacks.filter(f => f.rating >= 4).length / totalFeedbacks) * 100);
-
-  // Stats para os filtros
-  const ratingStats = ratings.map(rating => ({
-    value: rating,
-    label: `${rating} estrelas`,
-    count: feedbacks.filter(f => f.rating.toString() === rating).length
-  }));
-
-  const subjectStats = subjects.map(subject => ({
-    value: subject,
-    label: subject,
-    count: feedbacks.filter(f => f.subject === subject).length
-  }));
 
   const getRatingColor = (rating: number) => {
     if (rating >= 4) return 'text-green-600';
@@ -160,13 +114,14 @@ const TeacherFeedback: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f6ff] pb-20">
-      <Header 
-        title="Feedback dos Alunos 💬"
-        subtitle="Veja o que seus alunos estão dizendo sobre suas aulas"
-      />
+    <div className="min-h-screen bg-background">
+      <div className="pb-20 md:pb-0">
+          <Header 
+            title="Feedback dos Alunos 💬"
+            subtitle="Veja o que seus alunos estão dizendo sobre suas aulas"
+          />
 
-      <div className="px-3 sm:px-4 lg:px-6 space-y-3 sm:space-y-4 lg:space-y-6">
+          <div className="p-6 space-y-6">
             {/* Statistics Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
@@ -205,122 +160,36 @@ const TeacherFeedback: React.FC = () => {
             </div>
 
             {/* Search and Filters */}
-            <div className="flex items-center justify-between">
-              <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#030025]">
-                Feedbacks ({totalFeedbacks})
-                {hasActiveFilters && ` • ${filteredFeedbacks.length} ${filteredFeedbacks.length === 1 ? 'corresponde' : 'correspondem'} aos filtros`}
-              </h2>
-            </div>
-
-            <div className="flex gap-2 sm:gap-3">
-              <div className="flex-1 relative">
-                <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#001cab] h-3 w-3 sm:h-4 sm:w-4" />
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="Buscar por aluno, aula ou comentário..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8 sm:pl-10 bg-[#fffaf0] border-[#28b0ff] focus:border-[#0029ff] h-8 sm:h-10 text-xs sm:text-sm"
+                  className="pl-10"
                 />
               </div>
-              
-              {/* Botão de Filtros */}
-              <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline"
-                    size="sm"
-                    className={`border-[#28b0ff] hover:bg-[#f0f6ff] w-8 sm:w-auto text-xs sm:text-sm h-8 sm:h-10 p-0 sm:px-3 ${hasActiveFilters ? 'bg-[#0029ff] text-white border-[#0029ff]' : 'text-[#0029ff]'}`}
-                  >
-                    <Filter className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Filtros</span>
-                    {hasActiveFilters && (
-                      <Badge variant="secondary" className="hidden sm:inline-flex ml-2 bg-white/20 text-white text-xs">
-                        {selectedRatings.length + selectedSubjects.length}
-                      </Badge>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80" align="end">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-[#030025]">Filtrar Feedbacks</h4>
-                      {hasActiveFilters && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={clearFilters}
-                          className="text-xs text-[#d75200] hover:text-[#d75200] hover:bg-[#fffaf0] h-8 px-2"
-                        >
-                          Limpar
-                        </Button>
-                      )}
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <h5 className="text-xs sm:text-sm font-medium text-[#030025] mb-3">Avaliação</h5>
-                        <div className="space-y-2">
-                          {ratingStats.map((rating) => (
-                            <div key={rating.value} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`rating-${rating.value}`}
-                                checked={selectedRatings.includes(rating.value)}
-                                onCheckedChange={() => toggleRating(rating.value)}
-                                className="border-[#28b0ff] data-[state=checked]:bg-[#0029ff] data-[state=checked]:border-[#0029ff]"
-                              />
-                              <label 
-                                htmlFor={`rating-${rating.value}`} 
-                                className="text-xs sm:text-sm text-[#030025] cursor-pointer flex items-center gap-2"
-                              >
-                                <div className="flex items-center gap-1">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star 
-                                      key={i} 
-                                      className={`h-3 w-3 ${i < parseInt(rating.value) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
-                                    />
-                                  ))}
-                                </div>
-                                <Badge variant="secondary" className="bg-[#f0f6ff] text-[#0029ff] text-xs">
-                                  {rating.count}
-                                </Badge>
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <Separator />
-                      
-                      <div>
-                        <h5 className="text-xs sm:text-sm font-medium text-[#030025] mb-3">Disciplina</h5>
-                        <div className="space-y-2">
-                          {subjectStats.map((subject) => (
-                            <div key={subject.value} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`subject-${subject.value}`}
-                                checked={selectedSubjects.includes(subject.value)}
-                                onCheckedChange={() => toggleSubject(subject.value)}
-                                className="border-[#28b0ff] data-[state=checked]:bg-[#0029ff] data-[state=checked]:border-[#0029ff]"
-                              />
-                              <label 
-                                htmlFor={`subject-${subject.value}`} 
-                                className="text-xs sm:text-sm text-[#030025] cursor-pointer flex items-center gap-2"
-                              >
-                                {subject.label}
-                                <Badge variant="secondary" className="bg-[#f0f6ff] text-[#0029ff] text-xs">
-                                  {subject.count}
-                                </Badge>
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <select
+                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
+                value={selectedRating}
+                onChange={(e) => setSelectedRating(e.target.value)}
+              >
+                {ratings.map((rating) => (
+                  <option key={rating} value={rating}>
+                    {rating === 'Todas' ? 'Todas as notas' : `${rating} estrelas`}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+              >
+                {subjects.map((subject) => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
             </div>
 
             {/* Feedback List */}
@@ -404,7 +273,8 @@ const TeacherFeedback: React.FC = () => {
                 </p>
               </div>
             )}
-      </div>
+          </div>
+        </div>
 
       <TeacherNavigation />
     </div>
