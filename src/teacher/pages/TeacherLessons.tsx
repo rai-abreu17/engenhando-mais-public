@@ -1,0 +1,277 @@
+import React, { useState } from 'react';
+import { 
+  BookOpen, 
+  Star, 
+  Calendar,
+  Search,
+  Filter,
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  Clock,
+  Users
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import TeacherNavigation from '../components/TeacherNavigation';
+import Header from '@/components/common/Header';
+import { NavLink } from 'react-router-dom';
+
+const lessons = [
+  {
+    id: 1,
+    title: 'Limites Fundamentais',
+    description: 'Introdução aos conceitos básicos de limites em cálculo',
+    subject: 'Cálculo I',
+    class: 'Turma A',
+    duration: '45 min',
+    views: 156,
+    avgRating: 4.8,
+    totalRatings: 32,
+    status: 'Publicada',
+    publishedAt: '2024-01-10',
+    difficulty: 'Intermediário',
+    tags: ['limites', 'fundamentos', 'cálculo'],
+  },
+  {
+    id: 2,
+    title: 'Derivadas - Conceitos Básicos',
+    description: 'Conceitos fundamentais sobre derivadas e suas aplicações',
+    subject: 'Cálculo I',
+    class: 'Turma A',
+    duration: '50 min',
+    views: 142,
+    avgRating: 4.9,
+    totalRatings: 28,
+    status: 'Publicada',
+    publishedAt: '2024-01-08',
+    difficulty: 'Intermediário',
+    tags: ['derivadas', 'conceitos', 'aplicações'],
+  },
+  {
+    id: 3,
+    title: 'Movimento Retilíneo Uniforme',
+    description: 'Estudo do movimento em linha reta com velocidade constante',
+    subject: 'Física I',
+    class: 'Turma B',
+    duration: '40 min',
+    views: 98,
+    avgRating: 4.7,
+    totalRatings: 22,
+    status: 'Rascunho',
+    publishedAt: null,
+    difficulty: 'Básico',
+    tags: ['física', 'movimento', 'cinemática'],
+  },
+];
+
+const TeacherLessons: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('Todas');
+  const [selectedSubject, setSelectedSubject] = useState('Todas');
+
+  const subjects = ['Todas', ...Array.from(new Set(lessons.map(lesson => lesson.subject)))];
+
+  const filteredLessons = lessons.filter(lesson => {
+    const matchesSearch = lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         lesson.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = selectedFilter === 'Todas' || lesson.status === selectedFilter;
+    const matchesSubject = selectedSubject === 'Todas' || lesson.subject === selectedSubject;
+    return matchesSearch && matchesFilter && matchesSubject;
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Publicada': return 'bg-green-100 text-green-800';
+      case 'Rascunho': return 'bg-yellow-100 text-yellow-800';
+      case 'Arquivada': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Básico': return 'bg-blue-100 text-blue-800';
+      case 'Intermediário': return 'bg-orange-100 text-orange-800';
+      case 'Avançado': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="md:flex">
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block w-64 border-r border-border bg-card">
+          <div className="p-6">
+            <h2 className="text-xl font-bold text-primary mb-6">Portal do Professor</h2>
+            <TeacherNavigation />
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 pb-20 md:pb-0">
+          <Header 
+            title="Minhas Aulas 📚"
+            subtitle="Gerencie e acompanhe suas videoaulas"
+          />
+
+          <div className="p-6 space-y-6">
+            {/* Search and Filters */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Buscar aulas..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['Todas', 'Publicada', 'Rascunho', 'Arquivada'].map((filter) => (
+                  <Button
+                    key={filter}
+                    variant={selectedFilter === filter ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedFilter(filter)}
+                  >
+                    {filter}
+                  </Button>
+                ))}
+              </div>
+              <select
+                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+              >
+                {subjects.map((subject) => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Create Lesson Button */}
+            <div className="flex justify-end">
+              <Button asChild>
+                <NavLink to="/teacher/lessons/create">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Criar Nova Aula
+                </NavLink>
+              </Button>
+            </div>
+
+            {/* Lessons Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredLessons.map((lesson) => (
+                <Card key={lesson.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg line-clamp-2">{lesson.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{lesson.subject} • {lesson.class}</p>
+                      </div>
+                      <Badge className={getStatusColor(lesson.status)}>
+                        {lesson.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{lesson.description}</p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Metadata */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span>{lesson.duration}</span>
+                      </div>
+                      <Badge className={getDifficultyColor(lesson.difficulty)}>
+                        {lesson.difficulty}
+                      </Badge>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{lesson.views} visualizações</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                        <span className="text-sm">{lesson.avgRating} ({lesson.totalRatings})</span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1">
+                      {lesson.tags.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {lesson.tags.length > 3 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{lesson.tags.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Publication Date */}
+                    {lesson.publishedAt && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>Publicada em {new Date(lesson.publishedAt).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex gap-2 pt-2">
+                      <Button size="sm" variant="outline" className="flex-1">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ver
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Empty State */}
+            {filteredLessons.length === 0 && (
+              <div className="text-center py-12">
+                <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  Nenhuma aula encontrada
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Você ainda não criou nenhuma aula.'}
+                </p>
+                <Button asChild>
+                  <NavLink to="/teacher/lessons/create">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Criar Primeira Aula
+                  </NavLink>
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="md:hidden">
+        <TeacherNavigation />
+      </div>
+    </div>
+  );
+};
+
+export default TeacherLessons;

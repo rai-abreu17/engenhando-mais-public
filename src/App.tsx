@@ -21,6 +21,14 @@ import ReviewLessonPage from './pages/admin/ReviewLessonPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import AdminSettings from './pages/admin/AdminSettings';
 import AccessControlPage from './pages/admin/AccessControlPage';
+
+// Teacher Pages
+import TeacherDashboard from './teacher/pages/TeacherDashboard';
+import TeacherClasses from './teacher/pages/TeacherClasses';
+import TeacherLessons from './teacher/pages/TeacherLessons';
+import TeacherFeedback from './teacher/pages/TeacherFeedback';
+import TeacherAnalytics from './teacher/pages/TeacherAnalytics';
+import CreateLesson from './teacher/pages/CreateLesson';
 import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
@@ -61,6 +69,14 @@ const App = () => {
             <Route path="/admin/access-control" element={<AccessControlPage />} />
             <Route path="/admin/reports" element={<ReportsPage />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            
+            {/* Teacher Routes */}
+            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            <Route path="/teacher/classes" element={<TeacherClasses />} />
+            <Route path="/teacher/lessons" element={<TeacherLessons />} />
+            <Route path="/teacher/lessons/create" element={<CreateLesson />} />
+            <Route path="/teacher/feedback" element={<TeacherFeedback />} />
+            <Route path="/teacher/analytics" element={<TeacherAnalytics />} />
             
             <Route path="*" element={<Login />} />
           </Routes>
