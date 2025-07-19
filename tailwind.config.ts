@@ -27,8 +27,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: '#001CAB',
-					foreground: '#ffffff'
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -64,23 +64,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// ENGENHA+ Custom Colors - Nova Paleta
+				// ENGENHA+ Design System Colors
 				engenha: {
-					'light-blue': '#f0f6ff',     // Azul muito claro
-					'light-cream': '#fffaf0',    // Bege muito claro  
-					'dark-navy': '#030025',      // Azul muito escuro
-					'bright-blue': '#0029ff',    // Azul vibrante
-					'orange': '#ff7a28',         // Laranja
-					'blue': '#001cab',           // Azul escuro
-					'dark-orange': '#d75200',    // Laranja escuro
-					'sky-blue': '#28b0ff',       // Azul claro
-					'gold': '#ffb646',           // Amarelo/Dourado
-					// Aliases para compatibilidade
-					'blue-light': '#28b0ff',
-					'blue-dark': '#001cab',
-					gray: '#6b7280',
-					'text-light': '#f0f6ff',
-					'border': '#28b0ff'
+					'light-blue': 'hsl(var(--engenha-light-blue))',
+					'light-cream': 'hsl(var(--engenha-light-cream))',
+					'dark-navy': 'hsl(var(--engenha-dark-navy))',
+					'bright-blue': 'hsl(var(--engenha-bright-blue))',
+					'orange': 'hsl(var(--engenha-orange))',
+					'blue': 'hsl(var(--engenha-blue))',
+					'dark-orange': 'hsl(var(--engenha-dark-orange))',
+					'sky-blue': 'hsl(var(--engenha-sky-blue))',
+					'gold': 'hsl(var(--engenha-gold))'
 				}
 			},
 			borderRadius: {

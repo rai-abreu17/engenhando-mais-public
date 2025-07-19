@@ -15,11 +15,12 @@ export const useAuth = () => {
     setIsLoading(false);
   }, []);
 
-  const login = (token: string) => {
+  const login = (token: string, userType?: string) => {
     localStorage.setItem('engenha_token', token);
-    localStorage.setItem('engenha_user_type', token);
+    const type = userType || 'student';
+    localStorage.setItem('engenha_user_type', type);
     setIsAuthenticated(true);
-    setUserType(token);
+    setUserType(type);
   };
 
   const logout = () => {
