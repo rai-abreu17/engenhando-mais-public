@@ -23,7 +23,7 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AccessControlPage from './pages/admin/AccessControlPage';
 
 // Teacher Pages
-import TeacherDashboard from './teacher/pages/TeacherDashboard';
+import TeacherDashboard from './professores/pages/TeacherDashboard';
 import TeacherClasses from './teacher/pages/TeacherClasses';
 import TeacherLessons from './teacher/pages/TeacherLessons';
 import TeacherFeedback from './teacher/pages/TeacherFeedback';
@@ -56,7 +56,7 @@ const App = () => {
       if (userType === 'admin') {
         return <Navigate to="/admin/dashboard" replace />;
       } else if (userType === 'teacher') {
-        return <Navigate to="/teacher/dashboard" replace />;
+        return <Navigate to="/professores/dashboard" replace />;
       } else {
         return <Navigate to="/home" replace />;
       }
@@ -145,32 +145,32 @@ const App = () => {
             } />
             
             {/* Teacher Routes */}
-            <Route path="/teacher/dashboard" element={
+            <Route path="/professores/dashboard" element={
               <ProtectedRoute allowedUserTypes={['teacher']}>
                 <TeacherDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/teacher/classes" element={
+            <Route path="/professores/turmas" element={
               <ProtectedRoute allowedUserTypes={['teacher']}>
                 <TeacherClasses />
               </ProtectedRoute>
             } />
-            <Route path="/teacher/lessons" element={
+            <Route path="/professores/aulas" element={
               <ProtectedRoute allowedUserTypes={['teacher']}>
                 <TeacherLessons />
               </ProtectedRoute>
             } />
-            <Route path="/teacher/lessons/create" element={
+            <Route path="/professores/aulas/criar" element={
               <ProtectedRoute allowedUserTypes={['teacher']}>
                 <CreateLesson />
               </ProtectedRoute>
             } />
-            <Route path="/teacher/feedback" element={
+            <Route path="/professores/feedback" element={
               <ProtectedRoute allowedUserTypes={['teacher']}>
                 <TeacherFeedback />
               </ProtectedRoute>
             } />
-            <Route path="/teacher/analytics" element={
+            <Route path="/professores/analytics" element={
               <ProtectedRoute allowedUserTypes={['teacher']}>
                 <TeacherAnalytics />
               </ProtectedRoute>
