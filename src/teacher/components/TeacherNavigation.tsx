@@ -19,31 +19,31 @@ const TeacherNavigation: React.FC = () => {
 
   const navigationItems = [
     { 
-      path: '/teacher/dashboard', 
+      path: '/professores/dashboard', 
       icon: LayoutDashboard, 
       label: 'Dashboard',
       ariaLabel: 'Ir para Dashboard'
     },
     { 
-      path: '/teacher/classes', 
+      path: '/professores/turmas', 
       icon: Users, 
       label: 'Turmas',
       ariaLabel: 'Gerenciar turmas'
     },
     { 
-      path: '/teacher/lessons', 
+      path: '/professores/aulas', 
       icon: BookOpen, 
       label: 'Aulas',
       ariaLabel: 'Gerenciar aulas'
     },
     { 
-      path: '/teacher/feedback', 
+      path: '/professores/feedback', 
       icon: MessageSquare, 
       label: 'Feedback',
       ariaLabel: 'Ver feedback'
     },
     { 
-      path: '/teacher/analytics', 
+      path: '/professores/analytics', 
       icon: BarChart3, 
       label: 'Relatórios',
       ariaLabel: 'Ver relatórios'
@@ -230,7 +230,7 @@ const TeacherNavigation: React.FC = () => {
       
       {/* Floating Action Button - Create Lesson */}
       <Link
-        to="/teacher/lessons/create"
+        to="/professores/aulas/criar"
         className="fixed bottom-20 right-4 p-4 rounded-full shadow-lg hover:shadow-xl transition-all z-50"
         style={{
           background: `linear-gradient(135deg, ${COLORS.brightBlue}, ${COLORS.darkNavy})`,

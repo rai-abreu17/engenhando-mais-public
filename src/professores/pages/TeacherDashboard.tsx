@@ -11,7 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StatsCard from '@/components/shared/StatsCard';
-import TeacherNavigation from '../components/TeacherNavigation';
+import TeacherNavigation from '../../teacher/components/TeacherNavigation';
 import Header from '@/components/common/Header';
 import { NavLink } from 'react-router-dom';
 
@@ -104,19 +104,19 @@ const TeacherDashboard: React.FC = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Button asChild className="h-auto p-4 flex-col gap-2">
-                    <NavLink to="/teacher/lessons/create">
+                    <NavLink to="/professores/aulas/criar">
                       <BookOpen size={24} />
                       <span>Criar Nova Aula</span>
                     </NavLink>
                   </Button>
                   <Button variant="outline" asChild className="h-auto p-4 flex-col gap-2">
-                    <NavLink to="/teacher/classes">
+                    <NavLink to="/professores/turmas">
                       <Users size={24} />
                       <span>Gerenciar Turmas</span>
                     </NavLink>
                   </Button>
                   <Button variant="outline" asChild className="h-auto p-4 flex-col gap-2">
-                    <NavLink to="/teacher/feedback">
+                    <NavLink to="/professores/feedback">
                       <MessageSquare size={24} />
                       <span>Ver Feedback</span>
                     </NavLink>
