@@ -17,7 +17,8 @@ import {
   Save,
   RefreshCw,
   Download,
-  Upload
+  Upload,
+  LogOut
 } from 'lucide-react';
 import Header from '@/components/common/Header';
 import AdminNavigation from '@/admin/components/AdminNavigation';
@@ -283,6 +284,41 @@ const AdminSettings: React.FC = () => {
               <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               <span>Salvar Configurações</span>
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* Opções Avançadas e Segurança */}
+        <Card className="bg-[#fffaf0] border-[#28b0ff]">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2 text-[#030025] text-sm sm:text-base lg:text-lg">
+              <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-[#d75200]" />
+              <span>Opções Avançadas</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-[#030025] text-sm sm:text-base">Sair da plataforma</p>
+                <p className="text-xs sm:text-sm text-[#001cab]">Encerrar sessão do administrador</p>
+              </div>
+              <Button 
+                onClick={() => {
+                  // Limpar dados de autenticação
+                  localStorage.removeItem('engenha_token');
+                  localStorage.removeItem('engenha_user_type');
+                  localStorage.removeItem('selectedMascot');
+                  localStorage.removeItem('unlockedMascots');
+                  localStorage.removeItem('customMascotNames');
+                  
+                  // Redirecionar para a página de login
+                  window.location.href = '/login';
+                }}
+                className="self-start sm:self-auto bg-[#d75200] hover:bg-[#c94c00] text-white h-8 sm:h-10"
+              >
+                <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span>Sair</span>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

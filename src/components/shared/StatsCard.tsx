@@ -15,19 +15,41 @@ const StatsCard: React.FC<StatsCardProps> = ({
   value, 
   icon: Icon, 
   gradient,
-  iconColor = 'rgba(255, 255, 255, 0.6)'
+  iconColor = 'white'
 }) => {
   const formattedValue = typeof value === 'number' ? value.toLocaleString() : value;
+  
+  // Implementação mais robusta para lidar com diferentes formatos de gradiente
+  let cardStyle = {};
+  let cardClasses = 'text-white border-0';
+  
+  if (gradient.includes('linear-gradient')) {
+    // Gradiente CSS como string - aplicar como estilo inline
+    cardStyle = { 
+      background: gradient,
+      color: 'white' // Garantir que o texto seja branco
+    };
+  } else if (gradient.includes('from-')) {
+    // Formato de classe Tailwind
+    cardClasses = `text-white border-0 bg-gradient-to-br ${gradient}`;
+  } else {
+    // Fallback para um gradiente padrão caso nenhum formato seja reconhecido
+    cardStyle = { 
+      background: 'linear-gradient(135deg, #28b0ff, #0029ff)',
+      color: 'white'
+    };
+  }
 
   return (
     <Card 
-      className={`text-white border-0 bg-gradient-to-br ${gradient}`}
+      className={cardClasses}
+      style={cardStyle}
     >
       <CardContent className="p-2 sm:p-3 lg:p-4">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
-            <p className="text-white/80 text-xs lg:text-sm">{title}</p>
-            <p className="text-base sm:text-xl lg:text-2xl font-bold truncate">
+            <p className="text-white text-xs lg:text-sm">{title}</p>
+            <p className="text-base sm:text-xl lg:text-2xl font-bold truncate text-white">
               {formattedValue}
             </p>
           </div>

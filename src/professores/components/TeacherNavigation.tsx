@@ -6,7 +6,8 @@ import {
   BookOpen, 
   MessageSquare, 
   BarChart3,
-  Plus
+  Plus,
+  Settings
 } from 'lucide-react';
 
 const navigationItems = [
@@ -34,6 +35,11 @@ const navigationItems = [
     icon: BarChart3, 
     label: 'Analytics', 
     path: '/professores/analytics' 
+  },
+  { 
+    icon: Settings, 
+    label: 'Configurações', 
+    path: '/professores/configuracoes' 
   },
 ];
 

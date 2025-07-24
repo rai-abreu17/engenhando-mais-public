@@ -10,6 +10,7 @@ import Biblioteca from "./pages/Biblioteca";
 import MascoteNovo from './pages/MascoteNovo';
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
+import Help from "./pages/Help";
 
 // Admin Pages
 import AdminDashboard from './admin/pages/AdminDashboard';
@@ -24,11 +25,12 @@ import AccessControlPage from './pages/admin/AccessControlPage';
 
 // Teacher Pages
 import TeacherDashboard from './professores/pages/TeacherDashboard';
-import TeacherClasses from './teacher/pages/TeacherClasses';
-import TeacherLessons from './teacher/pages/TeacherLessons';
-import TeacherFeedback from './teacher/pages/TeacherFeedback';
-import TeacherAnalytics from './teacher/pages/TeacherAnalytics';
-import CreateLesson from './teacher/pages/CreateLesson';
+import TeacherClasses from './professores/pages/TeacherClasses';
+import TeacherLessons from './professores/pages/TeacherLessons';
+import TeacherFeedback from './professores/pages/TeacherFeedback';
+import TeacherAnalytics from './professores/pages/TeacherAnalytics';
+import CreateLesson from './professores/pages/CreateLesson';
+import ProfessorSettings from './professores/pages/ProfessorSettings';
 import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
@@ -57,8 +59,13 @@ const App = () => {
         return <Navigate to="/admin/dashboard" replace />;
       } else if (userType === 'teacher') {
         return <Navigate to="/professores/dashboard" replace />;
-      } else {
+      } else if (userType === 'student' || userType === 'authenticated') {
         return <Navigate to="/home" replace />;
+      } else {
+        // Caso o tipo de usuário não seja reconhecido, redirecionar para login
+        localStorage.removeItem('engenha_token');
+        localStorage.removeItem('engenha_user_type');
+        return <Navigate to="/login" replace />;
       }
     }
     
@@ -94,6 +101,11 @@ const App = () => {
             <Route path="/configuracoes" element={
               <ProtectedRoute allowedUserTypes={['authenticated']}>
                 <Configuracoes />
+              </ProtectedRoute>
+            } />
+            <Route path="/help" element={
+              <ProtectedRoute allowedUserTypes={['authenticated', 'teacher', 'admin']}>
+                <Help />
               </ProtectedRoute>
             } />
             
@@ -175,8 +187,13 @@ const App = () => {
                 <TeacherAnalytics />
               </ProtectedRoute>
             } />
+            <Route path="/professores/configuracoes" element={
+              <ProtectedRoute allowedUserTypes={['teacher']}>
+                <ProfessorSettings />
+              </ProtectedRoute>
+            } />
             
-            <Route path="*" element={<Login />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

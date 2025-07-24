@@ -7,7 +7,8 @@ import {
   MessageSquare, 
   BarChart3,
   Plus,
-  Menu
+  Menu,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -47,6 +48,12 @@ const TeacherNavigation: React.FC = () => {
       icon: BarChart3, 
       label: 'Relatórios',
       ariaLabel: 'Ver relatórios'
+    },
+    { 
+      path: '/professores/configuracoes', 
+      icon: Settings, 
+      label: 'Configurações',
+      ariaLabel: 'Ajustar configurações'
     }
   ];
 

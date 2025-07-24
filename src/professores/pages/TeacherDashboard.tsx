@@ -72,24 +72,28 @@ const TeacherDashboard: React.FC = () => {
                 title="Alunos Ativos"
                 value="156"
                 gradient="from-[#0029ff] to-[#28b0ff]"
+                iconColor="white"
               />
               <StatsCard
                 icon={BookOpen}
                 title="Aulas Criadas"
                 value="42"
                 gradient="from-[#28b0ff] to-[#0029ff]"
+                iconColor="white"
               />
               <StatsCard
                 icon={Star}
                 title="Avaliação Média"
                 value="4.7"
                 gradient="from-[#ff7a28] to-[#ffb646]"
+                iconColor="white"
               />
               <StatsCard
                 icon={TrendingUp}
                 title="Engajamento"
                 value="89%"
                 gradient="from-[#001cab] to-[#0029ff]"
+                iconColor="white"
               />
             </div>
 

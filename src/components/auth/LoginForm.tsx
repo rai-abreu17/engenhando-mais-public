@@ -74,21 +74,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
 
     // Login administrador
     if (formData.email === 'Administrador@email.com' && formData.password === '1234') {
-      login('admin');
+      login('mock-token-admin', 'admin');
       navigate('/admin/dashboard');
       return;
     }
 
     // Login professor
     if (formData.email === 'professor@gmail.com' && formData.password === '1234') {
-      login('teacher');
-      navigate('/teacher/dashboard');
+      login('mock-token-teacher', 'teacher');
+      navigate('/professores/dashboard');
       return;
     }
 
     // Login aluno
     console.log('Login submitted:', formData);
-    login('authenticated');
+    login('mock-token-student', 'authenticated');
     navigate('/home');
   };
 

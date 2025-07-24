@@ -142,25 +142,29 @@ const AdminDashboard: React.FC = () => {
             title="Alunos"
             value={stats.totalStudents}
             icon={Users}
-            gradient={GRADIENTS.primary}
+            gradient="from-[#28b0ff] to-[#0029ff]"
+            iconColor="white"
           />
           <StatsCard
             title="Professores"
             value={stats.totalTeachers}
             icon={GraduationCap}
-            gradient={GRADIENTS.secondary}
+            gradient="from-[#ff7a28] to-[#d75200]"
+            iconColor="white"
           />
           <StatsCard
             title="Turmas Ativas"
             value={stats.activeClasses}
             icon={BookOpen}
-            gradient={GRADIENTS.primary}
+            gradient="from-[#28b0ff] to-[#0029ff]"
+            iconColor="white"
           />
           <StatsCard
             title="Aulas Completas"
             value={stats.completedLessons}
             icon={TrendingUp}
-            gradient={GRADIENTS.success}
+            gradient="from-[#00a86b] to-[#008853]"
+            iconColor="white"
           />
         </section>
 
