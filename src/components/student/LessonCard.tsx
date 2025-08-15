@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, Clock, CheckCircle } from 'lucide-react';
@@ -109,3 +110,5 @@ export function LessonCard({
         </Button>
       </CardFooter>
     </Card>
+  );
+}
