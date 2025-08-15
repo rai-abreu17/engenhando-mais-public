@@ -11,6 +11,7 @@ import MascoteNovo from './pages/MascoteNovo';
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 import Help from "./pages/Help";
+import WatchLesson from "./pages/WatchLesson";
 
 // Admin Pages
 import AdminDashboard from './admin/pages/AdminDashboard';
@@ -106,6 +107,11 @@ const App = () => {
             <Route path="/help" element={
               <ProtectedRoute allowedUserTypes={['authenticated', 'teacher', 'admin']}>
                 <Help />
+              </ProtectedRoute>
+            } />
+            <Route path="/watch/:lessonId" element={
+              <ProtectedRoute allowedUserTypes={['authenticated', 'teacher', 'admin']}>
+                <WatchLesson />
               </ProtectedRoute>
             } />
             

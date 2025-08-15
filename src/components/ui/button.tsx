@@ -11,9 +11,9 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-border bg-card hover:bg-accent hover:text-accent-foreground",
+        outline: "border border-border bg-card text-card-foreground hover:bg-engenha-bright-blue hover:text-white hover:border-engenha-bright-blue",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "text-card-foreground hover:bg-engenha-bright-blue hover:text-white",
         link: "text-primary underline-offset-4 hover:underline",
         // ENGENHA+ variants
         engenha: "bg-engenha-bright-blue text-white hover:bg-engenha-blue shadow-md hover:shadow-lg",

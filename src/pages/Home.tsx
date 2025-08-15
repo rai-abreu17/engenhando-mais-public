@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import ResponsiveCarousel from '../components/common/ResponsiveCarousel';
 import Header from '@/components/shared/Header';
 import Navigation from '@/components/shared/Navigation';
@@ -7,117 +8,18 @@ import PageLayout from '@/components/layout/PageLayout';
 import { Card } from '@/components/ui/card-enhanced';
 import { Progress } from '@/components/ui/progress-enhanced';
 import { Button } from '@/components/ui/button';
-import { MOCK_SUBJECTS } from '../data/mockData';
+import { MOCK_SUBJECTS, MOCK_RECENT_VIDEOS, MOCK_POPULAR_VIDEOS } from '../data/mockData';
 import { useSubjects } from '../hooks/useSubjects';
 import { BookOpen, TrendingUp, Trophy, Play } from 'lucide-react';
 
 const studyStreak = 7;
 
-const recentVideos = [
-  {
-    id: 1,
-    title: 'Limites Fundamentais',
-    subject: 'Cálculo I',
-    progress: 80,
-    duration: '25 min',
-    thumbnail: '∫',
-  },
-  {
-    id: 2,
-    title: 'Movimento Retilíneo',
-    subject: 'Física I',
-    progress: 60,
-    duration: '30 min',
-    thumbnail: '⚗️',
-  },
-  {
-    id: 3,
-    title: 'Algoritmos Básicos',
-    subject: 'Algoritmos',
-    progress: 90,
-    duration: '40 min',
-    thumbnail: '💻',
-  },
-  {
-    id: 4,
-    title: 'Teorema de Pitágoras',
-    subject: 'Matemática',
-    progress: 50,
-    duration: '20 min',
-    thumbnail: '📐',
-  },
-  {
-    id: 5,
-    title: 'Circuitos Elétricos',
-    subject: 'Física II',
-    progress: 30,
-    duration: '35 min',
-    thumbnail: '⚡',
-  },
-  {
-    id: 6,
-    title: 'Banco de Dados',
-    subject: 'Programação',
-    progress: 70,
-    duration: '45 min',
-    thumbnail: '🗄️',
-  },
-  {
-    id: 7,
-    title: 'Integrais Definidas',
-    subject: 'Cálculo II',
-    progress: 20,
-    duration: '50 min',
-    thumbnail: '∫',
-  },
-];
-
-const recommendations = [
-  {
-    id: 1,
-    title: 'Derivadas - Conceitos',
-    subject: 'Cálculo I',
-    difficulty: 'Intermediário',
-    thumbnail: '📈',
-  },
-  {
-    id: 2,
-    title: 'Algoritmos de Ordenação',
-    subject: 'Programação',
-    difficulty: 'Avançado',
-    thumbnail: '🗃️',
-  },
-  {
-    id: 3,
-    title: 'Teorema de Pitágoras',
-    subject: 'Matemática',
-    difficulty: 'Básico',
-    thumbnail: '📐',
-  },
-  {
-    id: 4,
-    title: 'Circuitos Elétricos',
-    subject: 'Física II',
-    difficulty: 'Intermediário',
-    thumbnail: '⚡',
-  },
-  {
-    id: 5,
-    title: 'Banco de Dados',
-    subject: 'Programação',
-    difficulty: 'Intermediário',
-    thumbnail: '🗄️',
-  },
-  {
-    id: 6,
-    title: 'Integrais Definidas',
-    subject: 'Cálculo II',
-    difficulty: 'Avançado',
-    thumbnail: '∫',
-  },
-];
+// Usando os dados mockados do arquivo central
+const recentVideos = MOCK_RECENT_VIDEOS;
+const recommendations = MOCK_POPULAR_VIDEOS;
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const { filteredSubjects } = useSubjects(MOCK_SUBJECTS);
 
   // Função para renderizar cada item do carrossel "Continue de onde parou"
@@ -137,7 +39,17 @@ const Home: React.FC = () => {
           <p className="text-xs text-card-foreground">{video.progress}% completo</p>
         </div>
       </div>
-      <Button variant="engenha-secondary" size="icon" className="rounded-full">
+      <Button 
+        variant="engenha-secondary" 
+        size="icon" 
+        className="rounded-full"
+        onClick={(e) => {
+          e.stopPropagation();
+          // O ID do vídeo convertido para o formato esperado: '1-1', '2-1', etc.
+          const lessonId = `${video.id}-1`;
+          navigate(`/watch/${lessonId}`);
+        }}
+      >
         <Play size={16} />
       </Button>
     </Card>
@@ -154,9 +66,18 @@ const Home: React.FC = () => {
           {item.difficulty}
         </span>
       </div>
-      <div className="flex items-center">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={(e) => {
+          e.stopPropagation();
+          // O ID do vídeo convertido para o formato esperado: '1-1', '2-1', etc.
+          const lessonId = `${item.id}-1`;
+          navigate(`/watch/${lessonId}`);
+        }}
+      >
         <BookOpen className="text-engenha-sky-blue" size={20} />
-      </div>
+      </Button>
     </Card>
   );
 
