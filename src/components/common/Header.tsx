@@ -1,5 +1,6 @@
 
 import React, { ReactNode } from 'react';
+import LogoIcon from './LogoIcon';
 
 interface HeaderProps {
   title: string;
@@ -7,12 +8,18 @@ interface HeaderProps {
   showStreak?: boolean;
   streakDays?: number;
   icon?: ReactNode;
+  showLogo?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, subtitle, showStreak = false, streakDays = 0, icon }) => {
+const Header: React.FC<HeaderProps> = ({ title, subtitle, showStreak = false, streakDays = 0, icon, showLogo = false }) => {
   return (
     <header className="bg-gradient-to-r from-[#001cab] to-[#0029ff] text-white p-4 sm:p-6 rounded-b-3xl mb-4 sm:mb-6">
       <div className="flex justify-between items-start">
+        {showLogo && (
+          <div className="flex-shrink-0 mr-5">
+            <LogoIcon size="medium" />
+          </div>
+        )}
         <div className="flex-1 min-w-0 flex items-start gap-3">
           {icon && <div className="flex-shrink-0">{icon}</div>}
           <div>

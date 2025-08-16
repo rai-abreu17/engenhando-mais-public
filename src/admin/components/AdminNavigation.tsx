@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { COLORS } from '@/constants/theme';
+import LogoIcon from '@/components/common/LogoIcon';
 
 const AdminNavigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +62,8 @@ const AdminNavigation: React.FC = () => {
 
   const NavContent = () => (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b" style={{ borderColor: COLORS.skyBlue }}>
+      <div className="p-4 border-b flex items-center" style={{ borderColor: COLORS.skyBlue }}>
+        <LogoIcon size="small" className="mr-4" />
         <h2 
           className="text-lg font-semibold"
           style={{ color: COLORS.darkNavy }}
@@ -184,7 +186,8 @@ const AdminNavigation: React.FC = () => {
               className="h-auto max-h-[60vh] p-0"
               style={{ backgroundColor: COLORS.lightCream }}
             >
-              <div className="p-4 border-b" style={{ borderColor: COLORS.skyBlue }}>
+              <div className="p-4 border-b flex items-center" style={{ borderColor: COLORS.skyBlue }}>
+                <LogoIcon size="small" className="mr-3" />
                 <h2 
                   className="text-lg font-semibold"
                   style={{ color: COLORS.darkNavy }}

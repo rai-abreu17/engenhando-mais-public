@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import LoginForm from '../components/auth/LoginForm';
 import SignUpForm from '../components/auth/SignUpForm';
 import ForgotPasswordForm from '../components/auth/ForgotPasswordForm';
+import Logo from '../components/common/Logo';
 
 type AuthView = 'login' | 'signup' | 'forgot-password';
 
@@ -30,13 +31,10 @@ const Login = () => {
       {/* Header with logo */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         {/* Logo para todas as telas, com tamanho diferente para forgot-password */}
-        <div className={`bg-engenha-light-cream rounded-full flex items-center justify-center mb-8 shadow-lg ${
-          currentView === 'forgot-password' ? 'w-20 h-20' : 'w-32 h-32'
-        }`}>
-          <span className={`font-bold text-engenha-blue ${
-            currentView === 'forgot-password' ? 'text-2xl' : 'text-4xl'
-          }`}>LOGO</span>
-        </div>
+        <Logo 
+          variant={currentView === 'forgot-password' ? 'small' : 'default'}
+          className="mb-4"
+        />
 
         {/* Render the appropriate form component */}
         {renderCurrentView()}
