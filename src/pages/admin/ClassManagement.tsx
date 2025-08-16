@@ -15,7 +15,7 @@ import {
   XCircle,
   MoreVertical
 } from 'lucide-react';
-import Header from '@/components/common/Header';
+import Header from '@/features/student/components/Header';
 import AdminNavigation from '@/admin/components/AdminNavigation';
 import AddClass from '@/components/admin/AddClass';
 import RemoveClass from '@/components/admin/RemoveClass';

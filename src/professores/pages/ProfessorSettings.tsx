@@ -108,7 +108,6 @@ const ProfessorSettings: React.FC = () => {
       <Header 
         title="Configurações" 
         subtitle="Personalize sua experiência na plataforma"
-        icon={<Settings className="h-8 w-8" />}
       />
       
       <div className="container mx-auto p-4">

@@ -19,8 +19,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import TeacherNavigation from '../components/TeacherNavigation';
-import Header from '@/components/common/Header';
+import TeacherNavigation from '@/features/teacher/components/TeacherNavigation';
+import Header from '@/features/student/components/Header';
 
 const classes = [
   {

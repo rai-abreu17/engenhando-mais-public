@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Video, FileText, Upload, Play, ArrowLeft, Save } from 'lucide-react';
-import Header from '@/components/common/Header';
+import Header from '@/features/student/components/Header';
 
 const AddLessonPage: React.FC = () => {
   const navigate = useNavigate();

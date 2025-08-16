@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Filter, MoreVertical, Edit, Trash2, Mail, Clock, CheckCircle, XCircle } from 'lucide-react';
-import Header from '@/components/common/Header';
+import Header from '@/features/student/components/Header';
 import AdminNavigation from '@/admin/components/AdminNavigation';
 import AddTeacher from '@/components/admin/AddTeacher';
 import EditTeacher from '@/components/admin/EditTeacher';

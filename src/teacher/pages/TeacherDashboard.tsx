@@ -11,8 +11,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StatsCard from '@/components/shared/StatsCard';
-import TeacherNavigation from '../components/TeacherNavigation';
-import Header from '@/components/common/Header';
+import TeacherNavigation from '@/features/teacher/components/TeacherNavigation';
+import Header from '@/features/student/components/Header';
 import { NavLink } from 'react-router-dom';
 
 const recentClasses = [

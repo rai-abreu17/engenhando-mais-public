@@ -9,7 +9,7 @@ import {
   FileText,
   AlertTriangle
 } from 'lucide-react';
-import Header from '@/components/common/Header';
+import Header from '@/features/student/components/Header';
 import AdminNavigation from '@/admin/components/AdminNavigation';
 import AddTeacher from '@/components/admin/AddTeacher';
 import AddClass from '@/components/admin/AddClass';

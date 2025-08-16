@@ -16,7 +16,7 @@ import {
   FileText,
   Play
 } from 'lucide-react';
-import Header from '@/components/common/Header';
+import Header from '@/features/student/components/Header';
 import {
   Dialog,
   DialogContent,
