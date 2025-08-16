@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Heart, Utensils, Shirt, Gamepad2, ShoppingCart, Star, Volume2, VolumeX, RotateCcw } from 'lucide-react';
-import Header from '../features/student/components/Header';
-import Navigation from '../features/student/components/Navigation';
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
 import QuizGame from '../components/games/QuizGame';
 
 interface MascotType {

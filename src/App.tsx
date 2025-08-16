@@ -32,7 +32,7 @@ import TeacherFeedback from './professores/pages/TeacherFeedback';
 import TeacherAnalytics from './professores/pages/TeacherAnalytics';
 import CreateLesson from './professores/pages/CreateLesson';
 import ProfessorSettings from './professores/pages/ProfessorSettings';
-import { useAuth } from './shared/hooks/useAuth';
+import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
 

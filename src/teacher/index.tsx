@@ -17,4 +17,4 @@ export { default as TeacherAnalytics } from './pages/TeacherAnalytics';
 export { default as CreateLesson } from './pages/CreateLesson';
 
 // Components
-export { default as TeacherNavigation } from '@/features/teacher/components/TeacherNavigation';
+export { default as TeacherNavigation } from './components/TeacherNavigation';

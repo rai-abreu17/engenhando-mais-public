@@ -13,8 +13,8 @@ import {
   ThumbsUp,
   MessageCircle
 } from 'lucide-react';
-import Header from '@/features/student/components/Header';
-import TeacherNavigation from '@/features/teacher/components/TeacherNavigation';
+import Header from '@/components/common/Header';
+import TeacherNavigation from '../components/TeacherNavigation';
 
 // Mock data - em produção viria de APIs
 const analyticsData = {

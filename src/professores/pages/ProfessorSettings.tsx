@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Bell, BookOpen, Shield, HelpCircle, LogOut, Settings, Save } from 'lucide-react';
-import TeacherNavigation from '../../features/teacher/components/TeacherNavigation';
-import Header from '@/features/student/components/Header';
+import TeacherNavigation from '../components/TeacherNavigation';
+import Header from '@/components/common/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -108,6 +108,7 @@ const ProfessorSettings: React.FC = () => {
       <Header 
         title="Configurações" 
         subtitle="Personalize sua experiência na plataforma"
+        icon={<Settings className="h-8 w-8" />}
       />
       
       <div className="container mx-auto p-4">

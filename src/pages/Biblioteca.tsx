@@ -9,8 +9,8 @@
 import React, { useState } from 'react';
 import { Search, Star, Play, Clock } from 'lucide-react';
 
-import Header from '../features/student/components/Header';
-import Navigation from '../features/student/components/Navigation';
+import Header from '../components/common/Header';
+import Navigation from '../components/common/Navigation';
 import { Subject, Video, FilterType } from '../types/index';
 import { COLORS } from '../constants/index';
 import { MOCK_SUBJECTS } from '../data/mockData';
