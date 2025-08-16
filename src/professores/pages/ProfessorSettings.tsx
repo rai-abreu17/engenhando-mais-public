@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Bell, BookOpen, Shield, HelpCircle, LogOut, Settings, Save } from 'lucide-react';
-import TeacherNavigation from '../components/TeacherNavigation';
-import Header from '@/components/common/Header';
+import TeacherNavigation from '../../features/teacher/components/TeacherNavigation';
+import Header from '@/features/student/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

@@ -8,8 +8,8 @@ import {
   Calendar
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Header from '@/components/common/Header';
-import TeacherNavigation from '../components/TeacherNavigation';
+import Header from '@/features/student/components/Header';
+import TeacherNavigation from '../../features/teacher/components/TeacherNavigation';
 
 const TeacherAnalytics: React.FC = () => {
   const analyticsData = [

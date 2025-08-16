@@ -14,8 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import TeacherNavigation from '../components/TeacherNavigation';
-import Header from '@/components/common/Header';
+import TeacherNavigation from '../../features/teacher/components/TeacherNavigation';
+import Header from '@/features/student/components/Header';
 
 const feedbacks = [
   {

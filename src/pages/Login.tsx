@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import LoginForm from '../components/auth/LoginForm';
-import SignUpForm from '../components/auth/SignUpForm';
-import ForgotPasswordForm from '../components/auth/ForgotPasswordForm';
-import Logo from '../components/common/Logo';
+import LoginForm from '../features/auth/components/LoginForm';
+import SignUpForm from '../features/auth/components/SignUpForm';
+import ForgotPasswordForm from '../features/auth/components/ForgotPasswordForm';
+import Logo from '../components/layout/Logo';
 
 type AuthView = 'login' | 'signup' | 'forgot-password';
 
@@ -16,13 +16,13 @@ const Login = () => {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'login':
-        return <LoginForm onSwitchToSignUp={handleSwitchToSignUp} onForgotPassword={handleForgotPassword} />;
+        return <LoginForm onToggleForm={setCurrentView} />;
       case 'signup':
-        return <SignUpForm onSwitchToLogin={handleSwitchToLogin} />;
+        return <SignUpForm onToggleForm={setCurrentView} />;
       case 'forgot-password':
-        return <ForgotPasswordForm onBackToLogin={handleSwitchToLogin} />;
+        return <ForgotPasswordForm onToggleForm={setCurrentView} />;
       default:
-        return <LoginForm onSwitchToSignUp={handleSwitchToSignUp} onForgotPassword={handleForgotPassword} />;
+        return <LoginForm onToggleForm={setCurrentView} />;
     }
   };
 
@@ -31,10 +31,9 @@ const Login = () => {
       {/* Header with logo */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         {/* Logo para todas as telas, com tamanho diferente para forgot-password */}
-        <Logo 
-          variant={currentView === 'forgot-password' ? 'small' : 'default'}
-          className="mb-4"
-        />
+        <div className="mb-8">
+          <Logo />
+        </div>
 
         {/* Render the appropriate form component */}
         {renderCurrentView()}

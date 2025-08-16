@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import Header from '../components/common/Header';
-import Navigation from '../components/common/Navigation';
+import Header from '../features/student/components/Header';
+import Navigation from '../features/student/components/Navigation';
 
 const Mascote = () => {
   const [mascotStats, setMascotStats] = useState({
@@ -101,12 +101,10 @@ const Mascote = () => {
 
   return (
     <div className="min-h-screen bg-engenha-light-blue pb-20">
-      <Header 
-        title="Meu Mascote"
-        subtitle={`${studyStreak} dias consecutivos cuidando dele`}
-        showStreak={true}
-        streakDays={studyStreak}
-      />
+        <Header 
+          title="Meu Mascote"
+          subtitle={`${studyStreak} dias consecutivos cuidando dele`}
+        />
 
       <div className="px-6 space-y-6">
         {/* Indicador de Moedas */}

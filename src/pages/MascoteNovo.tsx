@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, ShoppingCart, Utensils, Hand, Moon, Gamepad2, Shirt, Sparkles, Volume2, VolumeX, Edit2 } from 'lucide-react';
-import Navigation from '../components/common/Navigation';
+import Navigation from '../features/student/components/Navigation';
 import RacingGame from '../components/games/RacingGame';
 import ShootingGame from '../components/games/ShootingGame';
 
