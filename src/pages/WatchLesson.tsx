@@ -88,8 +88,8 @@ const mockCourseData: Section[] = [
   }
 ];
 
-// Dados das perguntas do vídeo
-const videoQuestions = [
+// Dados padrão das perguntas do vídeo
+const defaultVideoQuestions = [
   {
     id: 'q1',
     time: 45, // 45 segundos
@@ -131,12 +131,86 @@ const videoQuestions = [
   }
 ];
 
+// Perguntas específicas para aula de Conjuntos
+const conjuntosVideoQuestions = [
+  {
+    id: 'q1',
+    time: 60, // 1 minuto
+    question: 'Dados os conjuntos A = {1, 2, 3, 4}, B = {3, 4, 5, 6} e C = {1, 3, 5, 7}, qual o resultado de (A ∩ B) ∪ C?',
+    options: [
+      '{1, 3, 4, 5, 7}',
+      '{1, 3, 5}',
+      '{3, 4}',
+      '{1, 3, 4, 5, 6, 7}'
+    ],
+    correctAnswer: 0,
+    explanation: 'A ∩ B = {3, 4} e (A ∩ B) ∪ C = {3, 4} ∪ {1, 3, 5, 7} = {1, 3, 4, 5, 7}. A intersecção seleciona elementos comuns aos dois conjuntos, e a união combina todos os elementos sem repetição.'
+  },
+  {
+    id: 'q2',
+    time: 180, // 3 minutos
+    question: 'Se U é o conjunto universo, A e B são subconjuntos de U, e A\' representa o complemento de A, qual destas expressões representa a Lei de De Morgan?',
+    options: [
+      '(A ∪ B)\' = A\' ∪ B\'',
+      '(A ∪ B)\' = A\' ∩ B\'',
+      '(A ∩ B)\' = A\' ∪ B\'',
+      '(A ∩ B)\' = A\' ∩ B\''
+    ],
+    correctAnswer: 2,
+    explanation: 'A Lei de De Morgan estabelece que o complemento da intersecção de dois conjuntos é igual à união dos complementos: (A ∩ B)\' = A\' ∪ B\'. De modo similar, (A ∪ B)\' = A\' ∩ B\'. Estas relações são fundamentais em lógica matemática e teoria dos conjuntos.'
+  },
+  {
+    id: 'q3',
+    time: 300, // 5 minutos
+    question: 'Seja A = {x ∈ ℝ | x² < 9} e B = {x ∈ ℝ | -1 ≤ x < 4}. O conjunto A ∩ B pode ser representado como:',
+    options: [
+      '(-3, 3)',
+      '[-1, 3)',
+      '(-3, 4)',
+      '[-1, 4)'
+    ],
+    correctAnswer: 1,
+    explanation: 'A = {x ∈ ℝ | x² < 9} = {x ∈ ℝ | -3 < x < 3} e B = {x ∈ ℝ | -1 ≤ x < 4}. A intersecção seleciona valores que pertencem simultaneamente aos dois conjuntos, resultando em A ∩ B = [-1, 3). O intervalo começa fechado em -1 (incluído) e termina aberto em 3 (não incluído).'
+  },
+  {
+    id: 'q4',
+    time: 420, // 7 minutos
+    question: 'Se A = {a, b, c, d}, B = {c, d, e, f} e C = {e, f, g, h}, qual o valor de |A × (B ∩ C)|?',
+    options: [
+      '0',
+      '4',
+      '8',
+      '16'
+    ],
+    correctAnswer: 0,
+    explanation: 'B ∩ C = {c, d, e, f} ∩ {e, f, g, h} = {e, f}. Como A = {a, b, c, d} e A × (B ∩ C) = A × {e, f}, se tivéssemos elementos comuns, o produto cartesiano teria cardinalidade |A| × |(B ∩ C)| = 4 × 2 = 8 pares ordenados. Porém, como B ∩ C = {e, f} e estes elementos não pertencem a A, então A × (B ∩ C) = ∅, logo |A × (B ∩ C)| = 0.'
+  },
+  {
+    id: 'q5',
+    time: 600, // 10 minutos
+    question: 'Considere o conjunto das partes P(A) onde A = {1, 2, 3}. Quantos subconjuntos X ∈ P(A) satisfazem a condição X ∩ {1, 3} ≠ ∅?',
+    options: [
+      '3',
+      '4',
+      '6',
+      '7'
+    ],
+    correctAnswer: 3,
+    explanation: 'O conjunto das partes P(A) de A = {1, 2, 3} contém 2³ = 8 subconjuntos: ∅, {1}, {2}, {3}, {1,2}, {1,3}, {2,3}, {1,2,3}. A condição X ∩ {1, 3} ≠ ∅ significa que X deve conter pelo menos um dos elementos 1 ou 3. Os conjuntos que satisfazem essa condição são: {1}, {3}, {1,2}, {1,3}, {2,3}, {1,2,3}, totalizando 7 subconjuntos. Apenas o conjunto vazio ∅ não satisfaz a condição.'
+  }
+];
+
 export default function WatchLesson() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   
   // Debug: log do lessonId
   console.log('WatchLesson - lessonId recebido:', lessonId);
+  
+  // Seleção dinâmica de perguntas com base no ID da lição
+  const videoQuestions = lessonId === 'j5i6XlfwxeA' 
+    ? conjuntosVideoQuestions // Perguntas específicas para aula de Conjuntos
+    : defaultVideoQuestions; // Perguntas padrão para outras aulas
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
