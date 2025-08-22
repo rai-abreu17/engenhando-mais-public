@@ -164,17 +164,26 @@ export default function WatchLesson() {
   );
 
   useEffect(() => {
+    console.log(`[WatchLesson] Nova lição carregada: ${lessonId}`);
     if (!currentLesson) {
       navigate('/');
       return;
     }
 
-    // Carregar progresso salvo
+    // Reset time to start for the new lesson by default - SEMPRE
+    console.log('[WatchLesson] Forçando currentTime = 0 para nova lição');
+    setCurrentTime(0);
+
+    // DESABILITANDO carregamento de progresso anterior 
+    // Comentado para forçar sempre início em 0
+    /*
+    // Carregar progresso salvo (se existir)
     const savedProgress = progress.find(p => p.lessonId === lessonId);
     if (savedProgress) {
       setCurrentTime(savedProgress.watchTime);
     }
-  }, [lessonId, currentLesson, navigate, progress]);
+    */
+  }, [lessonId, currentLesson, navigate]);
 
   useEffect(() => {
     // Salvar progresso a cada 5 segundos quando estiver reproduzindo
@@ -214,6 +223,9 @@ export default function WatchLesson() {
   };
 
   const goToLesson = (newLessonId: string) => {
+    console.log(`[WatchLesson] Navegando para nova lição: ${newLessonId}`);
+    // Resetar o tempo atual antes de navegar
+    setCurrentTime(0);
     navigate(`/watch/${newLessonId}`);
   };
 

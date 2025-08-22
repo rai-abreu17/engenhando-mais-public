@@ -61,6 +61,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [volume, setVolume] = useState(80);
   const [showControls, setShowControls] = useState(true);
   const [triggeredQuestions, setTriggeredQuestions] = useState<Set<string>>(new Set());
+  // Helper to namespace question IDs by video to avoid collisions between lessons
+  const questionKey = (qId: string) => `${videoId}::${qId}`;
   const [internalTime, setInternalTime] = useState(currentTime || 0);
   const [playerReady, setPlayerReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   // Função para criar o player do YouTube
   const initPlayer = () => {
     try {
-      console.log('Iniciando player do YouTube...');
+      console.log(`[VideoPlayer] Iniciando player do YouTube para video: ${videoId}, tempo DEVE SER ZERO`);
       
       // Verificar se a API do YouTube está realmente disponível
       if (!window.YT || !window.YT.Player) {
@@ -87,6 +89,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       // Limpar player anterior se existir
       if (playerRef.current) {
         try {
+          console.log('[VideoPlayer] Destruindo player antigo antes de criar novo');
           playerRef.current.destroy();
           playerRef.current = null;
         } catch (error) {
@@ -127,23 +130,27 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           cc_lang_pref: 'pt'  // preferência de idioma para legendas
         },
         events: {
-          onReady: (event: any) => {
-            console.log('Player pronto!');
-            setPlayerReady(true);
-            event.target.setVolume(volume);
-            
-            // Obter a duração real do vídeo
-            const actualDuration = event.target.getDuration();
-            if (actualDuration && actualDuration > 0) {
-              onTimeUpdate(currentTime, Math.floor(actualDuration));
-            }
-            
-            // Configurar o vídeo após player estar pronto
-            if (currentTime > 0) {
-              event.target.seekTo(currentTime, true);
-            }
-            
-            // Definir a taxa de reprodução inicial
+            onReady: (event: any) => {
+              console.log(`[VideoPlayer] Player pronto para vídeo: ${videoId} - FORÇANDO INÍCIO EM 0!`);
+              setPlayerReady(true);
+              event.target.setVolume(volume);
+              
+              // SEMPRE iniciar do começo - independente do que diz currentTime
+              console.log('[VideoPlayer] Forçando seekTo(0) na inicialização');
+              event.target.seekTo(0, true);
+              
+              // Obter a duração real do vídeo
+              const actualDuration = event.target.getDuration();
+              if (actualDuration && actualDuration > 0) {
+                console.log(`[VideoPlayer] Duração detectada: ${Math.floor(actualDuration)}s - Notificando com tempo 0`);
+                // Sempre notificar com tempo 0 ao inicializar
+                onTimeUpdate(0, Math.floor(actualDuration));
+              }
+              
+              // DESATIVAR: Não usar currentTime na inicialização
+              // if (currentTime > 0) {
+              //   event.target.seekTo(currentTime, true);
+              // }            // Definir a taxa de reprodução inicial
             try {
               event.target.setPlaybackRate(playbackRate);
             } catch (e) {
@@ -282,18 +289,23 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     // Função para inicializar API com tratamento de erro
     const setupYouTubeAPI = () => {
       try {
+        console.log(`[VideoPlayer] Inicializando API para videoId: ${videoId}, currentTime definido como: ${currentTime}`);
+        
         // Verificar se já existe script da API
         if (document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
           if (window.YT && window.YT.Player) {
+            console.log('[VideoPlayer] API do YouTube já carregada, inicializando player do zero');
             initPlayer();
           } else {
             // API está carregando, definir callback
+            console.log('[VideoPlayer] API do YouTube ainda carregando, definindo callback');
             window.onYouTubeIframeAPIReady = initPlayer;
           }
           return;
         }
         
         // Carregar API
+        console.log('[VideoPlayer] Carregando script da API do YouTube');
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -301,7 +313,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         
         // Definir callback
         window.onYouTubeIframeAPIReady = () => {
-          console.log('YouTube API carregada com sucesso');
+          console.log('[VideoPlayer] YouTube API carregada com sucesso, inicializando player com videoId:', videoId);
           initPlayer();
         };
       } catch (error) {
@@ -310,6 +322,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       }
     };
     
+    // Reset internos importantes
+    console.log(`[VideoPlayer] useEffect[videoId] - Resetando para videoId: ${videoId}`);
+    setInternalTime(0);
+    
     // Chamar função de setup
     setupYouTubeAPI();
 
@@ -317,6 +333,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       // Limpar o player quando o componente for desmontado
       if (playerRef.current) {
         try {
+          console.log('[VideoPlayer] Cleanup - destruindo player antigo');
           playerRef.current.destroy();
         } catch (error) {
           console.error('Erro ao destruir o player:', error);
@@ -324,6 +341,37 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoId]);
+
+  // Reset triggered questions when the video changes to avoid carrying state between lessons
+  useEffect(() => {
+    console.log(`[VideoPlayer] VideoId mudou para: ${videoId} - Resetando completamente o player`);
+    setTriggeredQuestions(new Set());
+    // Reset internal playback time for the new video
+    setInternalTime(0);
+    try {
+      // Inform parent that time reset to 0
+      onTimeUpdate(0);
+      
+      // SOLUÇÃO FORTE: destruir e recriar o player completamente
+      if (playerRef.current) {
+        try {
+          console.log('[VideoPlayer] Destruindo player antigo para criar novo do zero');
+          playerRef.current.destroy();
+          playerRef.current = null;
+          
+          // Forçar reinicialização do player
+          setTimeout(() => {
+            console.log('[VideoPlayer] Recriando player após destruição');
+            initPlayer();
+          }, 100);
+        } catch (e) {
+          console.error('Erro ao destruir player:', e);
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao resetar tempo do player ao mudar de vídeo:', e);
+    }
   }, [videoId]);
 
   // Sincronizar tempo interno e verificar questões
@@ -383,14 +431,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             }
           }
           
-          // Verificar questões
+          // Verificar questões (com namespace por vídeo)
           const currentQuestions = questions.filter(
-            q => Math.abs(q.time - currentTime) < 1 && !triggeredQuestions.has(q.id)
+            q => Math.abs(q.time - currentTime) < 1 && !triggeredQuestions.has(questionKey(q.id))
           );
       
           if (currentQuestions.length > 0 && isPlaying) {
             const question = currentQuestions[0];
-            setTriggeredQuestions(prev => new Set([...prev, question.id]));
+            setTriggeredQuestions(prev => new Set([...Array.from(prev), questionKey(question.id)]));
             playerRef.current.pauseVideo();
             onQuestionTriggered(question);
           }
@@ -868,7 +916,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               >
                 <div className={cn(
                   "w-4 h-4 rounded-full border-2 border-white cursor-pointer hover:scale-125 transition-transform",
-                  triggeredQuestions.has(star.id) 
+                  triggeredQuestions.has(questionKey(star.id)) 
                     ? "bg-green-500" 
                     : "bg-engenha-gold animate-pulse"
                 )}>
