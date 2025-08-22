@@ -24,7 +24,7 @@ const Home: React.FC = () => {
 
   // Função para renderizar cada item do carrossel "Continue de onde parou"
   const renderRecentVideo = (video: any) => (
-    <Card variant="engenha" interactive className="flex items-center gap-4 p-4 h-full">
+    <Card variant="engenha" className="flex items-center gap-4 p-4 h-full">
       <div className="text-3xl">{video.thumbnail}</div>
       <div className="flex-1">
         <h3 className="font-medium text-card-foreground text-sm">{video.title}</h3>
@@ -45,9 +45,9 @@ const Home: React.FC = () => {
         className="rounded-full"
         onClick={(e) => {
           e.stopPropagation();
-          // O ID do vídeo convertido para o formato esperado: '1-1', '2-1', etc.
-          const lessonId = `${video.id}-1`;
-          navigate(`/watch/${lessonId}`);
+          const targetId = (video && (video as any).lessonId) || 'X0OZt35ASgU';
+          console.log('Navegando para (router):', `/watch/${targetId}`);
+          navigate(`/watch/${targetId}`);
         }}
       >
         <Play size={16} />
@@ -57,7 +57,7 @@ const Home: React.FC = () => {
 
   // Função para renderizar cada item do carrossel "Recomendado para você"
   const renderRecommendation = (item: any) => (
-    <Card variant="engenha" interactive className="flex items-center gap-4 p-4 h-full">
+    <Card variant="engenha" className="flex items-center gap-4 p-4 h-full">
       <div className="text-3xl">{item.thumbnail}</div>
       <div className="flex-1">
         <h3 className="font-medium text-card-foreground text-sm">{item.title}</h3>
@@ -71,9 +71,9 @@ const Home: React.FC = () => {
         size="icon" 
         onClick={(e) => {
           e.stopPropagation();
-          // O ID do vídeo convertido para o formato esperado: '1-1', '2-1', etc.
-          const lessonId = `${item.id}-1`;
-          navigate(`/watch/${lessonId}`);
+          const targetId = (item && (item as any).lessonId) || 'X0OZt35ASgU';
+          console.log('Navegando para (router):', `/watch/${targetId}`);
+          navigate(`/watch/${targetId}`);
         }}
       >
         <BookOpen className="text-engenha-sky-blue" size={20} />

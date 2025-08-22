@@ -33,34 +33,57 @@ interface Section {
 const mockCourseData: Section[] = [
   {
     id: '1',
-    title: 'Seção 1: Introdução',
+    title: 'Seção 1: Introdução e Fundamentos',
     lessons: [
-      { id: '1-1', title: 'Introdução: visão geral do curso', duration: '17m', type: 'video' },
-      { id: '1-2', title: 'Mapa de estudos da carreira Java', duration: '4m', type: 'video' },
+      { id: 'X0OZt35ASgU', title: 'Aula Inaugural - O que estudaremos neste Curso', duration: '6:32', type: 'video' },
+      { id: 'j5i6XlfwxeA', title: 'Conjuntos e Operações com Conjuntos', duration: '16:42', type: 'video' },
+      { id: '7GLGVQUkQC4', title: 'Números Reais e Intervalos', duration: '18:37', type: 'video' },
+      { id: 'dMdpOoSnu2I', title: 'Operações com Frações e Dicas', duration: '11:15', type: 'video' },
+      { id: '91sLDPJRdhk', title: 'Racionalização e Simplificação de Raízes', duration: '11:43', type: 'video' },
+      { id: '2D_rTqUfuLQ', title: 'Polinômios', duration: '16:52', type: 'video' },
+      { id: '0Zhx5MnJWmc', title: 'Divisão de polinômios', duration: '19:27', type: 'video' },
+      { id: '-0eq7qMgOqc', title: 'Fatoração de polinômios', duration: '18:31', type: 'video' }
     ]
   },
   {
     id: '2',
-    title: 'Seção 2: Conceitos de programação',
+    title: 'Seção 2: Funções e Equações',
     lessons: [
-      { id: '2-1', title: 'Algoritmos e lógica de programação', duration: '15m', type: 'video' },
-      { id: '2-2', title: 'Estruturas de dados básicas', duration: '12m', type: 'video' },
-      { id: '2-3', title: 'Exercícios práticos', duration: '8m', type: 'quiz' },
+      { id: 'TwntXlUBr1I', title: 'Expressões Fracionárias', duration: '15:32', type: 'video' },
+      { id: 'AClRmo2iH5o', title: 'Conceitos Iniciais de Funções', duration: '16:25', type: 'video' },
+      { id: 'nIlfIo3jz3o', title: 'Funções Potência e Polinomiais', duration: '13:12', type: 'video' },
+      { id: 'lt9zW3YuTj0', title: 'Função Polinomial do 1° Grau (Função Afim)', duration: '25:27', type: 'video' },
+      { id: '9Kn_e_WjxPE', title: 'Equações e Inequações do 1º Grau', duration: '20:36', type: 'video' },
+      { id: 'bc_-20DGUzs', title: 'Função Polinomial do 2º Grau', duration: '16:16', type: 'video' },
+      { id: 'YnYhNKsrK9o', title: 'Equação e Inequação do Segundo Grau', duration: '21:03', type: 'video' },
+      { id: 'MSUreYH2bDE', title: 'Função Exponencial', duration: '17:54', type: 'video' }
     ]
   },
   {
     id: '3',
-    title: 'Seção 3: Introdução à linguagem Java',
+    title: 'Seção 3: Tópicos Avançados',
     lessons: [
-      { id: '3-1', title: 'Visão geral do capítulo', duration: '1m', type: 'video' },
-      { id: '3-2', title: 'Material de apoio do capítulo', duration: '1m', type: 'text' },
-      { id: '3-3', title: 'Entendendo as versões do Java', duration: '4m', type: 'video' },
-      { id: '3-4', title: 'Histórico e edições de Java', duration: '8m', type: 'video' },
-      { id: '3-5', title: 'JDK / JVM - Máquina Virtual do Java', duration: '7m', type: 'video' },
-      { id: '3-6', title: 'Estrutura de uma aplicação Java', duration: '3m', type: 'video' },
-      { id: '3-7', title: 'Instalando o Java JDK', duration: '1m', type: 'video' },
-      { id: '3-8', title: 'Instalando o Eclipse', duration: '3m', type: 'video' },
-      { id: '3-9', title: 'Primeiro programa em Java no Eclipse', duration: '14m', type: 'video' },
+      { id: '-bAwwBI9eOQ', title: 'Equações e Inequações Exponenciais', duration: '18:18', type: 'video' },
+      { id: 'sQxf9oJ87QI', title: 'Problemas Envolvendo Funções Exponenciais', duration: '14:02', type: 'video' },
+      { id: 'nPE5TXdqug0', title: 'Logaritmo', duration: '19:38', type: 'video' },
+      { id: 'CbQ0qgxId8k', title: 'Função Logarítmica', duration: '12:25', type: 'video' },
+      { id: 'Wl6P-LQxK20', title: 'Equações e Inequações Logarítmicas', duration: '14:07', type: 'video' },
+      { id: 'rJHLsAxfmxk', title: 'Inequações Fracionárias (ou Quociente)', duration: '13:10', type: 'video' },
+      { id: 'ANcLc07mIAg', title: 'Trigonometria - Conceitos Básicos', duration: '18:34', type: 'video' },
+      { id: 'ZBp-bSioul0', title: 'Introdução às Funções Trigonométricas', duration: '22:45', type: 'video' }
+    ]
+  },
+  {
+    id: '4',
+    title: 'Seção 4: Aprofundamento e Finalização',
+    lessons: [
+      { id: 'AC3znUH68Wc', title: 'Gráficos das Funções Seno e Cosseno e Variações', duration: '15:03', type: 'video' },
+      { id: 'UWweMHaNHB4', title: 'Outras Funções Trigonométricas', duration: '11:47', type: 'video' },
+      { id: 'tkWwODF9-_M', title: 'Função Modular', duration: '14:29', type: 'video' },
+      { id: 'cluldRX1TOc', title: 'Equação e Inequação Modular', duration: '17:36', type: 'video' },
+      { id: '9oYmJv1G4WA', title: 'Funções Inversas e Compostas', duration: '16:54', type: 'video' },
+      { id: 'ZsP3vV3W3ls', title: 'Uma Conversa Sobre Infinito (Aula de Encerramento)', duration: '17:21', type: 'video' },
+      { id: 'LWrmVePfuTY', title: 'Live de Pré-Cálculo - Revisão e Dúvidas', duration: '58:07', type: 'video' }
     ]
   }
 ];
@@ -70,47 +93,51 @@ const videoQuestions = [
   {
     id: 'q1',
     time: 45, // 45 segundos
-    question: 'Qual é o principal objetivo da linguagem Java?',
+    question: 'O que significa o termo "pré-cálculo"?',
     options: [
-      'Ser uma linguagem apenas para web',
-      'Ser multiplataforma e orientada a objetos',
-      'Substituir completamente o C++',
-      'Funcionar apenas em Windows'
+      'Uma forma de evitar estudar cálculo',
+      'Tópicos matemáticos essenciais para o estudo do cálculo',
+      'Um método alternativo ao cálculo diferencial',
+      'Cálculos realizados por computadores'
     ],
     correctAnswer: 1,
-    explanation: 'Java foi criada com o princípio "write once, run anywhere" - escreva uma vez, execute em qualquer lugar.'
+    explanation: 'Pré-cálculo compreende os tópicos matemáticos fundamentais necessários para o estudo do cálculo, como funções, trigonometria, e álgebra avançada.'
   },
   {
     id: 'q2',
     time: 120, // 2 minutos
-    question: 'O que significa JVM?',
+    question: 'Qual destes tópicos é fundamental no pré-cálculo?',
     options: [
-      'Java Virtual Machine',
-      'Java Version Manager',
-      'Java Visual Mode',
-      'Java Variable Method'
+      'Programação linear',
+      'Funções e suas propriedades',
+      'Teoria dos conjuntos avançada',
+      'Estatística descritiva'
     ],
-    correctAnswer: 0,
-    explanation: 'JVM (Java Virtual Machine) é responsável por executar o código Java em diferentes sistemas operacionais.'
+    correctAnswer: 1,
+    explanation: 'O estudo de funções e suas propriedades é central no pré-cálculo, pois forma a base para entender os conceitos de limite, derivada e integral no cálculo.'
   },
   {
     id: 'q3',
     time: 240, // 4 minutos
-    question: 'Qual extensão têm os arquivos de código Java?',
+    question: 'Por que o estudo das funções trigonométricas é importante no pré-cálculo?',
     options: [
-      '.js',
-      '.class',
-      '.java',
-      '.jvm'
+      'Apenas por tradição acadêmica',
+      'São raramente usadas em cálculo',
+      'São fundamentais para modelar fenômenos periódicos',
+      'São úteis apenas para engenheiros civis'
     ],
     correctAnswer: 2,
-    explanation: 'Arquivos de código fonte Java têm extensão .java, que são compilados para .class.'
+    explanation: 'Funções trigonométricas são essenciais para modelar fenômenos periódicos na natureza e engenharia, além de serem amplamente utilizadas em várias aplicações do cálculo diferencial e integral.'
   }
 ];
 
 export default function WatchLesson() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
+  
+  // Debug: log do lessonId
+  console.log('WatchLesson - lessonId recebido:', lessonId);
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(300); // 5 minutos exemplo
@@ -200,7 +227,15 @@ export default function WatchLesson() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!currentLesson) {
+  // Se não tiver ID de lição na URL, redirecionar para a primeira lição
+  useEffect(() => {
+    console.log('WatchLesson useEffect - lessonId:', lessonId);
+    if (!lessonId) {
+      navigate('/watch/MZSq-H-PB5I');
+    }
+  }, [lessonId, navigate]);
+
+  if (!currentLesson && lessonId) {
     return null;
   }
 
@@ -365,8 +400,8 @@ export default function WatchLesson() {
         <div className="flex-1 flex flex-col">
           {/* Video Container */}
           <VideoPlayer
-            videoId="73wo6vFD99s"
-            title={currentLesson.title}
+            videoId={lessonId || ''}
+            title={currentLesson?.title || ''}
             currentTime={currentTime}
             duration={duration}
             isPlaying={isPlaying}
@@ -412,33 +447,33 @@ export default function WatchLesson() {
                   <Card className="bg-gradient-to-br from-engenha-light-blue to-white border-engenha-sky-blue/30 shadow-lg">
                     <div className="p-6">
                       <h1 className="text-xl lg:text-2xl font-bold mb-4 text-engenha-dark-navy">
-                        Curso completo de Java e Programação Orientada a Objetos
+                        Curso Completo de Pré-Cálculo
                       </h1>
                       
                       <div className="flex flex-wrap items-center gap-4 text-sm text-engenha-blue mb-4">
                         <div className="flex items-center gap-1">
                           <span className="text-engenha-gold text-lg">★</span>
                           <span className="font-semibold">4,8</span>
-                          <span>(62.795 avaliações)</span>
+                          <span>(12.387 avaliações)</span>
                         </div>
-                        <span>• 182.371 Alunos</span>
-                        <span>• 54,5 horas de conteúdo</span>
+                        <span>• 623.147 Visualizações</span>
+                        <span>• 8,5 horas de conteúdo</span>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         <span className="px-3 py-1 bg-engenha-orange/10 text-engenha-orange text-sm rounded-full font-medium">
-                          Certificado disponível
+                          Material complementar
                         </span>
                         <span className="px-3 py-1 bg-engenha-sky-blue/10 text-engenha-sky-blue text-sm rounded-full font-medium">
-                          Atualizado 2024
+                          Preparatório para Cálculo I
                         </span>
                         <span className="px-3 py-1 bg-engenha-bright-blue/10 text-engenha-bright-blue text-sm rounded-full font-medium">
-                          Suporte completo
+                          Professor Douglas Maioli
                         </span>
                       </div>
 
                       <p className="text-engenha-blue text-sm">
-                        📚 Última atualização: junho de 2024 • 🌐 Legendas em Português
+                        📚 Curso completo preparatório para a disciplina de Cálculo I • 🌐 Disponível em Português e Inglês
                       </p>
                     </div>
                   </Card>
@@ -470,39 +505,39 @@ export default function WatchLesson() {
                       
                       <div className="prose prose-sm max-w-none text-engenha-dark-navy">
                         <p className="mb-4">
-                          <strong>[00:00]</strong> Muito bem pessoal, nesta aula vamos falar sobre a estrutura de uma aplicação Java e como organizar seu código de forma eficiente.
+                          <strong>[00:00]</strong> Olá pessoal! Bem-vindos à nossa primeira aula de Pré-Cálculo. Este curso é fundamental para quem vai estudar Cálculo I e outras disciplinas avançadas de matemática nas áreas de engenharia e ciências exatas.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[00:15]</strong> Java é uma linguagem de programação orientada a objetos, criada pela Sun Microsystems e atualmente mantida pela Oracle. Uma das principais características do Java é ser multiplataforma.
+                          <strong>[00:15]</strong> O Pré-Cálculo reúne os conceitos matemáticos essenciais que formam a base para o estudo do Cálculo. Aqui vamos revisar e aprofundar temas como funções, trigonometria, exponenciais e logaritmos.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[00:45]</strong> O principal objetivo da linguagem Java é seguir o conceito "write once, run anywhere" - escreva uma vez, execute em qualquer lugar. Isso é possível graças à Java Virtual Machine, ou JVM.
+                          <strong>[00:45]</strong> Um dos grandes benefícios de estudar Pré-Cálculo é a construção de uma base sólida que facilita a compreensão de limites, derivadas e integrais quando você avançar para o Cálculo I.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[01:30]</strong> A JVM é responsável por interpretar o bytecode Java e executá-lo no sistema operacional específico. Isso permite que um programa Java compilado rode em Windows, Linux, Mac ou qualquer sistema que tenha a JVM instalada.
+                          <strong>[01:30]</strong> Começaremos nosso estudo pelas funções, que são o conceito central do Pré-Cálculo. Uma função estabelece uma relação entre conjuntos onde cada elemento do domínio tem exatamente uma imagem no contradomínio.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[02:00]</strong> Agora vamos entender melhor o que significa JVM. JVM é a abreviação para Java Virtual Machine, que é o coração da plataforma Java.
+                          <strong>[02:00]</strong> Vamos estudar diversos tipos de funções como lineares, quadráticas, polinomiais, racionais, exponenciais, logarítmicas e trigonométricas. Cada tipo tem suas propriedades e aplicações específicas.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[02:30]</strong> Quando você escreve código Java, ele é salvo em arquivos com extensão .java. Esses arquivos são então compilados pelo compilador javac para gerar arquivos .class, que contêm o bytecode.
+                          <strong>[02:30]</strong> As funções trigonométricas são particularmente importantes, pois nos permitem modelar fenômenos periódicos como ondas sonoras, ciclos sazonais e circuitos elétricos. Veremos seno, cosseno, tangente e suas inversas.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[03:00]</strong> O bytecode é um código intermediário que não é específico de nenhuma arquitetura de hardware, permitindo que seja executado em qualquer sistema que tenha a JVM.
+                          <strong>[03:00]</strong> Outro conceito fundamental são as transformações de funções. Aprenderemos como operações como deslocamento, reflexão, alongamento e compressão afetam o gráfico de uma função.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[04:00]</strong> Os arquivos de código fonte Java sempre têm extensão .java. Esta é uma convenção importante que você deve sempre seguir quando criar seus programas.
+                          <strong>[04:00]</strong> Ao longo deste curso, resolveremos muitos exercícios práticos e abordaremos aplicações reais desses conceitos em física, engenharia, economia e outras áreas.
                         </p>
                         
                         <p className="mb-4">
-                          <strong>[04:30]</strong> Em resumo, a estrutura básica é: código .java → compilação → bytecode .class → execução na JVM → resultado final no sistema operacional.
+                          <strong>[04:30]</strong> Em resumo, o Pré-Cálculo é a ponte entre a Álgebra básica e o Cálculo avançado. Dominando esses conceitos, você estará preparado para enfrentar com confiança as disciplinas mais avançadas do seu curso.
                         </p>
                       </div>
                       

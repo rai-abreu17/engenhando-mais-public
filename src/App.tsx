@@ -48,12 +48,38 @@ const App = () => {
     );
   }
 
-  // Componente para proteger rotas
+  // Componente para proteger rotas com regras específicas por tipo de URL
   const ProtectedRoute = ({ children, allowedUserTypes }: { children: React.ReactNode, allowedUserTypes: string[] }) => {
+    const currentPath = window.location.pathname;
+
+    // Permitir acesso à rota /watch/:lessonId sem autenticação
+    if (currentPath.startsWith('/watch/')) {
+      console.log('ProtectedRoute: acesso público permitido para', currentPath);
+      return <>{children}</>;
+    }
+
+    // Verificar se o usuário está autenticado
     if (!isAuthenticated) {
+      console.log('ProtectedRoute: usuário não autenticado, redirecionando para /login (path)', currentPath);
       return <Navigate to="/login" replace />;
     }
     
+    // Regras existentes continuam aqui...
+    if (currentPath.startsWith('/admin/') && userType !== 'admin') {
+      // Rotas /admin/ são acessíveis apenas por administradores
+      if (userType === 'teacher') {
+        return <Navigate to="/professores/dashboard" replace />;
+      } else {
+        return <Navigate to="/home" replace />;
+      }
+    }
+    
+    // Rotas /professores/ são acessíveis por professores e administradores
+    if (currentPath.startsWith('/professores/') && userType !== 'admin' && userType !== 'teacher') {
+      return <Navigate to="/home" replace />;
+    }
+    
+    // Para outras rotas, verificar os tipos permitidos
     if (allowedUserTypes.length > 0 && userType && !allowedUserTypes.includes(userType)) {
       // Redirecionar para a página apropriada baseada no tipo de usuário
       if (userType === 'admin') {
@@ -109,11 +135,7 @@ const App = () => {
                 <Help />
               </ProtectedRoute>
             } />
-            <Route path="/watch/:lessonId" element={
-              <ProtectedRoute allowedUserTypes={['authenticated', 'teacher', 'admin']}>
-                <WatchLesson />
-              </ProtectedRoute>
-            } />
+            <Route path="/watch/:lessonId" element={<WatchLesson />} />
             
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={
@@ -164,37 +186,37 @@ const App = () => {
             
             {/* Teacher Routes */}
             <Route path="/professores/dashboard" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <TeacherDashboard />
               </ProtectedRoute>
             } />
             <Route path="/professores/turmas" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <TeacherClasses />
               </ProtectedRoute>
             } />
             <Route path="/professores/aulas" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <TeacherLessons />
               </ProtectedRoute>
             } />
             <Route path="/professores/aulas/criar" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <CreateLesson />
               </ProtectedRoute>
             } />
             <Route path="/professores/feedback" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <TeacherFeedback />
               </ProtectedRoute>
             } />
             <Route path="/professores/analytics" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <TeacherAnalytics />
               </ProtectedRoute>
             } />
             <Route path="/professores/configuracoes" element={
-              <ProtectedRoute allowedUserTypes={['teacher']}>
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <ProfessorSettings />
               </ProtectedRoute>
             } />

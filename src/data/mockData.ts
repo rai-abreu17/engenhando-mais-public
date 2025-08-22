@@ -78,48 +78,54 @@ export const MOCK_SUBJECTS: Subject[] = [
 
 export const MOCK_RECENT_VIDEOS: RecentVideo[] = [
   {
-    id: 1,
-    title: 'Limites e Continuidade',
+  id: 1,
+  lessonId: 'X0OZt35ASgU',
+  title: 'Limites e Continuidade',
     subject: 'Cálculo I',
     progress: 75,
     duration: '45 min',
     thumbnail: '📊'
   },
   {
-    id: 2,
-    title: 'Leis de Newton',
+  id: 2,
+  lessonId: 'j5i6XlfwxeA',
+  title: 'Leis de Newton',
     subject: 'Física I',
     progress: 30,
     duration: '38 min',
     thumbnail: '⚗️'
   },
   {
-    id: 3,
-    title: 'Algoritmos de Busca',
+  id: 3,
+  lessonId: '7GLGVQUkQC4',
+  title: 'Algoritmos de Busca',
     subject: 'Programação',
     progress: 60,
     duration: '52 min',
     thumbnail: '💻'
   },
   {
-    id: 4,
-    title: 'Derivadas Básicas',
+  id: 4,
+  lessonId: 'dMdpOoSnu2I',
+  title: 'Derivadas Básicas',
     subject: 'Cálculo I',
     progress: 20,
     duration: '35 min',
     thumbnail: '📈'
   },
   {
-    id: 5,
-    title: 'Estruturas de Dados',
+  id: 5,
+  lessonId: '91sLDPJRdhk',
+  title: 'Estruturas de Dados',
     subject: 'Programação',
     progress: 85,
     duration: '42 min',
     thumbnail: '🗃️'
   },
   {
-    id: 6,
-    title: 'Termodinâmica',
+  id: 6,
+  lessonId: '2D_rTqUfuLQ',
+  title: 'Termodinâmica',
     subject: 'Física II',
     progress: 45,
     duration: '48 min',
@@ -129,43 +135,49 @@ export const MOCK_RECENT_VIDEOS: RecentVideo[] = [
 
 export const MOCK_POPULAR_VIDEOS: PopularVideo[] = [
   {
-    id: 1,
-    title: 'Derivadas - Conceitos',
+  id: 1,
+  lessonId: '0Zhx5MnJWmc',
+  title: 'Derivadas - Conceitos',
     subject: 'Cálculo I',
     difficulty: 'Intermediário',
     thumbnail: '📈'
   },
   {
-    id: 2,
-    title: 'Algoritmos de Ordenação',
+  id: 2,
+  lessonId: '-0eq7qMgOqc',
+  title: 'Algoritmos de Ordenação',
     subject: 'Programação',
     difficulty: 'Avançado',
     thumbnail: '💻'
   },
   {
-    id: 3,
-    title: 'Teorema de Pitágoras',
+  id: 3,
+  lessonId: 'TwntXlUBr1I',
+  title: 'Teorema de Pitágoras',
     subject: 'Matemática',
     difficulty: 'Básico',
     thumbnail: '📐'
   },
   {
-    id: 4,
-    title: 'Circuitos Elétricos',
+  id: 4,
+  lessonId: 'AClRmo2iH5o',
+  title: 'Circuitos Elétricos',
     subject: 'Física II',
     difficulty: 'Intermediário',
     thumbnail: '⚡'
   },
   {
-    id: 5,
-    title: 'Banco de Dados',
+  id: 5,
+  lessonId: 'nIlfIo3jz3o',
+  title: 'Banco de Dados',
     subject: 'Programação',
     difficulty: 'Intermediário',
     thumbnail: '🗄️'
   },
   {
-    id: 6,
-    title: 'Integrais Definidas',
+  id: 6,
+  lessonId: 'lt9zW3YuTj0',
+  title: 'Integrais Definidas',
     subject: 'Cálculo II',
     difficulty: 'Avançado',
     thumbnail: '∫'
