@@ -73,7 +73,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
     }
 
     // Login administrador
-    if (formData.email === 'Administrador@email.com' && formData.password === '1234') {
+    if (formData.email === 'admin@gmail.com' && formData.password === '1234') {
       login('mock-token-admin', 'admin');
       navigate('/admin/dashboard');
       return;
