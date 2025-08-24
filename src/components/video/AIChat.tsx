@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Bot, Send, X, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -19,15 +20,36 @@ interface AIChatProps {
 }
 
 export const AIChat: React.FC<AIChatProps> = ({ isOpen, onClose }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  const { lessonId } = useParams<{ lessonId?: string }>();
+  const isConjuntosAula = lessonId === 'j5i6XlfwxeA';
+  
+  const [messages, setMessages] = useState<Message[]>([]);
+  
+  // Inicializar mensagem de boas-vindas com base no tipo de aula
+  useEffect(() => {
+    // Reset messages when the component mounts or lessonId changes
+    setMessages([{
       id: '1',
-      text: 'Olá! Sou seu assistente IA. Como posso ajudá-lo com esta aula?',
+      text: isConjuntosAula 
+        ? 'Olá! Sou seu assistente IA. Estou aqui para ajudar com sua aula sobre Conjuntos e Operações com Conjuntos. Como posso ajudá-lo hoje?' 
+        : 'Olá! Sou seu assistente IA. Como posso ajudá-lo com esta aula?',
       isUser: false,
       timestamp: new Date()
-    }
-  ]);
+    }]);
+  }, [lessonId, isConjuntosAula]);
   const [inputText, setInputText] = useState('');
+
+  // Respostas pré-definidas para aula de Conjuntos e Operações
+  const conjuntosRespostas: {[key: string]: string} = {
+    'default': 'Posso explicar melhor sobre qualquer conceito de conjuntos e operações apresentado nesta aula. Basta perguntar!',
+    'uniao': 'A união de conjuntos (A ∪ B) representa todos os elementos que pertencem a A OU a B. No minuto 08:11 o professor explica usando um exemplo de restaurante: imagine um restaurante "Sabores & Aromas" com dois salões: o salão A com mesas 1-10 e o salão B com mesas 11-20. No salão A temos o conjunto de clientes A = {Carlos, Ana, Pedro, Mariana, Felipe} e no salão B temos B = {Juliana, Lucas, Pedro, Camila}. A união A ∪ B representa TODOS os clientes do restaurante inteiro, sem repetir ninguém: A ∪ B = {Carlos, Ana, Pedro, Mariana, Felipe, Juliana, Lucas, Camila}. Matematicamente, x ∈ (A ∪ B) se, e somente se, x ∈ A ou x ∈ B (ou ambos).',
+    'intersecao': 'A intersecção de conjuntos (A ∩ B) representa todos os elementos que pertencem a A E a B simultaneamente. No vídeo, por volta dos 10:23, o professor explica que se continuarmos com o exemplo do restaurante "Sabores & Aromas", podemos identificar clientes que transitam entre os dois salões durante a noite. Se Pedro é o único cliente que aparece tanto no salão A quanto no salão B, então A ∩ B = {Pedro}. Isso significa que para todo elemento x, x ∈ (A ∩ B) se, e somente se, x ∈ A e x ∈ B. É como identificar os "clientes VIP" que têm acesso a ambos os espaços.',
+    'diferenca': 'A diferença entre conjuntos (A - B ou A \\ B) representa todos os elementos que pertencem a A mas NÃO pertencem a B. Aos 12:45, continuando o exemplo do restaurante, se A = {Carlos, Ana, Pedro, Mariana, Felipe} e B = {Juliana, Lucas, Pedro, Camila}, então A \\ B = {Carlos, Ana, Mariana, Felipe}, que representa os clientes que estão exclusivamente no salão A. Matematicamente, x ∈ (A \\ B) se, e somente se, x ∈ A e x ∉ B. No contexto do restaurante, isso pode representar clientes que têm preferência apenas pelo ambiente do salão A.',
+    'complemento': 'O complemento de um conjunto (A\') representa todos os elementos do universo que NÃO pertencem a A. Aproximadamente aos 15:30, no exemplo do restaurante, se considerarmos o universo U como todos os clientes cadastrados no sistema do restaurante "Sabores & Aromas", que são U = {Carlos, Ana, Pedro, Mariana, Felipe, Juliana, Lucas, Camila, Roberto, Beatriz, Gustavo}, e A = {Carlos, Ana, Pedro, Mariana, Felipe}, então o complemento de A seria A\' = {Juliana, Lucas, Camila, Roberto, Beatriz, Gustavo}, representando todos os clientes cadastrados que não estão no salão A naquele momento. Matematicamente, x ∈ A\' se, e somente se, x ∈ U e x ∉ A.',
+    'produto': 'O produto cartesiano (A × B) é o conjunto de todos os pares ordenados onde o primeiro elemento pertence a A e o segundo pertence a B. Por volta dos 13:05, usando o exemplo do restaurante, podemos pensar em combinar pratos do menu A com bebidas do menu B. Se A = {Risoto, Lasanha, Filé} e B = {Vinho, Suco, Água}, então A × B = {(Risoto,Vinho), (Risoto,Suco), (Risoto,Água), (Lasanha,Vinho), (Lasanha,Suco), (Lasanha,Água), (Filé,Vinho), (Filé,Suco), (Filé,Água)}. Isto representa todas as possíveis combinações de prato e bebida que um cliente pode pedir. Na matemática formal, A × B = {(a,b) | a ∈ A e b ∈ B}.',
+    'teoria': 'A teoria dos conjuntos fornece as bases matemáticas para compreender operações com conjuntos. Conforme explicado aos 05:20 no vídeo, a notação de conjuntos utiliza chaves { } para delimitar seus elementos. No contexto do restaurante "Sabores & Aromas" mencionado no minuto 08:11, podemos representar formalmente os conjuntos e suas operações. Por exemplo, se A = {Carlos, Ana, Pedro, Mariana, Felipe} e B = {Juliana, Lucas, Pedro, Camila}, podemos realizar diversas operações: união A ∪ B = {Carlos, Ana, Pedro, Mariana, Felipe, Juliana, Lucas, Camila}, intersecção A ∩ B = {Pedro}, diferença A \\ B = {Carlos, Ana, Mariana, Felipe}, e assim por diante. Essas notações matemáticas nos permitem representar e manipular grupos de elementos de forma precisa e sistemática.',
+    'exemplo_restaurante': 'No minuto 08:11 o professor explica a teoria dos conjuntos usando um excelente exemplo de restaurante. Imagine o restaurante "Sabores & Aromas" com dois salões (A e B) e um sistema de reservas. Podemos definir vários conjuntos: U = {todos os clientes cadastrados}, A = {clientes no salão A}, B = {clientes no salão B}, M = {clientes que pediram o menu degustação}. Com esses conjuntos, podemos aplicar todas as operações: A ∪ B representa todos os clientes presentes no restaurante; A ∩ B representa clientes que visitaram ambos os salões; A \\ B representa clientes exclusivos do salão A; U \\ (A ∪ B) representa clientes cadastrados que não estão no restaurante hoje; A ∩ M representa clientes do salão A que pediram o menu degustação. Este exemplo mostra como a matemática dos conjuntos se aplica a situações reais, ajudando a organizar informações e tomar decisões no gerenciamento do restaurante.'
+  };
 
   const sendMessage = () => {
     if (!inputText.trim()) return;
@@ -44,9 +66,59 @@ export const AIChat: React.FC<AIChatProps> = ({ isOpen, onClose }) => {
 
     // Simular resposta da IA
     setTimeout(() => {
+      let responseText = 'Entendi sua pergunta! Com base no conteúdo da aula, posso explicar que...';
+      
+      // Se for aula de Conjuntos, usar respostas contextuais
+      if (isConjuntosAula) {
+        // Detectar palavras-chave na pergunta do usuário
+        const lowerInput = inputText.toLowerCase();
+        
+        if (lowerInput.includes('restaurante') || (lowerInput.includes('exemplo') && lowerInput.includes('restaurante'))) {
+          responseText = conjuntosRespostas['exemplo_restaurante'];
+        }
+        else if (lowerInput.includes('união') || lowerInput.includes('uniao') || lowerInput.includes('∪')) {
+          responseText = conjuntosRespostas['uniao'];
+        } 
+        else if (lowerInput.includes('intersecção') || lowerInput.includes('interseccao') || lowerInput.includes('interseção') || lowerInput.includes('∩')) {
+          responseText = conjuntosRespostas['intersecao'];
+        }
+        else if (lowerInput.includes('diferença') || lowerInput.includes('diferenca') || lowerInput.includes('\\')) {
+          responseText = conjuntosRespostas['diferenca'];
+        }
+        else if (lowerInput.includes('complemento') || lowerInput.includes('complementar') || lowerInput.includes("'")) {
+          responseText = conjuntosRespostas['complemento'];
+        }
+        else if (lowerInput.includes('produto cartesiano') || lowerInput.includes('produto') || lowerInput.includes('×')) {
+          responseText = conjuntosRespostas['produto'];
+        }
+        else if (lowerInput.includes('teoria') || lowerInput.includes('notação') || lowerInput.includes('fundamentos')) {
+          responseText = conjuntosRespostas['teoria'];
+        }
+        else if ((lowerInput.includes('explique') || lowerInput.includes('exemplo')) && lowerInput.includes('08:11')) {
+          responseText = conjuntosRespostas['exemplo_restaurante'];
+        }
+        else if (lowerInput.includes('explique') || lowerInput.includes('exemplo')) {
+          // Escolher aleatoriamente uma das respostas para explicações gerais
+          const keys = Object.keys(conjuntosRespostas).filter(k => k !== 'default' && k !== 'exemplo_restaurante');
+          const randomKey = keys[Math.floor(Math.random() * keys.length)];
+          responseText = conjuntosRespostas[randomKey];
+        }
+        else {
+          responseText = conjuntosRespostas['default'];
+        }
+        
+        // Adicionar uma referência ao tempo do vídeo se não tiver
+        if (!responseText.includes('aos ') && !responseText.includes(':')) {
+          // Tempos fictícios aleatórios entre 1 e 15 minutos
+          const minuto = Math.floor(Math.random() * 15) + 1;
+          const segundo = Math.floor(Math.random() * 60);
+          responseText += ` Conforme explicado aos ${minuto.toString().padStart(2, '0')}:${segundo.toString().padStart(2, '0')} no vídeo, o professor utiliza exemplos práticos para facilitar a compreensão.`;
+        }
+      }
+
       const aiMessage: Message = {
         id: Date.now() + '_ai',
-        text: 'Entendi sua pergunta! Com base no conteúdo da aula, posso explicar que...',
+        text: responseText,
         isUser: false,
         timestamp: new Date()
       };
