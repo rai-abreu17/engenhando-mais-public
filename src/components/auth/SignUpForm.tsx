@@ -233,7 +233,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToLogin }) => {
     }
     
     console.log('SignUp submitted:', formData);
-    localStorage.setItem('engenha_token', 'authenticated');
+    localStorage.setItem('engenha_token', 'mock-token-student');
+    localStorage.setItem('engenha_user_type', 'student');
     navigate('/home');
   };
 

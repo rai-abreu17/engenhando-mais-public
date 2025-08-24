@@ -1,7 +1,6 @@
 import React, { useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
 
 interface SocialButton {
   name: string;
@@ -15,7 +14,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPassword }) => {
-  const { login } = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -25,8 +24,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
     email: '',
     password: ''
   });
-  const navigate = useNavigate();
 
+  const login = (token: string, userType: string) => {
+    localStorage.setItem('engenha_token', token);
+    localStorage.setItem('engenha_user_type', userType);
+  };
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
@@ -88,7 +90,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
 
     // Login aluno
     console.log('Login submitted:', formData);
-    login('mock-token-student', 'authenticated');
+    login('mock-token-student', 'student');
     navigate('/home');
   };
 

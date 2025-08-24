@@ -32,18 +32,47 @@ import TeacherFeedback from './professores/pages/TeacherFeedback';
 import TeacherAnalytics from './professores/pages/TeacherAnalytics';
 import CreateLesson from './professores/pages/CreateLesson';
 import ProfessorSettings from './professores/pages/ProfessorSettings';
-import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { isAuthenticated, isLoading, userType } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [userType, setUserType] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('engenha_token');
+        const storedUserType = localStorage.getItem('engenha_user_type');
+        
+        if (token) {
+          setIsAuthenticated(true);
+          setUserType(storedUserType || 'authenticated');
+        } else {
+          setIsAuthenticated(false);
+          setUserType(null);
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        setIsAuthenticated(false);
+        setUserType(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   // Se estiver carregando, pode mostrar um spinner ou tela de loading
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="w-16 h-16 border-4 border-blue-500 border-solid rounded-full border-t-transparent animate-spin"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[#f0f6ff]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#0029ff] border-solid rounded-full border-t-transparent animate-spin mx-auto mb-4"></div>
+          <p className="text-[#030025] font-medium">Carregando ENGENHA+...</p>
+        </div>
       </div>
     );
   }
@@ -107,7 +136,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             
             {/* Student Routes */}
             <Route path="/home" element={

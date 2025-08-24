@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/auth/LoginForm';
 import SignUpForm from '../components/auth/SignUpForm';
 import ForgotPasswordForm from '../components/auth/ForgotPasswordForm';
@@ -7,7 +8,25 @@ import Logo from '../components/common/Logo';
 type AuthView = 'login' | 'signup' | 'forgot-password';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<AuthView>('login');
+
+  React.useEffect(() => {
+    // Check if user is already authenticated
+    const token = localStorage.getItem('engenha_token');
+    const userType = localStorage.getItem('engenha_user_type');
+    
+    if (token) {
+      // Redirect based on user type
+      if (userType === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (userType === 'teacher') {
+        navigate('/professores/dashboard');
+      } else {
+        navigate('/home');
+      }
+    }
+  }, [navigate]);
 
   const handleSwitchToSignUp = () => setCurrentView('signup');
   const handleSwitchToLogin = () => setCurrentView('login');
