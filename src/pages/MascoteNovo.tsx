@@ -759,10 +759,16 @@ const MascoteNovo = () => {
 
       {/* Jogos */}
       {showRacingGame && (
-        <RacingGame
-          onGameEnd={handleGameEnd}
-          onClose={() => setShowRacingGame(false)}
-        />
+        <div className="fixed inset-0 z-[150]">
+          <RacingGame
+            key="racing-game" /* Usa uma chave fixa para evitar remontagem desnecessária */
+            onGameEnd={handleGameEnd}
+            onClose={() => {
+              console.log('🎮 Fechando jogo de corrida');
+              setShowRacingGame(false);
+            }}
+          />
+        </div>
       )}
 
       {showShootingGame && (
