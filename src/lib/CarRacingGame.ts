@@ -73,15 +73,17 @@ interface Road {
 class CarRacingGame {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private onGameOver: (score: number) => void;
-    private onScoreUpdate: (score: number) => void;
+    private onGameOver: (score: number, coins: number) => void;
+    private onScoreUpdate: (score: number, coins: number) => void;
     
     private width: number;
     private height: number;
     private player: Player;
     private obstacles: Obstacle[];
+    private collectibles: any[] = []; // Re-added collectibles
     
     private score: number;
+    private coins: number = 0; // Re-added coins
     private gameOver: boolean;
     private gameStarted: boolean;
     private isDebugMode: boolean = false; // Modo de depuração para visualizar áreas de colisão
@@ -121,6 +123,7 @@ class CarRacingGame {
     private road: Road;
     private obstacleSpawnInterval: number;
     private lastObstacleSpawnTime: number;
+    private lastCollectibleSpawnTime: number;
     private lastTime?: number;
     private animationFrameId?: number;
     
@@ -128,7 +131,7 @@ class CarRacingGame {
     private keyDownHandler?: (e: KeyboardEvent) => void;
     private keyUpHandler?: (e: KeyboardEvent) => void;
 
-    constructor(canvas: HTMLCanvasElement, onGameOver: (score: number) => void, onScoreUpdate: (score: number) => void) {
+    constructor(canvas: HTMLCanvasElement, onGameOver: (score: number, coins: number) => void, onScoreUpdate: (score: number, coins: number) => void) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d")!;
         this.onGameOver = onGameOver;
@@ -145,8 +148,8 @@ class CarRacingGame {
         this.width = canvas.width || window.innerWidth;
         this.height = canvas.height || window.innerHeight;
         
-        // Calcula o tamanho do carro baseado em 7% da largura da tela (reduzido de 15%)
-        const carWidth = Math.floor(this.width * 0.07);
+        // Calcula o tamanho do carro baseado em 15% da largura da tela (restaurado de 7%)
+        const carWidth = Math.floor(this.width * 0.15);
         // Mantém proporção do SVG original (34x56 = ~1:1.65)
         const carHeight = Math.floor(carWidth * 1.65);
 
@@ -174,14 +177,17 @@ class CarRacingGame {
         this.initializePlayerCar();
         
         this.obstacles = [];
+        this.collectibles = [];
 
         this.score = 0;
+        this.coins = 0;
         this.gameOver = false;
         this.gameStarted = false;
 
         // Intervalos iniciais para spawns
-        this.obstacleSpawnInterval = 3000; // ms - Aumentado para dar mais espaço entre os carros
+        this.obstacleSpawnInterval = 1800; // ms - Restaurado para o valor original (era 3000)
         this.lastObstacleSpawnTime = 0;
+        this.lastCollectibleSpawnTime = 0; // Re-added collectible spawn time
 
         this.keys = {};
         
@@ -382,12 +388,15 @@ class CarRacingGame {
         this.player.x = this.width / 2 - 17;
         this.player.y = this.height - 100;
         this.obstacles = [];
+        this.collectibles = [];
         this.score = 0;
+        this.coins = 0;
         this.gameOver = false;
         this.gameStarted = false;
         this.lastObstacleSpawnTime = 0;
+        this.lastCollectibleSpawnTime = 0;
         this.logCounter = 0;
-        this.onScoreUpdate(this.score);
+        this.onScoreUpdate(this.score, this.coins);
         
         console.log('🎮 NOVO JOGO INICIADO! Estado inicial:', 
                     '\n - Posição do jogador:', Math.round(this.player.x), 'x', Math.round(this.player.y),
@@ -478,8 +487,33 @@ class CarRacingGame {
             });
         }
     }
-
-
+    
+    private spawnCollectible(): void {
+        // Define os centros exatos das vias
+        const leftLaneCenter = this.road.left + (this.road.width * 0.25);
+        const rightLaneCenter = this.road.left + (this.road.width * 0.75);
+        
+        // Escolhe aleatoriamente uma das duas vias
+        const laneCenter = Math.random() < 0.5 ? leftLaneCenter : rightLaneCenter;
+        
+        // Tamanho do coletável
+        const collectibleSize = Math.floor(this.width * 0.03);
+        
+        // Posiciona no centro da via
+        const x = laneCenter - (collectibleSize / 2);
+        
+        // Define o tipo (90% moeda, 10% boost)
+        const type = Math.random() < 0.9 ? "coin" : "boost";
+        
+        this.collectibles.push({
+            x,
+            y: -collectibleSize,
+            width: collectibleSize,
+            height: collectibleSize,
+            speed: 2,
+            type
+        });
+    }
 
     private update(deltaTime: number): void {
         if (this.gameOver || !this.gameStarted) return;
@@ -544,6 +578,13 @@ class CarRacingGame {
         }
 
         // Update and check collisions for obstacles
+        // Spawn collectibles
+        this.lastCollectibleSpawnTime += deltaTime;
+        if (this.lastCollectibleSpawnTime > 2000) { // Every 2 seconds
+            this.spawnCollectible();
+            this.lastCollectibleSpawnTime = 0;
+        }
+        
         this.obstacles.forEach((obstacle, index) => {
             obstacle.y += obstacle.speed;
             
@@ -799,18 +840,39 @@ class CarRacingGame {
                 
                 // Notifica o componente React sobre o game over
                 console.log('🔴 Enviando evento de GAME OVER para o componente React');
-                this.onGameOver(this.score);
+                this.onGameOver(this.score, this.coins);
             }
             
             if (obstacle.y > this.height) {
                 this.obstacles.splice(index, 1);
                 this.score += 10; // Score for dodging
                 console.log(`📊 Pontuação atualizada: ${this.score} (+10)`);
-                this.onScoreUpdate(this.score);
+                this.onScoreUpdate(this.score, this.coins);
             }
         });
-
-
+        
+        // Update and check collisions for collectibles
+        this.collectibles.forEach((collectible, index) => {
+            collectible.y += collectible.speed;
+            if (
+                this.player.x < collectible.x + collectible.width &&
+                this.player.x + this.player.width > collectible.x &&
+                this.player.y < collectible.y + collectible.height &&
+                this.player.y + this.player.height > collectible.y
+            ) {
+                if (collectible.type === "coin") {
+                    this.coins += 1;
+                    this.score += 5;
+                } else if (collectible.type === "boost") {
+                    this.score += 20;
+                }
+                this.collectibles.splice(index, 1);
+                this.onScoreUpdate(this.score, this.coins);
+            }
+            if (collectible.y > this.height) {
+                this.collectibles.splice(index, 1);
+            }
+        });
     }
 
     private draw(): void {
@@ -939,6 +1001,19 @@ class CarRacingGame {
                 );
             }
         });
+        
+        // Draw collectibles
+        this.collectibles.forEach(collectible => {
+            if (collectible.type === "coin") {
+                this.ctx.fillStyle = "gold";
+                this.ctx.beginPath();
+                this.ctx.arc(collectible.x + collectible.width / 2, collectible.y + collectible.height / 2, collectible.width / 2, 0, Math.PI * 2);
+                this.ctx.fill();
+            } else if (collectible.type === "boost") {
+                this.ctx.fillStyle = "lime";
+                this.ctx.fillRect(collectible.x, collectible.y, collectible.width, collectible.height);
+            }
+        });
 
         // Draw player car
         if (this.player.image.complete && this.player.image.src) {
@@ -1054,9 +1129,9 @@ class CarRacingGame {
             this.ctx.textAlign = "center";
             this.ctx.fillText("COLISÃO!", this.width / 2, this.height / 2 - this.height * 0.1);
             
-            // Texto de pontuação
+            // Texto de pontuação e moedas
             this.ctx.font = `${Math.max(18, Math.floor(this.width / 25))}px Arial`;
-            this.ctx.fillText(`Pontuação: ${this.score}`, this.width / 2, this.height / 2);
+            this.ctx.fillText(`Pontuação: ${this.score}  |  Moedas: ${this.coins}`, this.width / 2, this.height / 2);
             
             // Instruções para reiniciar
             this.ctx.fillStyle = "rgba(255, 255, 255, 0.9)";

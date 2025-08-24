@@ -171,19 +171,17 @@ const CanvasRacingGame: React.FC<CanvasRacingGameProps> = ({ onGameEnd, onClose 
       }
     }, 8000); // 8 segundos de timeout
     
-    const handleGameOver = (finalScore: number) => {
+    const handleGameOver = (finalScore: number, finalCoins: number) => {
       console.log(`🛑 JOGO FINALIZADO no componente React`);
-      console.log(`📊 Pontuação final: ${finalScore}`);
+      console.log(`📊 Pontuação final: ${finalScore}, Moedas: ${finalCoins}`);
       console.log(`🔄 Aguardando reinício...`);
       setGameOver(true);
-      // Chamamos onGameEnd com a pontuação final e 0 moedas (já que não temos mais moedas)
-      onGameEnd(finalScore, 0);
+      onGameEnd(finalScore, finalCoins);
     };
 
-    const handleScoreUpdate = (currentScore: number) => {
+    const handleScoreUpdate = (currentScore: number, currentCoins: number) => {
       setScore(currentScore);
-      // Não temos mais moedas no jogo, então mantemos em 0
-      setCoins(0);
+      setCoins(currentCoins);
     };
 
     // Executar inicialização dentro do timeout para dar tempo ao componente de estabilizar
