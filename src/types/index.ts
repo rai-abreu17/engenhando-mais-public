@@ -21,6 +21,7 @@ export interface Video extends BaseEntity {
 
 export interface RecentVideo extends Video {
   progress: number;
+  lessonId?: string;
 }
 
 export interface PopularVideo extends BaseEntity {
@@ -28,6 +29,7 @@ export interface PopularVideo extends BaseEntity {
   subject: string;
   difficulty: string;
   thumbnail: string;
+  lessonId?: string;
 }
 
 export interface Subject extends BaseEntity {
