@@ -1,5 +1,40 @@
-import playerCarImg from '@/assets/player_car.png';
-import opponentCarImg from '@/assets/opponent_car.png';
+// SVG car sprites with different colors
+const createCarSVG = (primaryColor: string, windowColor: string = '#FFFFFF') => `
+<svg width="34" height="56" viewBox="0 0 34 56" xmlns="http://www.w3.org/2000/svg">
+  <g fill-rule="evenodd">
+    <path fill="#222222" d="M0 36h8v16H0zM26 36h8v16h-8z"/>
+    <path fill="${primaryColor}" d="M8 0h18v56H8z"/>
+    <path fill="${windowColor}" d="M14 0h6v52h-6z"/>
+    <path fill="#222222" d="M11 20h12v10H11z"/>
+    <path fill="#444444" d="M4 8h26v8H4z"/>
+    <path fill="#444444" d="M8 44h18v8H8z"/>
+  </g>
+</svg>
+`;
+
+const createImageFromSVG = (svgString: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image(34, 56);
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load SVG image'));
+    };
+    
+    img.src = url;
+  });
+};
+
+// Car colors
+const PLAYER_CAR_COLOR = '#D82C2C'; // Red
+const OPPONENT_COLORS = ['#2C5AD8', '#2CD85A', '#D8A52C', '#8A2CD8', '#D82CA5']; // Blue, Green, Orange, Purple, Pink
 
 interface Player {
     x: number;
@@ -73,14 +108,16 @@ class CarRacingGame {
         this.height = canvas.height;
 
         this.player = {
-            x: this.width / 2 - 25,
+            x: this.width / 2 - 17,
             y: this.height - 100,
-            width: 50,
-            height: 80,
+            width: 34,
+            height: 56,
             speed: 5,
             image: new Image()
         };
-        this.player.image.src = playerCarImg;
+        
+        // Initialize player car image
+        this.initializePlayerCar();
         
         this.obstacles = [];
         this.collectibles = [];
@@ -105,7 +142,18 @@ class CarRacingGame {
         this.keys = {};
 
         this.initEventListeners();
-        requestAnimationFrame(this.loop);
+    }
+
+    private async initializePlayerCar(): Promise<void> {
+        try {
+            this.player.image = await createImageFromSVG(createCarSVG(PLAYER_CAR_COLOR));
+            // Start the game loop after player car is loaded
+            requestAnimationFrame(this.loop);
+        } catch (error) {
+            console.error('Failed to load player car:', error);
+            // Start anyway with fallback
+            requestAnimationFrame(this.loop);
+        }
     }
 
     private initEventListeners(): void {
@@ -132,7 +180,7 @@ class CarRacingGame {
     }
 
     public resetGame(): void {
-        this.player.x = this.width / 2 - 25;
+        this.player.x = this.width / 2 - 17;
         this.player.y = this.height - 100;
         this.obstacles = [];
         this.collectibles = [];
@@ -145,19 +193,34 @@ class CarRacingGame {
         this.onScoreUpdate(this.score, this.coins);
     }
 
-    private spawnObstacle(): void {
-        const x = this.road.left + Math.random() * (this.road.width - 50);
+    private async spawnObstacle(): Promise<void> {
+        const x = this.road.left + Math.random() * (this.road.width - 34);
         const speed = 2 + Math.random() * 3; // Varied speed
-        const obstacleImage = new Image();
-        obstacleImage.src = opponentCarImg;
-        this.obstacles.push({
-            x: x,
-            y: -80,
-            width: 50,
-            height: 80,
-            speed: speed,
-            image: obstacleImage
-        });
+        const randomColor = OPPONENT_COLORS[Math.floor(Math.random() * OPPONENT_COLORS.length)];
+        
+        try {
+            const obstacleImage = await createImageFromSVG(createCarSVG(randomColor));
+            this.obstacles.push({
+                x: x,
+                y: -56,
+                width: 34,
+                height: 56,
+                speed: speed,
+                image: obstacleImage
+            });
+        } catch (error) {
+            console.error('Failed to create opponent car:', error);
+            // Create with fallback rectangle
+            const fallbackImage = new Image();
+            this.obstacles.push({
+                x: x,
+                y: -56,
+                width: 34,
+                height: 56,
+                speed: speed,
+                image: fallbackImage
+            });
+        }
     }
 
     private spawnCollectible(): void {
@@ -190,7 +253,7 @@ class CarRacingGame {
         // Spawn obstacles
         this.lastObstacleSpawnTime += deltaTime;
         if (this.lastObstacleSpawnTime > this.obstacleSpawnInterval) {
-            this.spawnObstacle();
+            this.spawnObstacle(); // Now async but we don't need to await
             this.lastObstacleSpawnTime = 0;
             this.obstacleSpawnInterval = Math.max(500, this.obstacleSpawnInterval - 10); // Increase difficulty
         }
@@ -265,11 +328,21 @@ class CarRacingGame {
 
         // Draw obstacles
         this.obstacles.forEach(obstacle => {
-            if (obstacle.image.complete) {
+            if (obstacle.image.complete && obstacle.image.src) {
                 this.ctx.drawImage(obstacle.image, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
             } else {
-                this.ctx.fillStyle = "red"; // Fallback color
+                // Fallback rectangle with gradient
+                const gradient = this.ctx.createLinearGradient(obstacle.x, obstacle.y, obstacle.x, obstacle.y + obstacle.height);
+                gradient.addColorStop(0, '#4A90E2');
+                gradient.addColorStop(1, '#2171B5');
+                this.ctx.fillStyle = gradient;
                 this.ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                
+                // Add some car-like details
+                this.ctx.fillStyle = "#FFFFFF";
+                this.ctx.fillRect(obstacle.x + 8, obstacle.y + 5, 18, 30);
+                this.ctx.fillStyle = "#222222";
+                this.ctx.fillRect(obstacle.x + 11, obstacle.y + 15, 12, 8);
             }
         });
 
@@ -287,11 +360,21 @@ class CarRacingGame {
         });
 
         // Draw player car
-        if (this.player.image.complete) {
+        if (this.player.image.complete && this.player.image.src) {
             this.ctx.drawImage(this.player.image, this.player.x, this.player.y, this.player.width, this.player.height);
         } else {
-            this.ctx.fillStyle = "blue"; // Fallback color
+            // Fallback rectangle with gradient  
+            const gradient = this.ctx.createLinearGradient(this.player.x, this.player.y, this.player.x, this.player.y + this.player.height);
+            gradient.addColorStop(0, '#D82C2C');
+            gradient.addColorStop(1, '#B91C1C');
+            this.ctx.fillStyle = gradient;
             this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
+            
+            // Add some car-like details
+            this.ctx.fillStyle = "#FFFFFF";
+            this.ctx.fillRect(this.player.x + 8, this.player.y + 5, 18, 30);
+            this.ctx.fillStyle = "#222222";
+            this.ctx.fillRect(this.player.x + 11, this.player.y + 15, 12, 8);
         }
 
         // Draw HUD
@@ -332,9 +415,7 @@ class CarRacingGame {
         this.update(deltaTime);
         this.draw();
 
-        if (!this.gameOver) {
-            requestAnimationFrame(this.loop);
-        }
+        requestAnimationFrame(this.loop);
     }
 
     public destroy(): void {

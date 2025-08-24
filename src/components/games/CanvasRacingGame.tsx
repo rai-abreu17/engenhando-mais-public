@@ -91,6 +91,16 @@ const CanvasRacingGame: React.FC<CanvasRacingGameProps> = ({ onGameEnd, onClose 
               className="w-full max-w-4xl border-2 border-gray-300 rounded-lg bg-gray-900 cursor-pointer"
               style={{ aspectRatio: '4/3' }}
             />
+            
+            {/* Loading indicator */}
+            {!gameInstance.current && (
+              <div className="absolute inset-0 bg-black/75 flex items-center justify-center rounded-lg">
+                <div className="text-center text-white space-y-2">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+                  <p className="text-sm">Carregando carros...</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Instruções */}
