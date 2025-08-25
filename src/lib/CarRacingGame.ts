@@ -124,6 +124,7 @@ class CarRacingGame {
     private obstacleSpawnInterval: number;
     private lastObstacleSpawnTime: number;
     private lastCollectibleSpawnTime: number;
+    private lastScoreUpdateTime: number = 0; // Para atualizar a pontuação periodicamente
     private lastTime?: number;
     private animationFrameId?: number;
     
@@ -148,8 +149,8 @@ class CarRacingGame {
         this.width = canvas.width || window.innerWidth;
         this.height = canvas.height || window.innerHeight;
         
-        // Calcula o tamanho do carro baseado em 15% da largura da tela (restaurado de 7%)
-        const carWidth = Math.floor(this.width * 0.15);
+        // Calcula o tamanho do carro baseado em 10% da largura da tela
+        const carWidth = Math.floor(this.width * 0.10);
         // Mantém proporção do SVG original (34x56 = ~1:1.65)
         const carHeight = Math.floor(carWidth * 1.65);
 
@@ -166,7 +167,7 @@ class CarRacingGame {
         
         this.player = {
             x: leftLaneCenter,
-            y: this.height - carHeight - 20,
+            y: this.height - carHeight - 5, // Posicionado mais próximo ao fundo da tela
             width: carWidth,
             height: carHeight,
             speed: 10,  // Aumentado para transição mais rápida entre vias
@@ -315,8 +316,8 @@ class CarRacingGame {
         
         // Ajusta posição do jogador após redimensionamento
         if (this.player) {
-            // Reduzido para 7% da largura da tela
-            const carWidth = Math.floor(this.width * 0.07); 
+            // Ajustado para 10% da largura da tela
+            const carWidth = Math.floor(this.width * 0.10); 
             // Mantém proporção do SVG original (34x56 = ~1:1.65)
             const carHeight = Math.floor(carWidth * 1.65); 
             
@@ -335,12 +336,12 @@ class CarRacingGame {
             this.player.x = isLeftLane ? leftLaneCenter : rightLaneCenter;
             
             // Ajusta posição vertical para ficar próximo ao final da tela
-            this.player.y = this.height - carHeight - 20;
+            this.player.y = this.height - carHeight - 5; // Reduzido o espaço para o carro ficar mais visível
         }
         
         // Redimensiona os obstáculos existentes
         if (this.obstacles?.length) {
-            const carWidth = Math.floor(this.width * 0.07); 
+            const carWidth = Math.floor(this.width * 0.10); 
             const carHeight = Math.floor(carWidth * 1.65); 
             
             this.obstacles.forEach(obstacle => {
@@ -385,8 +386,18 @@ class CarRacingGame {
         const finalScore = this.score;
         
         // Resetando o jogo
-        this.player.x = this.width / 2 - 17;
-        this.player.y = this.height - 100;
+        // Calcula o tamanho correto do carro
+        const carWidth = Math.floor(this.width * 0.10);
+        const carHeight = Math.floor(carWidth * 1.65);
+        
+        // Define centros das vias
+        const leftLaneCenter = this.road.left + (this.road.width * 0.25) - (carWidth / 2);
+        
+        // Posiciona o carro na via esquerda
+        this.player.x = leftLaneCenter;
+        this.player.y = this.height - carHeight - 5; // Posiciona o carro mais próximo ao fundo da tela
+        this.player.width = carWidth;
+        this.player.height = carHeight;
         this.obstacles = [];
         this.collectibles = [];
         this.score = 0;
@@ -395,6 +406,7 @@ class CarRacingGame {
         this.gameStarted = false;
         this.lastObstacleSpawnTime = 0;
         this.lastCollectibleSpawnTime = 0;
+        this.lastScoreUpdateTime = 0;
         this.logCounter = 0;
         this.onScoreUpdate(this.score, this.coins);
         
@@ -417,8 +429,8 @@ class CarRacingGame {
     }
 
     private async spawnObstacle(): Promise<void> {
-        // Reduzido para 7% da largura da tela
-        const carWidth = Math.floor(this.width * 0.07);
+        // Ajustado para 10% da largura da tela
+        const carWidth = Math.floor(this.width * 0.10);
         // Mantém proporção do SVG original (34x56 = ~1:1.65)
         const carHeight = Math.floor(carWidth * 1.65);
         
@@ -521,6 +533,14 @@ class CarRacingGame {
         // Define lane centers
         const leftLaneCenter = this.road.left + (this.road.width * 0.25) - (this.player.width / 2);
         const rightLaneCenter = this.road.left + (this.road.width * 0.75) - (this.player.width / 2);
+        
+        // Atualizar a pontuação a cada 500ms enquanto o jogador se move
+        this.lastScoreUpdateTime += deltaTime;
+        if (this.lastScoreUpdateTime > 500) { // A cada 500ms
+            this.score += 1; // Incrementa 1 ponto
+            this.onScoreUpdate(this.score, this.coins); // Atualiza a interface
+            this.lastScoreUpdateTime = 0;
+        }
         
         // Determinar a via alvo com base nas teclas pressionadas
         // Se nenhuma tecla estiver pressionada, mantenha a posição atual
@@ -832,13 +852,11 @@ class CarRacingGame {
                     }
                 }
                 
-                // Marca o estado como game over
+                // Marca o estado como game over (sem animação)
                 this.gameOver = true;
-                
                 // Garante que o estado seja atualizado visualmente
                 this.draw(); // Força renderização imediata da tela de game over
-                
-                // Notifica o componente React sobre o game over
+                // Notifica o componente React sobre o game over (o componente decide o que fazer)
                 console.log('🔴 Enviando evento de GAME OVER para o componente React');
                 this.onGameOver(this.score, this.coins);
             }
@@ -1127,7 +1145,7 @@ class CarRacingGame {
             this.ctx.fillStyle = "white";
             this.ctx.font = `bold ${Math.max(24, Math.floor(this.width / 16))}px Arial`;
             this.ctx.textAlign = "center";
-            this.ctx.fillText("COLISÃO!", this.width / 2, this.height / 2 - this.height * 0.1);
+            this.ctx.fillText("VOCÊ COLIDIU!", this.width / 2, this.height / 2 - this.height * 0.1);
             
             // Texto de pontuação e moedas
             this.ctx.font = `${Math.max(18, Math.floor(this.width / 25))}px Arial`;
@@ -1403,6 +1421,58 @@ class CarRacingGame {
         }
     }
     
+    // Cria uma animação visual quando o carro colide
+    private animateCollision(callback: () => void) {
+        console.log('💥 Iniciando animação de colisão');
+        const originalX = this.player.x;
+        const originalY = this.player.y;
+        const frames = 8; // Número de quadros da animação
+        let currentFrame = 0;
+        
+        // Efeito sonoro de colisão (opcional)
+        try {
+            const audio = new Audio();
+            audio.volume = 0.5;
+            audio.src = "data:audio/wav;base64,UklGRnQHAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU8HAACA/4r/oP+y/8b/0v/X/+P/6v/r/+v/5//X/8z/vP+r/53/i/97/2z/Yf9Z/1X/Vf9a/2L/bf97/5H/qf/E/97/+/8ZAC8APgBKAFQAWgBhAGEAWgBVAE0AQgA4AC0AHgALAPv/6//a/8j/vP+y/6j/nv+W/5T/lP+W/5z/p/+y/7//y//Y/+j/9/8IABYAIgAxAD0ASABRAFgAYABgAGIAYABcAFkAUQBMAEUAPAA0ACwAIQAYAAoAAQDz/+v/4P/a/9L/zf/K/8n/yP/K/8r/0P/U/9r/4P/n/+7/9v/8/wQACgAOABIAFgAZAB0AHgAhACEAIQAgAB4AHAAYABUAFAAOAA0ACgAFAAQAAgD//wEA/v/+//z//P/8//v//P/8//7///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA/v/+//3//f/9//3//f/9//3//f/9//3//f/9//3//f/+//7//v/+//7//v8AAP//AAAAAAAAAAAAAAAAAAAAAAAA///6//X/8f/q/+X/4//e/9v/2P/T/9P/0v/Q/8//zv/N/83/zP/N/8z/zf/M/87/zv/Q/9D/0f/S/9P/1v/X/9n/2f/b/97/3//h/+H/4//k/+X/5v/o/+j/6f/r/+z/7P/s/+7/7//w//H/8f/y//T/9P/2//f/9//4//r/+//9//3//v8AAP//AAD///3//P/+//v/+v/7//r/+P/2//X/8//y//D/7//u/+3/7P/q/+r/6P/o/+f/5v/l/+X/5P/k/+P/4//j/+P/4//k/+T/5P/j/+T/5P/l/+X/5v/n/+j/6f/q/+r/6//s/+3/7v/v//D/8P/y//P/9P/1//f/+P/5//n/+//8//z//v/+/wAAAAAAAAAAAAD/////AAD///7//f/9//z/+v/6//j/+P/1//X/8//z//H/8f/w/+7/7f/s/+r/6f/o/+f/5v/l/+X/5P/j/+P/4v/i/+L/4v/j/+T/5f/l/+b/5//o/+r/6//t/+3/7//x//L/9P/1//f/+f/7//z//f////7/AAAAAAAAAAAAAP///v/+//7//f/8//v/+v/5//j/9v/1//T/8//y//H/7//v/+7/7f/s/+v/6v/p/+n/6f/o/+j/6P/o/+j/6f/p/+r/6v/r/+z/7f/u/+//7//w//L/8//0//X/9v/3//j/+f/6//v//P/9//3//v/+/wAAAAAAAAAAAAAAAAEAAgABAAIAAwACAAMAAwADAAMAAwADAAMAAwADAAMAAgACAAIAAQABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v/9//z/+//6//n/+P/3//b/9f/1//T/9P/z//L/8v/y//H/8f/x//H/8f/x//L/8v/z//P/9P/1//b/9v/3//j/+f/6//v//P/9//7//v8AAAEAAAADAAQABAAGAAQABQAGAAUABQAFAAUABQAFAAQABQAEAAQABAADAAQABAADAAMABAADAAQABAADAAMABAADAAQABAAEAAQABQAFAAUABQAGAAYABQAGAAYABQAGAAUABQAFAAQABQAEAAQABAADAAQABAADAAQABAAAAAAAAAAAAAAAAAAA//8AAP///v/+//3//P/8//v/+v/6//n/+P/4//j/+P/3//f/+P/3//j/+P/4//n/+v/6//v//P/9//3//v/+//7//v8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////AAD+//7//f/9//3//f/9//z//P/8//z//P/8//z//P/8//z//P/8//z//f/9//3//v/+//7//v8AAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            audio.play();
+        } catch (e) {
+            console.warn('⚠️ Não foi possível reproduzir som de colisão', e);
+        }
+        
+        const animateFrame = () => {
+            if (currentFrame >= frames) {
+                // Restaura o estado original
+                this.player.x = originalX;
+                this.player.y = originalY;
+                
+                // Executa o callback após a animação
+                callback();
+                return;
+            }
+            
+            // Efeito de tremor - movemos o carro aleatoriamente
+            const shakeAmount = 10 * (1 - currentFrame/frames); // Diminui gradualmente
+            this.player.x = originalX + (Math.random() * shakeAmount - shakeAmount/2);
+            this.player.y = originalY + (Math.random() * shakeAmount - shakeAmount/2);
+            
+            // Efeito de flash vermelho
+            if (currentFrame % 2 === 0) {
+                this.ctx.fillStyle = 'rgba(255,0,0,0.3)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+            }
+            
+            // Desenha o frame
+            this.draw();
+            
+            // Próximo quadro
+            currentFrame++;
+            requestAnimationFrame(animateFrame);
+        };
+        
+        // Inicia a animação
+        requestAnimationFrame(animateFrame);
+    }
+
     // Manipuladores de eventos de toque
     private handleTouchStart = (e: TouchEvent) => {
         const touchX = e.touches[0].clientX;
