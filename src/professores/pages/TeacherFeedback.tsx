@@ -89,6 +89,7 @@ const TeacherFeedback: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRating, setSelectedRating] = useState('Todas');
   const [selectedSubject, setSelectedSubject] = useState('Todas');
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
 
   const subjects = ['Todas', ...Array.from(new Set(feedbacks.map(f => f.subject)))];
   const ratings = ['Todas', '5', '4', '3', '2', '1'];
@@ -160,36 +161,51 @@ const TeacherFeedback: React.FC = () => {
             </div>
 
             {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex items-center mb-4 gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
+                  type="text"
                   placeholder="Buscar por aluno, aula ou comentário..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="w-full bg-[#fffaf0] border border-[#28b0ff] rounded-xl px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-[#0029ff] focus:border-transparent"
                 />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#001cab]" size={20} />
               </div>
-              <select
-                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
-                value={selectedRating}
-                onChange={(e) => setSelectedRating(e.target.value)}
-              >
-                {ratings.map((rating) => (
-                  <option key={rating} value={rating}>
-                    {rating === 'Todas' ? 'Todas as notas' : `${rating} estrelas`}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
-              >
-                {subjects.map((subject) => (
-                  <option key={subject} value={subject}>{subject}</option>
-                ))}
-              </select>
+              {/* Ícone de filtro */}
+              <div className="relative">
+                <Button variant="outline" size="icon" className="rounded-full" aria-label="Filtrar feedbacks" onClick={() => setShowFilterMenu(v => !v)}>
+                  <Filter className="h-5 w-5" />
+                </Button>
+                {showFilterMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10 p-2 space-y-2">
+                    <div>
+                      <span className="block text-xs font-semibold text-gray-500 mb-1">Nota</span>
+                      {ratings.map((rating) => (
+                        <button
+                          key={rating}
+                          className={`w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm ${selectedRating === rating ? 'font-bold text-primary' : ''}`}
+                          onClick={() => { setSelectedRating(rating); setShowFilterMenu(false); }}
+                        >
+                          {rating === 'Todas' ? 'Todas as notas' : `${rating} estrelas`}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="pt-2 border-t border-gray-100">
+                      <span className="block text-xs font-semibold text-gray-500 mb-1">Disciplina</span>
+                      {subjects.map((subject) => (
+                        <button
+                          key={subject}
+                          className={`w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm ${selectedSubject === subject ? 'font-bold text-primary' : ''}`}
+                          onClick={() => { setSelectedSubject(subject); setShowFilterMenu(false); }}
+                        >
+                          {subject}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Feedback List */}

@@ -12,7 +12,7 @@ export const MOCK_SUBJECTS: Subject[] = [
     id: 1,
     name: 'Cálculo I',
     icon: '∫',
-    progress: 75,
+  progress: 0,
     videoCount: 24,
     color: 'bg-[#0029ff]',
     isMine: true,
@@ -80,10 +80,10 @@ export const MOCK_RECENT_VIDEOS: RecentVideo[] = [
   {
   id: 1,
   lessonId: 'X0OZt35ASgU',
-  title: 'Limites e Continuidade',
-    subject: 'Cálculo I',
-    progress: 75,
-    duration: '45 min',
+  title: 'Conjuntos e Operações com Conjuntos',
+    subject: 'Pré-Cálculo',
+  progress: 0,
+    duration: '17m',
     thumbnail: '📊'
   },
   {

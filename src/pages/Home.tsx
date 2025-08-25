@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveCarousel from '../components/common/ResponsiveCarousel';
@@ -27,7 +26,10 @@ const Home: React.FC = () => {
     <Card variant="engenha" className="flex items-center gap-4 p-4 h-full">
       <div className="text-3xl">{video.thumbnail}</div>
       <div className="flex-1">
-        <h3 className="font-medium text-card-foreground text-sm">{video.title}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-medium text-card-foreground text-sm">{video.title}</h3>
+          {/* Removido círculo de concluído */}
+        </div>
         <p className="text-xs text-muted-foreground">{video.subject} • {video.duration}</p>
         <div className="mt-2 space-y-1">
           <Progress 
@@ -45,9 +47,7 @@ const Home: React.FC = () => {
         className="rounded-full"
         onClick={(e) => {
           e.stopPropagation();
-          const targetId = (video && (video as any).lessonId) || 'X0OZt35ASgU';
-          console.log('Navegando para (router):', `/watch/${targetId}`);
-          navigate(`/watch/${targetId}`);
+          navigate('/watch/j5i6XlfwxeA');
         }}
       >
         <Play size={16} />

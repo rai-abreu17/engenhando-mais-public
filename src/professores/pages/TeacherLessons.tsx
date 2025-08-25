@@ -72,6 +72,7 @@ const TeacherLessons: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('Todas');
   const [selectedSubject, setSelectedSubject] = useState('Todas');
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
 
   const subjects = ['Todas', ...Array.from(new Set(lessons.map(lesson => lesson.subject)))];
 
@@ -110,38 +111,52 @@ const TeacherLessons: React.FC = () => {
           />
 
           <div className="p-6 space-y-6">
-            {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
+            {/* Barra de Pesquisa com Filtro */}
+            <div className="flex items-center mb-4 gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Buscar aulas..."
+                  type="text"
+                  placeholder="Buscar aulas por título ou descrição"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="w-full bg-[#fffaf0] border border-[#28b0ff] rounded-xl px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-[#0029ff] focus:border-transparent"
                 />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#001cab]" size={20} />
               </div>
-              <div className="flex flex-wrap gap-2">
-                {['Todas', 'Publicada', 'Rascunho', 'Arquivada'].map((filter) => (
-                  <Button
-                    key={filter}
-                    variant={selectedFilter === filter ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedFilter(filter)}
-                  >
-                    {filter}
-                  </Button>
-                ))}
+              {/* Ícone de filtro */}
+              <div className="relative">
+                <Button variant="outline" size="icon" className="rounded-full" aria-label="Filtrar aulas" onClick={() => setShowFilterMenu(v => !v)}>
+                  <Filter className="h-5 w-5" />
+                </Button>
+                {showFilterMenu && (
+                  <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded shadow-lg z-10 p-2 space-y-2">
+                    <div>
+                      <span className="block text-xs font-semibold text-gray-500 mb-1">Status</span>
+                      {['Todas', 'Publicada', 'Rascunho', 'Arquivada'].map((filter) => (
+                        <button
+                          key={filter}
+                          className={`w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm ${selectedFilter === filter ? 'font-bold text-primary' : ''}`}
+                          onClick={() => { setSelectedFilter(filter); setShowFilterMenu(false); }}
+                        >
+                          {filter}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="pt-2 border-t border-gray-100">
+                      <span className="block text-xs font-semibold text-gray-500 mb-1">Disciplina</span>
+                      {subjects.map((subject) => (
+                        <button
+                          key={subject}
+                          className={`w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm ${selectedSubject === subject ? 'font-bold text-primary' : ''}`}
+                          onClick={() => { setSelectedSubject(subject); setShowFilterMenu(false); }}
+                        >
+                          {subject}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <select
-                className="px-3 py-2 border border-input rounded-md bg-background text-sm"
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
-              >
-                {subjects.map((subject) => (
-                  <option key={subject} value={subject}>{subject}</option>
-                ))}
-              </select>
             </div>
 
             {/* Create Lesson Button */}

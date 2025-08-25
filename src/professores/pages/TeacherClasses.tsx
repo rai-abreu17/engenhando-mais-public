@@ -56,6 +56,7 @@ const classes = [
 const TeacherClasses: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('Todas');
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
 
   const filteredClasses = classes.filter(classItem => {
     const matchesSearch = classItem.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,29 +74,36 @@ const TeacherClasses: React.FC = () => {
           />
 
           <div className="p-6 space-y-6">
-            {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
+            {/* Barra de Pesquisa com Filtro */}
+            <div className="flex items-center mb-4 gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Buscar por nome ou código da turma..."
+                  type="text"
+                  placeholder="Buscar turmas por nome ou código"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="w-full bg-[#fffaf0] border border-[#28b0ff] rounded-xl px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-[#0029ff] focus:border-transparent"
                 />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#001cab]" size={20} />
               </div>
-              <div className="flex gap-2">
-                {['Todas', 'Ativa', 'Concluída'].map((filter) => (
-                  <Button
-                    key={filter}
-                    variant={selectedFilter === filter ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedFilter(filter)}
-                  >
-                    <Filter className="h-4 w-4 mr-2" />
-                    {filter}
-                  </Button>
-                ))}
+              {/* Ícone de filtro */}
+              <div className="relative">
+                <Button variant="outline" size="icon" className="rounded-full" aria-label="Filtrar turmas" onClick={() => setShowFilterMenu(v => !v)}>
+                  <Filter className="h-5 w-5" />
+                </Button>
+                {showFilterMenu && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-10 p-2 space-y-2">
+                    {['Todas', 'Ativa', 'Concluída'].map((filter) => (
+                      <button
+                        key={filter}
+                        className={`w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm ${selectedFilter === filter ? 'font-bold text-primary' : ''}`}
+                        onClick={() => { setSelectedFilter(filter); setShowFilterMenu(false); }}
+                      >
+                        {filter}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

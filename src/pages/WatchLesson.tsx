@@ -219,7 +219,17 @@ export default function WatchLesson() {
   
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [progress, setProgress] = useLocalStorage<LessonProgress[]>('course-progress', []);
+    const [progress, setProgress, removeProgress] = useLocalStorage<LessonProgress[]>(
+      'course-progress',
+      [
+        {
+          lessonId: 'X0OZt35ASgU',
+          completed: true,
+          watchTime: 392, // 6:32 em segundos
+          totalTime: 392
+        }
+      ]
+    );
   
   // Estados para funcionalidades novas
   const [showAIChat, setShowAIChat] = useState(false);
@@ -304,6 +314,7 @@ export default function WatchLesson() {
   };
 
   const isLessonCompleted = (lessonId: string) => {
+    if (lessonId === 'X0OZt35ASgU') return true;
     return progress.find(p => p.lessonId === lessonId)?.completed || false;
   };
 
@@ -446,15 +457,15 @@ export default function WatchLesson() {
   const tabs = [
     { id: 'overview', label: 'Visão geral' },
     { id: 'description', label: 'Descrição' },
-    { id: 'qa', label: 'Q&A' },
+    { id: 'qa', label: 'Fórum' },
     { id: 'notes', label: 'Anotações' },
     { id: 'reviews', label: 'Avaliações' },
   ];
 
   return (
     <div className="min-h-screen bg-engenha-light-blue font-['Inter',sans-serif]">
-      {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-white shadow-sm border-b border-engenha-sky-blue">
+      {/* Header com botão de voltar para todas as telas */}
+      <div className="flex items-center justify-between p-4 bg-white shadow-sm border-b border-engenha-sky-blue">
         <Button
           variant="ghost"
           size="sm"
@@ -464,21 +475,22 @@ export default function WatchLesson() {
           <ArrowLeft className="h-5 w-5 mr-2" />
           Voltar
         </Button>
-        
-        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button variant="engenha-outline" size="sm">
-              <Menu className="h-5 w-5 mr-2" />
-              Conteúdo
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-full sm:w-96 p-0">
-            <SheetHeader className="p-4 border-b">
-              <SheetTitle className="text-engenha-dark-navy">Conteúdo do Curso</SheetTitle>
-            </SheetHeader>
-            <CourseSidebarContent />
-          </SheetContent>
-        </Sheet>
+        <div className="lg:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="engenha-outline" size="sm">
+                <Menu className="h-5 w-5 mr-2" />
+                Conteúdo
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:w-96 p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle className="text-engenha-dark-navy">Conteúdo do Curso</SheetTitle>
+              </SheetHeader>
+              <CourseSidebarContent />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row min-h-screen lg:min-h-[calc(100vh)]">
@@ -674,7 +686,7 @@ export default function WatchLesson() {
                               <span className="text-xs text-engenha-blue">há 2 horas</span>
                             </div>
                             <p className="text-engenha-blue mb-3">
-                              Qual a diferença prática entre JDK e JRE? Não ficou muito claro no vídeo.
+                              O que são conjuntos e como eles são representados?
                             </p>
                             <div className="flex items-center gap-4">
                               <Button variant="ghost" size="sm" className="text-engenha-blue hover:bg-engenha-light-blue hover:text-engenha-dark-navy">
@@ -684,7 +696,6 @@ export default function WatchLesson() {
                                 Responder
                               </Button>
                             </div>
-                            
                             {/* Resposta */}
                             <div className="mt-4 pl-4 border-l-2 border-engenha-sky-blue/30">
                               <div className="flex items-start gap-3">
@@ -698,9 +709,7 @@ export default function WatchLesson() {
                                     <span className="text-xs text-engenha-blue">há 1 hora</span>
                                   </div>
                                   <p className="text-engenha-blue text-sm">
-                                    Ótima pergunta! O JDK (Java Development Kit) inclui ferramentas para desenvolvimento, como o compilador javac. 
-                                    Já o JRE (Java Runtime Environment) é apenas o ambiente para executar aplicações Java. 
-                                    Se você só vai executar programas Java, precisa apenas do JRE. Para desenvolver, precisa do JDK completo.
+                                    Conjuntos são coleções bem definidas de objetos, chamados elementos. Eles podem ser representados por listagem (A = {'{'}1,2,3{'}'}) ou por propriedade (B = {'{'}x | x é número par{'}'}).
                                   </p>
                                   <div className="flex items-center gap-4 mt-2">
                                     <Button variant="ghost" size="sm" className="text-engenha-blue hover:bg-engenha-light-blue hover:text-engenha-dark-navy">
@@ -728,7 +737,7 @@ export default function WatchLesson() {
                               <span className="text-xs text-engenha-blue">há 5 horas</span>
                             </div>
                             <p className="text-engenha-blue mb-3">
-                              É possível usar Java para desenvolvimento mobile?
+                              Como funciona a união e a interseção de conjuntos?
                             </p>
                             <div className="flex items-center gap-4">
                               <Button variant="ghost" size="sm" className="text-engenha-blue hover:bg-engenha-light-blue hover:text-engenha-dark-navy">
@@ -737,6 +746,51 @@ export default function WatchLesson() {
                               <Button variant="ghost" size="sm" className="text-engenha-blue hover:bg-engenha-light-blue hover:text-engenha-dark-navy">
                                 Responder
                               </Button>
+                            </div>
+                            {/* Resposta de aluno */}
+                            <div className="mt-4 pl-4 border-l-2 border-engenha-sky-blue/30">
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 bg-engenha-orange rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="text-white text-xs font-semibold">LC</span>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="font-medium text-engenha-dark-navy">Lucas Carvalho</span>
+                                    <span className="text-xs text-engenha-blue">há 4 horas</span>
+                                  </div>
+                                  <p className="text-engenha-blue text-sm">
+                                    União é juntar todos os elementos dos dois conjuntos, e interseção é pegar só o que tem nos dois ao mesmo tempo. Exemplo: A = {'{'}1,2,3{'}'}, B = {'{'}2,3,4{'}'}; A ∪ B = {'{'}1,2,3,4{'}'}, A ∩ B = {'{'}2,3{'}'}.
+                                  </p>
+                                  <div className="flex items-center gap-4 mt-2">
+                                    <Button variant="ghost" size="sm" className="text-engenha-blue hover:bg-engenha-light-blue hover:text-engenha-dark-navy">
+                                      👍 2
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {/* Resposta do instrutor */}
+                            <div className="mt-4 pl-4 border-l-2 border-engenha-sky-blue/30">
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 bg-engenha-bright-blue rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="text-white text-xs font-semibold">PR</span>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="font-medium text-engenha-dark-navy">Prof. Roberto</span>
+                                    <span className="px-2 py-0.5 bg-engenha-orange/10 text-engenha-orange text-xs rounded-full">Instrutor</span>
+                                    <span className="text-xs text-engenha-blue">há 4 horas</span>
+                                  </div>
+                                  <p className="text-engenha-blue text-sm">
+                                    A união de dois conjuntos A e B (A ∪ B) é o conjunto de todos os elementos que estão em A, em B ou em ambos. A interseção (A ∩ B) é o conjunto dos elementos que estão em A e em B ao mesmo tempo.
+                                  </p>
+                                  <div className="flex items-center gap-4 mt-2">
+                                    <Button variant="ghost" size="sm" className="text-engenha-blue hover:bg-engenha-light-blue hover:text-engenha-dark-navy">
+                                      👍 7
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
