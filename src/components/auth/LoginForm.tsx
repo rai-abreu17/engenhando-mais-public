@@ -74,24 +74,42 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
       return;
     }
 
+    // Normalizar email (remover espaços e converter para minúsculo)
+    const normalizedEmail = formData.email.trim().toLowerCase();
+    const normalizedPassword = formData.password.trim();
+
+    console.log('Tentativa de login:', { email: normalizedEmail, password: normalizedPassword });
+
     // Login administrador
-    if (formData.email === 'admin@gmail.com' && formData.password === '1234') {
+    if (normalizedEmail === 'admin@gmail.com' && normalizedPassword === '1234') {
+      console.log('Login como administrador');
       login('mock-token-admin', 'admin');
       navigate('/admin/dashboard');
       return;
     }
 
     // Login professor
-    if (formData.email === 'professor@gmail.com' && formData.password === '1234') {
+    if (normalizedEmail === 'professor@gmail.com' && normalizedPassword === '1234') {
+      console.log('Login como professor');
       login('mock-token-teacher', 'teacher');
       navigate('/professores/dashboard');
       return;
     }
 
-    // Login aluno
-    console.log('Login submitted:', formData);
-    login('mock-token-student', 'student');
-    navigate('/home');
+    // Login aluno (credenciais padrão ou outras credenciais válidas)
+    if (normalizedEmail === 'aluno@gmail.com' && normalizedPassword === '1234') {
+      console.log('Login como aluno');
+      login('mock-token-student', 'student');
+      navigate('/home');
+      return;
+    }
+
+    // Se chegou até aqui, credenciais inválidas
+    setErrors({
+      email: 'Credenciais inválidas',
+      password: 'Credenciais inválidas'
+    });
+    console.log('Credenciais inválidas:', { email: normalizedEmail, password: normalizedPassword });
   };
 
   const isFormValid = () => {
