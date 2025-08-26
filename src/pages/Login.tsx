@@ -12,20 +12,38 @@ const Login = () => {
   const [currentView, setCurrentView] = useState<AuthView>('login');
 
   React.useEffect(() => {
-    // Check if user is already authenticated
-    const token = localStorage.getItem('engenha_token');
-    const userType = localStorage.getItem('engenha_user_type');
-    
-    if (token) {
-      // Redirect based on user type
-      if (userType === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (userType === 'teacher') {
-        navigate('/professores/dashboard');
-      } else {
-        navigate('/home');
+    // Verifica se o usuário está autenticado
+    const checkAuth = () => {
+      const token = localStorage.getItem('engenha_token');
+      const userType = localStorage.getItem('engenha_user_type');
+      
+      console.log('Verificando autenticação na página de login:', { token, userType });
+      
+      // Verifica se o usuário está na página de login por acidente enquanto já está autenticado
+      if (token && window.location.pathname === '/login') {
+        console.log('Usuário já autenticado, redirecionando...');
+        // Redirect based on user type
+        if (userType === 'admin') {
+          console.log('Redirecionando para dashboard de admin');
+          navigate('/admin/dashboard');
+        } else if (userType === 'teacher') {
+          console.log('Redirecionando para dashboard de professor');
+          navigate('/professores/dashboard');
+        } else {
+          console.log('Redirecionando para home (aluno)');
+          navigate('/home');
+        }
       }
-    }
+    };
+    
+    checkAuth();
+    
+    // Adicionar um event listener para verificar quando o localStorage muda
+    window.addEventListener('storage', checkAuth);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+    };
   }, [navigate]);
 
   const handleSwitchToSignUp = () => setCurrentView('signup');

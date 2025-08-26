@@ -25,7 +25,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
     password: ''
   });
 
+  // Função login não utilizada diretamente para evitar problemas com o redirecionamento
   const login = (token: string, userType: string) => {
+    console.log('Definindo tokens de autenticação:', { token, userType });
     localStorage.setItem('engenha_token', token);
     localStorage.setItem('engenha_user_type', userType);
   };
@@ -74,36 +76,52 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
       return;
     }
 
-    // Normalizar email (remover espaços e converter para minúsculo)
-    const normalizedEmail = formData.email.trim().toLowerCase();
-    const normalizedPassword = formData.password.trim();
-
-    // Login administrador
-    if (normalizedEmail === 'admin@gmail.com' && normalizedPassword === '1234') {
-      login('mock-token-admin', 'admin');
-      navigate('/admin/dashboard');
-      return;
+    try {
+      // Normalizar email (remover espaços e converter para minúsculo)
+      const normalizedEmail = formData.email.trim().toLowerCase();
+      const normalizedPassword = formData.password.trim();
+      
+      console.log('Tentando login com:', { email: normalizedEmail });
+  
+      // Login administrador
+      if (normalizedEmail === 'admin@gmail.com' && normalizedPassword === '1234') {
+        localStorage.setItem('engenha_token', 'mock-token-admin');
+        localStorage.setItem('engenha_user_type', 'admin');
+        console.log('Login como administrador bem-sucedido');
+        navigate('/admin/dashboard');
+        return;
+      }
+  
+      // Login professor
+      if (normalizedEmail === 'professor@gmail.com' && normalizedPassword === '1234') {
+        localStorage.setItem('engenha_token', 'mock-token-teacher');
+        localStorage.setItem('engenha_user_type', 'teacher');
+        console.log('Login como professor bem-sucedido');
+        navigate('/professores/dashboard');
+        return;
+      }
+  
+      // Login aluno (credenciais padrão ou outras credenciais válidas)
+      if (normalizedEmail === 'aluno@gmail.com' && normalizedPassword === '1234') {
+        localStorage.setItem('engenha_token', 'mock-token-student');
+        localStorage.setItem('engenha_user_type', 'student');
+        console.log('Login como aluno bem-sucedido');
+        navigate('/home');
+        return;
+      }
+  
+      // Se chegou até aqui, credenciais inválidas
+      setErrors({
+        email: 'Credenciais inválidas',
+        password: 'Credenciais inválidas'
+      });
+    } catch (error) {
+      console.error('Erro no login:', error);
+      setErrors({
+        email: 'Erro ao fazer login',
+        password: 'Erro ao fazer login'
+      });
     }
-
-    // Login professor
-    if (normalizedEmail === 'professor@gmail.com' && normalizedPassword === '1234') {
-      login('mock-token-teacher', 'teacher');
-      navigate('/professores/dashboard');
-      return;
-    }
-
-    // Login aluno (credenciais padrão ou outras credenciais válidas)
-    if (normalizedEmail === 'aluno@gmail.com' && normalizedPassword === '1234') {
-      login('mock-token-student', 'student');
-      navigate('/home');
-      return;
-    }
-
-    // Se chegou até aqui, credenciais inválidas
-    setErrors({
-      email: 'Credenciais inválidas',
-      password: 'Credenciais inválidas'
-    });
   };
 
   const isFormValid = () => {
