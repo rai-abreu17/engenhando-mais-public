@@ -7,7 +7,8 @@ import {
   MessageSquare, 
   BarChart3,
   Plus,
-  Settings
+  Settings,
+  FileText
 } from 'lucide-react';
 
 const navigationItems = [
@@ -35,6 +36,11 @@ const navigationItems = [
     icon: BarChart3, 
     label: 'Analytics', 
     path: '/professores/analytics' 
+  },
+  { 
+    icon: FileText, 
+    label: 'Relatórios', 
+    path: '/professores/relatorios' 
   },
   { 
     icon: Settings, 

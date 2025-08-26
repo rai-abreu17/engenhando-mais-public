@@ -20,7 +20,7 @@ import ClassManagement from './pages/admin/ClassManagement';
 import LessonManagement from './pages/admin/LessonManagement';
 import AddLessonPage from './pages/admin/AddLessonPage';
 import ReviewLessonPage from './pages/admin/ReviewLessonPage';
-import ReportsPage from './pages/admin/ReportsPage';
+import ReportsPage from './pages/ReportsPage';
 import AdminSettings from './pages/admin/AdminSettings';
 import AccessControlPage from './pages/admin/AccessControlPage';
 
@@ -247,6 +247,11 @@ const App = () => {
             <Route path="/professores/configuracoes" element={
               <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
                 <ProfessorSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/professores/relatorios" element={
+              <ProtectedRoute allowedUserTypes={['teacher', 'admin']}>
+                <ReportsPage />
               </ProtectedRoute>
             } />
             

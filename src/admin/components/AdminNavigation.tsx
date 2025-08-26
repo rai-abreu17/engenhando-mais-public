@@ -8,7 +8,8 @@ import {
   Settings, 
   Menu,
   X,
-  Shield
+  Shield,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -43,6 +44,12 @@ const AdminNavigation: React.FC = () => {
       icon: FileText, 
       label: 'Aulas',
       ariaLabel: 'Gerenciar aulas'
+    },
+    { 
+      path: '/admin/reports', 
+      icon: BarChart3, 
+      label: 'Relatórios',
+      ariaLabel: 'Ver relatórios do sistema'
     },
     { 
       path: '/admin/access-control', 
