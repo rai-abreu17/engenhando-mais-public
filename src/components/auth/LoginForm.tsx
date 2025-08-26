@@ -78,11 +78,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
     const normalizedEmail = formData.email.trim().toLowerCase();
     const normalizedPassword = formData.password.trim();
 
-    console.log('Tentativa de login:', { email: normalizedEmail, password: normalizedPassword });
-
     // Login administrador
     if (normalizedEmail === 'admin@gmail.com' && normalizedPassword === '1234') {
-      console.log('Login como administrador');
       login('mock-token-admin', 'admin');
       navigate('/admin/dashboard');
       return;
@@ -90,7 +87,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
 
     // Login professor
     if (normalizedEmail === 'professor@gmail.com' && normalizedPassword === '1234') {
-      console.log('Login como professor');
       login('mock-token-teacher', 'teacher');
       navigate('/professores/dashboard');
       return;
@@ -98,7 +94,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
 
     // Login aluno (credenciais padrão ou outras credenciais válidas)
     if (normalizedEmail === 'aluno@gmail.com' && normalizedPassword === '1234') {
-      console.log('Login como aluno');
       login('mock-token-student', 'student');
       navigate('/home');
       return;
@@ -109,7 +104,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
       email: 'Credenciais inválidas',
       password: 'Credenciais inválidas'
     });
-    console.log('Credenciais inválidas:', { email: normalizedEmail, password: normalizedPassword });
   };
 
   const isFormValid = () => {
@@ -200,6 +194,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
       >
         Não tem uma conta? Clique aqui!
       </button>
+
+      {/* Credenciais de teste */}
+      <div className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
+        <h3 className="text-engenha-light-cream font-semibold mb-2 text-sm">Credenciais de Teste:</h3>
+        <div className="text-xs text-engenha-sky-blue space-y-1">
+          <p><strong>Admin:</strong> admin@gmail.com / 1234</p>
+          <p><strong>Professor:</strong> professor@gmail.com / 1234</p>
+          <p><strong>Aluno:</strong> aluno@gmail.com / 1234</p>
+        </div>
+      </div>
 
       {/* Social Login */}
       <div className="mt-8 w-full max-w-sm">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { Download, Users, BookOpen, TrendingUp, AlertTriangle, Clock, Target, MessageCircle, FileText, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Header from '@/components/common/Header';
+import AdminNavigation from '@/admin/components/AdminNavigation';
+import TeacherNavigation from '@/professores/components/TeacherNavigation';
 
 // Dados mockados
 const mockAdminSummary = [
@@ -71,7 +75,17 @@ const mockTeacherEngagement = {
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', '#8884d8', '#82ca9d', '#ffc658'];
 
 const ReportsPage = () => {
-  const [currentRole, setCurrentRole] = useState<'admin' | 'professor'>('admin');
+  const location = useLocation();
+  
+  // Detectar papel do usuário baseado na rota atual
+  const getUserRole = (): 'admin' | 'professor' => {
+    if (location.pathname.startsWith('/professores/')) {
+      return 'professor';
+    }
+    return 'admin';
+  };
+  
+  const [currentRole] = useState<'admin' | 'professor'>(getUserRole());
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState({ start: '2024-01-01', end: '2024-01-31' });
   const [selectedCourse, setSelectedCourse] = useState('all');
@@ -84,14 +98,13 @@ const ReportsPage = () => {
 
   const itemsPerPage = 5;
 
-  // Simulação de loading
-  const handleRoleChange = (role: 'admin' | 'professor') => {
+  // Simulação de loading inicial
+  useEffect(() => {
     setLoading(true);
     setTimeout(() => {
-      setCurrentRole(role);
       setLoading(false);
-    }, 1500);
-  };
+    }, 1000);
+  }, []);
 
   // Função para exportar CSV
   const exportToCSV = (data: any[], filename: string) => {
@@ -160,32 +173,10 @@ const ReportsPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Relatórios</h1>
-            <p className="text-muted-foreground">Análise de desempenho e engajamento</p>
-          </div>
-          
-          {/* Role Selector */}
-          <div className="flex gap-2">
-            <Button
-              variant={currentRole === 'admin' ? 'default' : 'outline'}
-              onClick={() => handleRoleChange('admin')}
-              className="flex items-center gap-2"
-            >
-              <Users className="w-4 h-4" />
-              Administrador
-            </Button>
-            <Button
-              variant={currentRole === 'professor' ? 'default' : 'outline'}
-              onClick={() => handleRoleChange('professor')}
-              className="flex items-center gap-2"
-            >
-              <BookOpen className="w-4 h-4" />
-              Professor
-            </Button>
-          </div>
-        </div>
+        <Header 
+          title="Relatórios"
+          subtitle={currentRole === 'admin' ? 'Análise geral do sistema' : 'Análise das suas turmas'}
+        />
 
         {/* Filters */}
         <Card>
@@ -671,6 +662,9 @@ const ReportsPage = () => {
           </>
         )}
       </div>
+      
+      {/* Navegação específica por papel */}
+      {currentRole === 'admin' ? <AdminNavigation /> : <TeacherNavigation />}
     </div>
   );
 };
