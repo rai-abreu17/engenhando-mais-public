@@ -88,7 +88,7 @@ export const MOCK_RECENT_VIDEOS: RecentVideo[] = [
   },
   {
   id: 2,
-  lessonId: 'j5i6XlfwxeA',
+  lessonId: 'BC2ZpzOBKYQ',
   title: 'Leis de Newton',
     subject: 'Física I',
     progress: 30,

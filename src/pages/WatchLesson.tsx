@@ -36,7 +36,7 @@ const mockCourseData: Section[] = [
     title: 'Seção 1: Introdução e Fundamentos',
     lessons: [
       { id: 'X0OZt35ASgU', title: 'Aula Inaugural - O que estudaremos neste Curso', duration: '6:32', type: 'video' },
-      { id: 'j5i6XlfwxeA', title: 'Conjuntos e Operações com Conjuntos', duration: '16:42', type: 'video' },
+      { id: 'BC2ZpzOBKYQ', title: 'Conjuntos e Operações com Conjuntos', duration: '16:42', type: 'video' },
       { id: '7GLGVQUkQC4', title: 'Números Reais e Intervalos', duration: '18:37', type: 'video' },
       { id: 'dMdpOoSnu2I', title: 'Operações com Frações e Dicas', duration: '11:15', type: 'video' },
       { id: '91sLDPJRdhk', title: 'Racionalização e Simplificação de Raízes', duration: '11:43', type: 'video' },
@@ -208,7 +208,7 @@ export default function WatchLesson() {
   console.log('WatchLesson - lessonId recebido:', lessonId);
   
   // Seleção dinâmica de perguntas com base no ID da lição
-  const videoQuestions = lessonId === 'j5i6XlfwxeA' 
+  const videoQuestions = lessonId === 'BC2ZpzOBKYQ' 
     ? conjuntosVideoQuestions // Perguntas específicas para aula de Conjuntos
     : defaultVideoQuestions; // Perguntas padrão para outras aulas
   

@@ -21,7 +21,7 @@ interface AIChatProps {
 
 export const AIChat: React.FC<AIChatProps> = ({ isOpen, onClose }) => {
   const { lessonId } = useParams<{ lessonId?: string }>();
-  const isConjuntosAula = lessonId === 'j5i6XlfwxeA';
+  const isConjuntosAula = lessonId === 'BC2ZpzOBKYQ';
   
   const [messages, setMessages] = useState<Message[]>([]);
   

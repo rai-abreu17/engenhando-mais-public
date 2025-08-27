@@ -47,7 +47,7 @@ const Home: React.FC = () => {
         className="rounded-full"
         onClick={(e) => {
           e.stopPropagation();
-          navigate('/watch/j5i6XlfwxeA');
+          navigate('/watch/BC2ZpzOBKYQ');
         }}
       >
         <Play size={16} />
