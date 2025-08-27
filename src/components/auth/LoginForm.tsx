@@ -213,16 +213,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
         Não tem uma conta? Clique aqui!
       </button>
 
-      {/* Credenciais de teste */}
-      <div className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-        <h3 className="text-engenha-light-cream font-semibold mb-2 text-sm">Credenciais de Teste:</h3>
-        <div className="text-xs text-engenha-sky-blue space-y-1">
-          <p><strong>Admin:</strong> admin@gmail.com / 1234</p>
-          <p><strong>Professor:</strong> professor@gmail.com / 1234</p>
-          <p><strong>Aluno:</strong> aluno@gmail.com / 1234</p>
-        </div>
-      </div>
-
       {/* Social Login */}
       <div className="mt-8 w-full max-w-sm">
         <div className="flex items-center mb-4">
