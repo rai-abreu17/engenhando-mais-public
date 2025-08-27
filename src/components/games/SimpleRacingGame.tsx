@@ -164,9 +164,11 @@ const SimpleRacingGame: React.FC<SimpleRacingGameProps> = ({ onGameEnd, onClose 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (gameState === 'collision_detected') {
-        // Qualquer tecla sai da tela de colisão
-        e.preventDefault();
-        setGameState('finished');
+        // Só muda para 'finished' se Enter ou Space for pressionada
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setGameState('finished');
+        }
         return;
       }
       
@@ -250,7 +252,7 @@ const SimpleRacingGame: React.FC<SimpleRacingGameProps> = ({ onGameEnd, onClose 
           >
             Continuar
           </button>
-          <p className="text-sm text-red-200">Ou pressione qualquer tecla</p>
+          <p className="text-sm text-red-200">Ou pressione ENTER ou ESPAÇO</p>
         </div>
       </div>
     );
