@@ -475,16 +475,28 @@ const CanvasRacingGame: React.FC<CanvasRacingGameProps> = ({ onGameEnd, onClose 
                       <div className="text-2xl font-bold text-white">{coins}</div>
                     </div>
                   </div>
-                  <button 
-                    className="bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-3 rounded-lg font-bold text-white hover:from-cyan-600 hover:to-blue-600 transform hover:scale-105 transition-all"
-                    onClick={() => {
-                      console.log('🎮 Botão JOGAR NOVAMENTE clicado');
-                      safelyRestartGame();
-                    }}
-                  >
-                    Jogar Novamente
-                  </button>
-                  <p className="text-sm text-gray-300">Ou pressione ESPAÇO para reiniciar</p>
+                  <div className="flex flex-col sm:flex-row justify-center gap-3">
+                    <button 
+                      className="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-3 rounded-lg font-bold text-white hover:from-cyan-600 hover:to-blue-600 transform hover:scale-105 transition-all"
+                      onClick={() => {
+                        console.log('🎮 Botão JOGAR NOVAMENTE clicado');
+                        safelyRestartGame();
+                      }}
+                    >
+                      Jogar Novamente
+                    </button>
+                    <button 
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3 rounded-lg font-bold text-white hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all"
+                      onClick={() => {
+                        console.log('💰 Botão COLETAR RECOMPENSA clicado');
+                        // Aqui chamamos onGameEnd para coletar a recompensa
+                        onGameEnd(score, coins);
+                      }}
+                    >
+                      Coletar Recompensa
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-300">Ou pressione ESPAÇO para jogar novamente</p>
                 </>
               ) : isLoading ? (
                 <>

@@ -144,12 +144,7 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
           setGameState('finished');
           setEndGameReason('collision');
           setGameStarted(false);
-          // Notifica o componente pai (CanvasRacingGame) para tratar o Game Over
-          try {
-            onGameEnd(score, calculateCoinsReward(score, distance));
-          } catch (e) {
-            console.warn('⚠️ onGameEnd lançou erro:', e);
-          }
+          // Não chamamos onGameEnd aqui, deixamos para o botão "Coletar Recompensa" fazer isso
 
           // Mostrar a mensagem de colisão (visível antes do overlay)
           const collisionMessage = document.createElement('div');
