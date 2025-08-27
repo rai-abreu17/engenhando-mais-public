@@ -176,7 +176,7 @@ const CanvasRacingGame: React.FC<CanvasRacingGameProps> = ({ onGameEnd, onClose 
       console.log(`📊 Pontuação final: ${finalScore}, Moedas: ${finalCoins}`);
       console.log(`🔄 Aguardando reinício...`);
       setGameOver(true);
-      onGameEnd(finalScore, finalCoins);
+      // Removida a chamada de onGameEnd para que seja chamada apenas quando o usuário clicar em "Fechar o Jogo"
     };
 
     const handleScoreUpdate = (currentScore: number, currentCoins: number) => {
@@ -486,14 +486,14 @@ const CanvasRacingGame: React.FC<CanvasRacingGameProps> = ({ onGameEnd, onClose 
                       Jogar Novamente
                     </button>
                     <button 
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3 rounded-lg font-bold text-white hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all"
+                      className="bg-gradient-to-r from-red-500 to-red-700 px-4 py-3 rounded-lg font-bold text-white hover:from-red-600 hover:to-red-800 transform hover:scale-105 transition-all"
                       onClick={() => {
-                        console.log('💰 Botão COLETAR RECOMPENSA clicado');
-                        // Aqui chamamos onGameEnd para coletar a recompensa
+                        console.log('� Botão FECHAR O JOGO clicado');
+                        // Aqui chamamos onGameEnd para finalizar o jogo
                         onGameEnd(score, coins);
                       }}
                     >
-                      Coletar Recompensa
+                      Fechar o Jogo
                     </button>
                   </div>
                   <p className="text-sm text-gray-300">Ou pressione ESPAÇO para jogar novamente</p>
