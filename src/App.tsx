@@ -38,35 +38,44 @@ const queryClient = new QueryClient();
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [authChecked, setAuthChecked] = React.useState(false);
   const [userType, setUserType] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const checkAuth = () => {
+      console.log('App: Verificando autenticação...');
       try {
         const token = localStorage.getItem('engenha_token');
         const storedUserType = localStorage.getItem('engenha_user_type');
         
+        console.log('App: Token:', token ? 'existe' : 'não existe');
+        console.log('App: Tipo de usuário:', storedUserType);
+        
         if (token) {
           setIsAuthenticated(true);
           setUserType(storedUserType || 'authenticated');
+          console.log('App: Usuário autenticado como', storedUserType || 'authenticated');
         } else {
           setIsAuthenticated(false);
           setUserType(null);
+          console.log('App: Usuário não autenticado');
         }
       } catch (error) {
-        console.error('Error checking auth:', error);
+        console.error('App: Erro ao verificar autenticação:', error);
         setIsAuthenticated(false);
         setUserType(null);
       } finally {
         setIsLoading(false);
+        setAuthChecked(true);
+        console.log('App: Verificação de autenticação concluída');
       }
     };
     
     checkAuth();
   }, []);
 
-  // Se estiver carregando, pode mostrar um spinner ou tela de loading
-  if (isLoading) {
+  // Se estiver carregando ou a verificação de auth não foi concluída, mostrar loading
+  if (isLoading || !authChecked) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#f0f6ff]">
         <div className="text-center">
@@ -81,21 +90,26 @@ const App = () => {
   const ProtectedRoute = ({ children, allowedUserTypes }: { children: React.ReactNode, allowedUserTypes: string[] }) => {
     const currentPath = window.location.pathname;
 
+    console.log('ProtectedRoute: Verificando acesso para', currentPath);
+    console.log('ProtectedRoute: Usuário autenticado:', isAuthenticated);
+    console.log('ProtectedRoute: Tipo de usuário:', userType);
+    console.log('ProtectedRoute: Tipos permitidos:', allowedUserTypes);
+
     // Permitir acesso à rota /watch/:lessonId sem autenticação
     if (currentPath.startsWith('/watch/')) {
-      console.log('ProtectedRoute: acesso público permitido para', currentPath);
+      console.log('ProtectedRoute: Acesso público permitido para', currentPath);
       return <>{children}</>;
     }
 
     // Verificar se o usuário está autenticado
     if (!isAuthenticated) {
-      console.log('ProtectedRoute: usuário não autenticado, redirecionando para /login (path)', currentPath);
+      console.log('ProtectedRoute: Usuário não autenticado, redirecionando para /login');
       return <Navigate to="/login" replace />;
     }
     
-    // Regras existentes continuam aqui...
+    // Verificar se é uma rota de admin e o usuário não é admin
     if (currentPath.startsWith('/admin/') && userType !== 'admin') {
-      // Rotas /admin/ são acessíveis apenas por administradores
+      console.log('ProtectedRoute: Usuário não é admin, redirecionando conforme tipo');
       if (userType === 'teacher') {
         return <Navigate to="/professores/dashboard" replace />;
       } else {
@@ -103,28 +117,36 @@ const App = () => {
       }
     }
     
-    // Rotas /professores/ são acessíveis por professores e administradores
+    // Verificar se é uma rota de professor e o usuário não tem permissão
     if (currentPath.startsWith('/professores/') && userType !== 'admin' && userType !== 'teacher') {
+      console.log('ProtectedRoute: Usuário não tem permissão para rota de professor');
       return <Navigate to="/home" replace />;
     }
     
-    // Para outras rotas, verificar os tipos permitidos
+    // Para outras rotas, verificar os tipos permitidos (apenas se allowedUserTypes não estiver vazio)
     if (allowedUserTypes.length > 0 && userType && !allowedUserTypes.includes(userType)) {
-      // Redirecionar para a página apropriada baseada no tipo de usuário
-      if (userType === 'admin') {
-        return <Navigate to="/admin/dashboard" replace />;
-      } else if (userType === 'teacher') {
-        return <Navigate to="/professores/dashboard" replace />;
-      } else if (userType === 'student' || userType === 'authenticated') {
-        return <Navigate to="/home" replace />;
-      } else {
-        // Caso o tipo de usuário não seja reconhecido, redirecionar para login
-        localStorage.removeItem('engenha_token');
-        localStorage.removeItem('engenha_user_type');
-        return <Navigate to="/login" replace />;
+      console.log('ProtectedRoute: Tipo de usuário não permitido para esta rota');
+      
+      // Evitar loops de redirecionamento: não redirecionar se já estamos na página correta
+      const shouldRedirect = (() => {
+        if (userType === 'admin' && !currentPath.startsWith('/admin/')) return '/admin/dashboard';
+        if (userType === 'teacher' && !currentPath.startsWith('/professores/')) return '/professores/dashboard';
+        if ((userType === 'student' || userType === 'authenticated') && 
+            !currentPath.startsWith('/home') && 
+            !currentPath.startsWith('/biblioteca') && 
+            !currentPath.startsWith('/mascote') && 
+            !currentPath.startsWith('/configuracoes') &&
+            !currentPath.startsWith('/help')) return '/home';
+        return null;
+      })();
+
+      if (shouldRedirect) {
+        console.log('ProtectedRoute: Redirecionando para', shouldRedirect);
+        return <Navigate to={shouldRedirect} replace />;
       }
     }
     
+    console.log('ProtectedRoute: Acesso permitido para', currentPath);
     return <>{children}</>;
   };
   
@@ -140,22 +162,22 @@ const App = () => {
             
             {/* Student Routes */}
             <Route path="/home" element={
-              <ProtectedRoute allowedUserTypes={['authenticated']}>
+              <ProtectedRoute allowedUserTypes={['authenticated', 'student']}>
                 <Home />
               </ProtectedRoute>
             } />
             <Route path="/biblioteca" element={
-              <ProtectedRoute allowedUserTypes={['authenticated']}>
+              <ProtectedRoute allowedUserTypes={['authenticated', 'student']}>
                 <Biblioteca />
               </ProtectedRoute>
             } />
             <Route path="/mascote" element={
-              <ProtectedRoute allowedUserTypes={['authenticated']}>
+              <ProtectedRoute allowedUserTypes={['authenticated', 'student']}>
                 <MascoteNovo />
               </ProtectedRoute>
             } />
             <Route path="/configuracoes" element={
-              <ProtectedRoute allowedUserTypes={['authenticated']}>
+              <ProtectedRoute allowedUserTypes={['authenticated', 'student']}>
                 <Configuracoes />
               </ProtectedRoute>
             } />

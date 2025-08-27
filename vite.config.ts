@@ -8,7 +8,18 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    allowedHosts: ["8080-iu0w9o1tg8b9e3qrqa-7c5c2803.manusvm.computer"],
+    cors: true,
+    hmr: {
+      host: 'localhost',
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      }
+    },
+    allowedHosts: true,
   },
   plugins: [
     react(),

@@ -12,39 +12,33 @@ const Login = () => {
   const [currentView, setCurrentView] = useState<AuthView>('login');
 
   React.useEffect(() => {
-    // Verifica se o usuário está autenticado
+    // Verifica se o usuário já está autenticado ao carregar a página
     const checkAuth = () => {
       const token = localStorage.getItem('engenha_token');
       const userType = localStorage.getItem('engenha_user_type');
       
-      console.log('Verificando autenticação na página de login:', { token, userType });
+      console.log('Login: Verificando autenticação na página de login:', { token, userType });
       
-      // Verifica se o usuário está na página de login por acidente enquanto já está autenticado
+      // Se o usuário já está autenticado, redirecionar
       if (token && window.location.pathname === '/login') {
-        console.log('Usuário já autenticado, redirecionando...');
-        // Redirect based on user type
+        console.log('Login: Usuário já autenticado, redirecionando...');
+        // Redirect based on user type using window.location.href for full page reload
         if (userType === 'admin') {
-          console.log('Redirecionando para dashboard de admin');
-          navigate('/admin/dashboard');
+          console.log('Login: Redirecionando para dashboard de admin');
+          window.location.href = '/admin/dashboard';
         } else if (userType === 'teacher') {
-          console.log('Redirecionando para dashboard de professor');
-          navigate('/professores/dashboard');
+          console.log('Login: Redirecionando para dashboard de professor');
+          window.location.href = '/professores/dashboard';
         } else {
-          console.log('Redirecionando para home (aluno)');
-          navigate('/home');
+          console.log('Login: Redirecionando para home (aluno)');
+          window.location.href = '/home';
         }
       }
     };
     
+    // Verificar apenas uma vez ao carregar a página
     checkAuth();
-    
-    // Adicionar um event listener para verificar quando o localStorage muda
-    window.addEventListener('storage', checkAuth);
-    
-    return () => {
-      window.removeEventListener('storage', checkAuth);
-    };
-  }, [navigate]);
+  }, []);
 
   const handleSwitchToSignUp = () => setCurrentView('signup');
   const handleSwitchToLogin = () => setCurrentView('login');

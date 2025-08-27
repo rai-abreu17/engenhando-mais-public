@@ -88,7 +88,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
         localStorage.setItem('engenha_token', 'mock-token-admin');
         localStorage.setItem('engenha_user_type', 'admin');
         console.log('Login como administrador bem-sucedido');
-        navigate('/admin/dashboard');
+        window.location.href = '/admin/dashboard';
         return;
       }
   
@@ -97,7 +97,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
         localStorage.setItem('engenha_token', 'mock-token-teacher');
         localStorage.setItem('engenha_user_type', 'teacher');
         console.log('Login como professor bem-sucedido');
-        navigate('/professores/dashboard');
+        window.location.href = '/professores/dashboard';
         return;
       }
   
@@ -106,7 +106,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp, onForgotPasswor
         localStorage.setItem('engenha_token', 'mock-token-student');
         localStorage.setItem('engenha_user_type', 'student');
         console.log('Login como aluno bem-sucedido');
-        navigate('/home');
+        window.location.href = '/home';
         return;
       }
   
