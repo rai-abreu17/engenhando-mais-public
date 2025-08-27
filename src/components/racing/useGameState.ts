@@ -124,7 +124,7 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
           car.position <= GAME_CONFIG.COLLISION_RANGE_MAX
         );
         
-        if (collision) {
+  if (collision) {
           console.log('💥 Colisão detectada!', {
             carId: collision.id,
             playerLane: currentLane + 1,
@@ -133,12 +133,33 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
             collisionRange: `${GAME_CONFIG.COLLISION_RANGE_MIN}-${GAME_CONFIG.COLLISION_RANGE_MAX}`
           });
           
-          // Mostrar a mensagem de colisão
+          // Encerrar o jogo imediatamente para acionar a tela de Game Over no componente pai
+          try {
+            if (gameLoopRef.current) {
+              cancelAnimationFrame(gameLoopRef.current);
+            }
+          } catch (e) {
+            console.warn('⚠️ Falha ao cancelar animation frame', e);
+          }
+          setGameState('finished');
+          setEndGameReason('collision');
+          setGameStarted(false);
+          // Notifica o componente pai (CanvasRacingGame) para tratar o Game Over
+          try {
+            onGameEnd(score, calculateCoinsReward(score, distance));
+          } catch (e) {
+            console.warn('⚠️ onGameEnd lançou erro:', e);
+          }
+
+          // Mostrar a mensagem de colisão (visível antes do overlay)
           const collisionMessage = document.createElement('div');
-          collisionMessage.className = 'fixed top-1/3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-xl md:text-3xl font-bold py-4 px-8 rounded-xl z-50 collision-message shadow-xl border-4 border-white';
+          collisionMessage.className = 'fixed top-1/3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-xl md:text-3xl font-bold py-4 px-8 rounded-xl collision-message shadow-xl border-4 border-white';
           collisionMessage.textContent = '💥 BATIDA! 💥';
+          // Garantir que a mensagem fique acima do canvas do jogo (que usa z-index alto)
+          collisionMessage.style.zIndex = '10002';
+          collisionMessage.style.pointerEvents = 'none';
           document.body.appendChild(collisionMessage);
-          
+
           // Efeito sonoro (opcional)
           try {
             const audio = new Audio();
@@ -149,14 +170,11 @@ export const useGameState = (onGameEnd: (score: number, coins: number) => void) 
             console.warn('⚠️ Não foi possível reproduzir som de colisão', e);
           }
           
-          // Remover a mensagem após alguns segundos
+          // Remover a mensagem após alguns segundos (sem alterar o estado do jogo novamente)
           setTimeout(() => {
             if (document.body.contains(collisionMessage)) {
               document.body.removeChild(collisionMessage);
             }
-            // Definir o estado do jogo como finalizado
-            setGameState('finished');
-            setEndGameReason('collision');
           }, 1500);
         }
       }

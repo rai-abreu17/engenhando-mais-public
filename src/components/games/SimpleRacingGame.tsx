@@ -41,7 +41,7 @@ interface SimpleRacingGameProps {
 }
 
 const SimpleRacingGame: React.FC<SimpleRacingGameProps> = ({ onGameEnd, onClose }) => {
-  const [gameState, setGameState] = useState<'playing' | 'question' | 'finished'>('playing');
+  const [gameState, setGameState] = useState<'playing' | 'question' | 'collision_detected' | 'finished'>('playing');
   const [playerLane, setPlayerLane] = useState(1);
   const [cars, setCars] = useState<Car[]>([]);
   const [distance, setDistance] = useState(0);
@@ -108,7 +108,7 @@ const SimpleRacingGame: React.FC<SimpleRacingGameProps> = ({ onGameEnd, onClose 
 
       if (collision) {
         console.log('💥 Colisão!');
-        setGameState('finished');
+        setGameState('collision_detected');
         return updatedCars;
       }
 
@@ -163,6 +163,13 @@ const SimpleRacingGame: React.FC<SimpleRacingGameProps> = ({ onGameEnd, onClose 
   // Controles do teclado
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      if (gameState === 'collision_detected') {
+        // Qualquer tecla sai da tela de colisão
+        e.preventDefault();
+        setGameState('finished');
+        return;
+      }
+      
       if (gameState !== 'playing') return;
       
       switch (e.key) {
@@ -218,6 +225,36 @@ const SimpleRacingGame: React.FC<SimpleRacingGameProps> = ({ onGameEnd, onClose 
       setPlayerLane(prev => prev + 1);
     }
   };
+
+  // Tela de colisão
+  if (gameState === 'collision_detected') {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[10003]">
+        <div className="text-center text-white space-y-4 max-w-md p-6 bg-red-900/80 rounded-xl border border-red-500/30 pointer-events-auto">
+          <h2 className="text-4xl font-bold text-red-300 mb-4 animate-pulse">💥 BATIDA! 💥</h2>
+          <p className="text-lg text-white">Você colidiu com outro carro!</p>
+          <div className="bg-red-800/50 rounded-lg p-4 mb-4">
+            <div className="text-sm text-red-200 mb-2">Resultado da corrida:</div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-red-200">Distância:</span>
+              <span className="font-bold text-white">{distance.toFixed(0)}m</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-red-200">Pontuação:</span>
+              <span className="font-bold text-white">{score} pts</span>
+            </div>
+          </div>
+          <button 
+            className="bg-gradient-to-r from-red-500 to-red-600 px-8 py-3 rounded-lg font-bold text-white hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all"
+            onClick={() => setGameState('finished')}
+          >
+            Continuar
+          </button>
+          <p className="text-sm text-red-200">Ou pressione qualquer tecla</p>
+        </div>
+      </div>
+    );
+  }
 
   // Tela de fim de jogo
   if (gameState === 'finished') {

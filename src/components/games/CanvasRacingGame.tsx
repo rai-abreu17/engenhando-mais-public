@@ -460,8 +460,8 @@ const CanvasRacingGame: React.FC<CanvasRacingGameProps> = ({ onGameEnd, onClose 
         
         {/* Tela de Welcome ou Game Over ou Loading */}
         {(gameOver || !gameStarted || isLoading) && (
-          <div className="absolute inset-0 bg-black/75 flex items-center justify-center">
-            <div className="text-center text-white space-y-4 max-w-md p-6 bg-gray-900/80 rounded-xl border border-cyan-500/30">
+          <div className="absolute inset-0 bg-black/75 flex items-center justify-center z-[10003]">
+            <div className="text-center text-white space-y-4 max-w-md p-6 bg-gray-900/80 rounded-xl border border-cyan-500/30 pointer-events-auto">
               {gameOver ? (
                 <>
                   <h3 className="text-2xl font-bold text-cyan-300">Jogo Finalizado!</h3>

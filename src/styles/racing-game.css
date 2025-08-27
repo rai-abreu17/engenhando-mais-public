@@ -15,7 +15,7 @@ body.game-active nav.fixed.bottom-0 {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 9999;
+  z-index: 10000; /* aumentado para evitar sobreposições inesperadas */
 }
 
 /* Animação de colisão */
@@ -31,6 +31,8 @@ body.game-active nav.fixed.bottom-0 {
 .collision-message {
   animation: collision-bounce 0.5s infinite;
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+  z-index: 10003; /* acima do container do jogo (10000) */
+  pointer-events: none; /* não bloqueia interações */
 }
 
 /* Estilos para a tela de Game Over */
@@ -43,7 +45,7 @@ body.game-active nav.fixed.bottom-0 {
   background-color: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
-  z-index: 10000;
+  z-index: 10001; /* acima do container e abaixo da collision-message */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,6 +89,6 @@ body.game-active nav.fixed.bottom-0 {
 
 /* Ajustar z-index para garantir que o jogo fique acima de tudo */
 .racing-game-overlay {
-  z-index: 10000;
+  z-index: 10002;
   position: relative;
 }
