@@ -6,8 +6,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Subject, FilterType } from '../../types';
-import { filterSubjects } from '../../utils';
+import { Subject, FilterType } from '../types';
+import { filterSubjects } from '../utils';
 
 export const useSubjects = (initialSubjects: Subject[]) => {
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);

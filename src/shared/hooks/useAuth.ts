@@ -36,7 +36,7 @@ export const useAuth = () => {
     setIsAuthenticated(true);
     setUserType(type);
     
-    // Disparar evento storage para notificar outros componentes
+    // Disparar um evento para informar que o login foi realizado
     window.dispatchEvent(new Event('storage'));
   };
 

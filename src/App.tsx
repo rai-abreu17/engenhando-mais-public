@@ -4,34 +4,34 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Biblioteca from "./pages/Biblioteca";
-import MascoteNovo from './pages/MascoteNovo';
-import Configuracoes from "./pages/Configuracoes";
+import Login from "./features/auth/pages/LoginPage";
+import Home from "./features/student/pages/HomePage";
+import Biblioteca from "./features/student/pages/BibliotecaPage";
+import MascoteNovo from './features/student/pages/MascotePage';
+import Configuracoes from "./features/student/pages/ConfiguracoesPage";
 import NotFound from "./pages/NotFound";
 import Help from "./pages/Help";
-import WatchLesson from "./pages/WatchLesson";
+import WatchLesson from "./features/video/pages/WatchLessonPage";
 
 // Admin Pages
-import AdminDashboard from './admin/pages/AdminDashboard';
-import TeacherManagement from './pages/admin/TeacherManagement';
-import ClassManagement from './pages/admin/ClassManagement';
-import LessonManagement from './pages/admin/LessonManagement';
-import AddLessonPage from './pages/admin/AddLessonPage';
-import ReviewLessonPage from './pages/admin/ReviewLessonPage';
+import AdminDashboard from './features/admin/pages/AdminDashboard';
+import TeacherManagement from './features/admin/pages/TeacherManagement';
+import ClassManagement from './features/admin/pages/ClassManagement';
+import LessonManagement from './features/admin/pages/LessonManagement';
+import AddLessonPage from './features/admin/pages/AddLessonPage';
+import ReviewLessonPage from './features/admin/pages/ReviewLessonPage';
 import ReportsPage from './pages/ReportsPage';
-import AdminSettings from './pages/admin/AdminSettings';
-import AccessControlPage from './pages/admin/AccessControlPage';
+import AdminSettings from './features/admin/pages/AdminSettings';
+import AccessControlPage from './features/admin/pages/AccessControlPage';
 
 // Teacher Pages
-import TeacherDashboard from './professores/pages/TeacherDashboard';
-import TeacherClasses from './professores/pages/TeacherClasses';
-import TeacherLessons from './professores/pages/TeacherLessons';
-import TeacherFeedback from './professores/pages/TeacherFeedback';
-import TeacherAnalytics from './professores/pages/TeacherAnalytics';
-import CreateLesson from './professores/pages/CreateLesson';
-import ProfessorSettings from './professores/pages/ProfessorSettings';
+import TeacherDashboard from './features/teacher/pages/TeacherDashboard';
+import TeacherClasses from './features/teacher/pages/TeacherClasses';
+import TeacherLessons from './features/teacher/pages/TeacherLessons';
+import TeacherFeedback from './features/teacher/pages/TeacherFeedback';
+import TeacherAnalytics from './features/teacher/pages/TeacherAnalytics';
+import CreateLesson from './features/teacher/pages/CreateLesson';
+import ProfessorSettings from './features/teacher/pages/ProfessorSettings';
 
 const queryClient = new QueryClient();
 
