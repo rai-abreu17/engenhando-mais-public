@@ -1,9 +1,0 @@
-/**
- * Common components exports
- * 
- * This file exports all common components to simplify imports
- */
-
-export { default as Header } from './Header';
-export { default as Navigation } from './Navigation';
-export { default as ResponsiveCarousel } from './ResponsiveCarousel';
